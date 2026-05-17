@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(grep -r \"DATAKILDER\\\\|DATAKONTROLCENTER\\\\|Y:\\\\\\\\\\\\\\\\\" \"C:/Users/jst/OneDrive - Social og Sundhedsskolen Randers/BI-SOSU/BI-OEKONOMI/Rapporter/HR_OEKONOMI\" --include=\"*.tmdl\" --include=\"*.m\" -l)",
+      "Bash(grep -n \"DATAKILDER\\\\|DATAKONTROLCENTER\\\\|Y:\\\\\\\\\\\\\\\\\\\\|fnGetValue\\\\|fnHentVærdi\\\\|parameter\\\\|Parameter\" \"C:/Users/jst/OneDrive - Social og Sundhedsskolen Randers/BI-SOSU/BI-OEKONOMI/Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/expressions.tmdl\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\jst\\\\OneDrive - Social og Sundhedsskolen Randers\\\\AI OS\" -Recurse -Force)",
+      "Bash(Select-Object FullName, PSIsContainer)",
+      "Bash(Sort-Object FullName)"
+    ]
+  }
+}

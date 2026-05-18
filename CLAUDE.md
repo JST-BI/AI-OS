@@ -129,3 +129,15 @@ Alt andet kører uden prompt.
 - **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `BI-SOSU/`.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`
+
+---
+
+## Navnekonvention — nye projekter
+
+Nye projekter følger mønsteret `BI-<EMNE>` — både GitHub-repo og lokal mappe hedder det samme:
+
+| GitHub repo | Lokal mappe under `BI-SOSU\` |
+|---|---|
+| `JST-BI/BI-<EMNE>` | `BI-SOSU\BI-<EMNE>` |
+
+Eksempler: `BI-OEKONOMI`, `BI-INNOMATE`, `BI-HR`, `BI-ELEV`

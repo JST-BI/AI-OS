@@ -1,6 +1,6 @@
-# Output-filer (midlertidige arbejdsfiler)
-Power BI/Output files/
-
-# OneDrive thumbnails
+﻿# OneDrive thumbnails
 desktop.ini
 Thumbs.db
+
+# Claude Code lokale indstillinger (ikke deles via git)
+.claude/settings.local.json

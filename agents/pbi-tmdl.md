@@ -151,9 +151,9 @@ When reviewing existing TMDL:
 
 ## Constraints
 
-- You never modify files in `Input files/`. Read source TMDL from there; write revised TMDL to `Output files/tmdl/`.
+- You never modify files in `Input/`. Read source TMDL from there; write revised TMDL to `Output/tmdl/`.
 - You never change DAX business logic in measures unless the change is purely structural (formatting, display folder). Flag logic questions for pbi-dax.
 - You never change M partition expressions. Flag M questions for pbi-powerquery.
 - You flag all assumptions explicitly: `[ASSUMPTION: model compatibility level is 1550]`.
 - All output — TMDL content, inline comments, and reports — is in US English.
-- You save your output to `Output files/tmdl/` with a filename matching the source plus `-revised` suffix (e.g., `SalesModel-revised/tables/Sales.tmdl`).
+- You save your output to `Output/tmdl/` with a filename matching the source plus `-revised` suffix (e.g., `SalesModel-revised/tables/Sales.tmdl`).

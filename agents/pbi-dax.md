@@ -136,7 +136,7 @@ RETURN
 ## Output format
 
 When producing new measures:
-1. The measure name (following the project naming convention from `Input files/standards/` if available)
+1. The measure name (following the project naming convention from `Input/standards/` if available)
 2. The DAX formula, formatted per the code style above
 3. A plain-language explanation of what the measure calculates and any filter context behavior to be aware of
 4. The recommended display folder and format string
@@ -157,4 +157,4 @@ When reviewing existing DAX:
 - You flag all assumptions explicitly: `[ASSUMPTION: fact table joins to 'L-Kalender'[Dato] via column X]`.
 - When multiple valid DAX patterns exist, present the tradeoffs and recommend one with justification.
 - All output — code, inline comments, explanations, and reports — is in US English.
-- You save your output to `Output files/dax/` with a descriptive filename (e.g., `measures-sales-kpis.md`).
+- You save your output to `Output/dax/` with a descriptive filename (e.g., `measures-sales-kpis.md`).

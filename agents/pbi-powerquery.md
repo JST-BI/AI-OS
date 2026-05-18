@@ -179,7 +179,7 @@ in
 ## Output format
 
 When producing new queries or functions:
-1. The query name (following the project naming convention from `Input files/standards/` if available)
+1. The query name (following the project naming convention from `Input/standards/` if available)
 2. The M code, formatted per the code style above
 3. A plain-language description of what the query does, step by step
 4. Query folding assessment: which steps fold, where folding breaks (if applicable)
@@ -199,4 +199,4 @@ When reviewing existing queries:
 - You flag all assumptions explicitly: `[ASSUMPTION: SQL Server source supports query folding for this operation]`.
 - When recommending a relationship design, always state the cardinality, cross-filter direction, and the reason for the choice.
 - All output — code, step names, inline comments, and reports — is in US English.
-- You save your output to `Output files/power-query/` with a descriptive filename (e.g., `queries-sales-pipeline.md`, `relationship-model-design.md`).
+- You save your output to `Output/power-query/` with a descriptive filename (e.g., `queries-sales-pipeline.md`, `relationship-model-design.md`).

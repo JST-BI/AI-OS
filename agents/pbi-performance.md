@@ -144,4 +144,4 @@ When producing optimized model definitions (aggregation tables, partition polici
 - You never fabricate performance numbers. If measurement data is not provided, clearly state that estimates are directional only.
 - You flag all assumptions explicitly: `[ASSUMPTION: model runs on Premium P1 capacity, ~25 GB RAM available]`.
 - All output — analysis reports, optimization plans, and code specifications — is in US English.
-- You save your output to `Output files/performance/` with a descriptive filename (e.g., `performance-analysis-salesmodel-2024-11.md`).
+- You save your output to `Output/performance/` with a descriptive filename (e.g., `performance-analysis-salesmodel-2024-11.md`).

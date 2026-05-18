@@ -8,7 +8,7 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 [ ] CLAUDE.md findes i AI OS rod (denne fil)
 [ ] CLAUDE.md findes i BI-SOSU/BI-OEKONOMI/
 [ ] CLAUDE.md findes i BI-SOSU/BI-INNOMATE/
-[ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, inno-hr, inno-system, inno-logistics, inno-mailtemplate
+[ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer
 [ ] AI OS rod indeholder KUN: agents/, .claude/, CLAUDE.md, .gitattributes, .gitignore — ingen projektmapper
 [ ] BI-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, CLAUDE.md, .gitattributes, .gitignore
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
@@ -81,6 +81,12 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.claude/agents/`.
 | `inno-logistics` | Procesplaner, tjeklister, rollebeskrivelser, arbejdsgangsoverblik |
 | `inno-mailtemplate` | Mailskabeloner i INNOMATE, merge-felter, CPR-regler |
 
+### Generel infrastruktur-agent
+
+| Agent | Rolle |
+|---|---|
+| `md-optimizer` | Optimering og vedligehold af alle `.md`-filer — særligt CLAUDE.md-hukommelsesfiler. Persisterer ny viden, fejlmønstre og workflowændringer. Bruges proaktivt efter sessioner med fejlrettelser eller arkitekturændringer. |
+
 ---
 
 ## Routing — kør dette først ved enhver opgave
@@ -89,12 +95,15 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.claude/agents/`.
 Opgaven vedrører agenter eller AI-konfiguration?
   JA  → Arbejd direkte her i AI OS.
   NEJ →
-    Drejer det sig om Power BI (DAX, M-kode, TMDL, rapporter)?
-      JA  → Skift til BI-OEKONOMI og brug pbi-agenter.
+    Drejer det sig om optimering/opdatering af .md-filer eller hukommelse?
+      JA  → Spawn md-optimizer.
       NEJ →
-        Drejer det sig om INNOMATE (onboarding, skabeloner, processer)?
-          JA  → Skift til BI-INNOMATE og brug inno-agenter.
-          NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
+        Drejer det sig om Power BI (DAX, M-kode, TMDL, rapporter)?
+          JA  → Skift til BI-OEKONOMI og brug pbi-agenter.
+          NEJ →
+            Drejer det sig om INNOMATE (onboarding, skabeloner, processer)?
+              JA  → Skift til BI-INNOMATE og brug inno-agenter.
+              NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
 ```
 
 ---

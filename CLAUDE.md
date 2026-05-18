@@ -6,14 +6,14 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 
 ```
 [ ] CLAUDE.md findes i AI OS rod (denne fil)
-[ ] CLAUDE.md findes i BI-SOSU/BI-OEKONOMI/
-[ ] CLAUDE.md findes i BI-SOSU/SYS-INNOMATE/
+[ ] CLAUDE.md findes i AI-SOSU/BI-OEKONOMI/
+[ ] CLAUDE.md findes i AI-SOSU/SYS-INNOMATE/
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer
 [ ] AI OS rod indeholder KUN: agents/, .claude/, CLAUDE.md, .gitattributes, .gitignore — ingen projektmapper
 [ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, CLAUDE.md, .gitattributes, .gitignore
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
-[ ] ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
-[ ] ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
@@ -39,14 +39,14 @@ Dette gælder også de projektspecifikke `CLAUDE.md`-filer i `BI-OEKONOMI` og `S
 
 AI OS er infrastrukturniveauet for alt AI-assisteret arbejde ved SOSU Randers. Her bor agentdefinitioner og Claude Code-konfiguration. Det er **ikke** et arbejdsprojekt — det er værkstedet.
 
-Arbejdsprojekterne ligger i `BI-SOSU/` (samme OneDrive-rod):
+Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 
 | Projekt | Sti | Indhold |
 |---|---|---|
-| `BI-OEKONOMI` | `../BI-SOSU/BI-OEKONOMI/` | Power BI-rapport og semantisk model for HR/økonomi |
-| `SYS-INNOMATE` | `../BI-SOSU/SYS-INNOMATE/` | Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE |
-| `ADM-HÅNDBØGER` | `../ADM-HÅNDBØGER/` | Personalehåndbog og Lederhåndbog — afspejler hinandens emner |
-| `ADM-ØKONOMI` | `../ADM-ØKONOMI/` | Regnskabsinstruks, Indkøbspolitik og Strategi for finansiel risiko |
+| `BI-OEKONOMI` | `../AI-SOSU/BI-OEKONOMI/` | Power BI-rapport og semantisk model for HR/økonomi |
+| `SYS-INNOMATE` | `../AI-SOSU/SYS-INNOMATE/` | Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE |
+| `ADM-HÅNDBØGER` | `../AI-SOSU/ADM-HÅNDBØGER/` | Personalehåndbog og Lederhåndbog — afspejler hinandens emner |
+| `ADM-ØKONOMI` | `../AI-SOSU/ADM-ØKONOMI/` | Regnskabsinstruks, Indkøbspolitik og Strategi for finansiel risiko |
 
 ---
 
@@ -56,8 +56,8 @@ Arbejdsprojekterne ligger i `BI-SOSU/` (samme OneDrive-rod):
 |---|---|
 | Oprette eller redigere en agent | AI OS (`agents/`) |
 | Ændre Claude Code-indstillinger | AI OS (`.claude/`) |
-| Bygge DAX, M-kode eller Power BI-rapporter | `BI-SOSU/BI-OEKONOMI/` |
-| Skrive procesplaner eller mailskabeloner | `BI-SOSU/SYS-INNOMATE/` |
+| Bygge DAX, M-kode eller Power BI-rapporter | `AI-SOSU/BI-OEKONOMI/` |
+| Skrive procesplaner eller mailskabeloner | `AI-SOSU/SYS-INNOMATE/` |
 | Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
 | Redigere Regnskabsinstruks, Indkøbspolitik eller finansiel risiko | `ADM-ØKONOMI/` |
 | Noget der spænder over flere projekter | Start her, koordinér |
@@ -121,7 +121,7 @@ Uanset hvad tilladelsesindstillingerne tillader automatisk, skal Claude **altid 
 | Handling | Eksempel |
 |---|---|
 | `git push --force` | Overskriver fjernhistorik |
-| Sletning af filer/mapper uden for projektmapperne | `rm` på stier uden for `BI-SOSU/` eller `AI OS/` |
+| Sletning af filer/mapper uden for projektmapperne | `rm` på stier uden for `AI-SOSU/` eller `AI OS/` |
 | Masseoperationer der ikke kan fortrydes | Slette >5 filer på én gang |
 | Afsendelse til eksterne tjenester | E-mail, API-kald med persondata |
 | Ændring af Git-konfiguration globalt | `git config --global` |
@@ -132,7 +132,7 @@ Alt andet kører uden prompt.
 
 ## Regler for denne mappe
 
-- **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `BI-SOSU/`.
+- **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `AI-SOSU/`.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`
 
@@ -144,8 +144,8 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 
 | Præfiks | Projekttype | GitHub-repo | Lokal mappe |
 |---|---|---|---|
-| `BI-` | Power BI-rapporter og datamodeller | `JST-BI/BI-<EMNE>` | `BI-SOSU\BI-<EMNE>` |
-| `SYS-` | Systemkonfiguration og procesautomatisering (fx INNOMATE) | `JST-BI/SYS-<EMNE>` | `BI-SOSU\SYS-<EMNE>` |
-| `ADM-` | Administrative dokumenter (håndbøger, politikker) | `JST-BI/ADM-<EMNE>` | `ADM-<EMNE>\` (i OneDrive-rod) |
+| `BI-` | Power BI-rapporter og datamodeller | `JST-BI/BI-<EMNE>` | `AI-SOSU\BI-<EMNE>` |
+| `SYS-` | Systemkonfiguration og procesautomatisering (fx INNOMATE) | `JST-BI/SYS-<EMNE>` | `AI-SOSU\SYS-<EMNE>` |
+| `ADM-` | Administrative dokumenter (håndbøger, politikker) | `JST-BI/ADM-<EMNE>` | `AI-SOSU\ADM-<EMNE>` |
 
-**Bemærk**: `BI-` og `SYS-`-projekter samles under `BI-SOSU\`. `ADM-`-projekter ligger direkte i OneDrive-roden. GitHub-repo-navne skal være ASCII (undgå æ, ø, å).
+**Bemærk**: Alle projekter samles under `AI-SOSU\`. GitHub-repo-navne skal være ASCII (undgå æ, ø, å).

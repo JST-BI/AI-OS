@@ -1,5 +1,23 @@
 # CLAUDE.md — AI OS (SOSU Randers)
 
+## Session-startkontrol — kør ved FØRSTE prompt i hver session
+
+Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noget **fejler**:
+
+```
+[ ] CLAUDE.md findes i AI OS rod (denne fil)
+[ ] CLAUDE.md findes i BI-SOSU/BI-OEKONOMI/
+[ ] CLAUDE.md findes i BI-SOSU/BI-INNOMATE/
+[ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, inno-hr, inno-system, inno-logistics, inno-mailtemplate
+[ ] AI OS rod indeholder KUN: agents/, .claude/, CLAUDE.md, .gitattributes, .gitignore — ingen projektmapper
+[ ] BI-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, CLAUDE.md, .gitattributes, .gitignore
+[ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
+```
+
+Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
+
+---
+
 ## Selvvedligehold — obligatorisk
 
 Når du:

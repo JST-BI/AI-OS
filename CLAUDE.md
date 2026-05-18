@@ -99,6 +99,22 @@ Opgaven vedrører agenter eller AI-konfiguration?
 
 ---
 
+## Sikkerhedsregler — handlinger der ALTID kræver bekræftelse
+
+Uanset hvad tilladelsesindstillingerne tillader automatisk, skal Claude **altid stoppe og spørge** før:
+
+| Handling | Eksempel |
+|---|---|
+| `git push --force` | Overskriver fjernhistorik |
+| Sletning af filer/mapper uden for projektmapperne | `rm` på stier uden for `BI-SOSU/` eller `AI OS/` |
+| Masseoperationer der ikke kan fortrydes | Slette >5 filer på én gang |
+| Afsendelse til eksterne tjenester | E-mail, API-kald med persondata |
+| Ændring af Git-konfiguration globalt | `git config --global` |
+
+Alt andet kører uden prompt.
+
+---
+
 ## Regler for denne mappe
 
 - **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `BI-SOSU/`.

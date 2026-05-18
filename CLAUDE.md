@@ -7,10 +7,10 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 ```
 [ ] CLAUDE.md findes i AI OS rod (denne fil)
 [ ] CLAUDE.md findes i BI-SOSU/BI-OEKONOMI/
-[ ] CLAUDE.md findes i BI-SOSU/BI-INNOMATE/
+[ ] CLAUDE.md findes i BI-SOSU/SYS-INNOMATE/
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer
 [ ] AI OS rod indeholder KUN: agents/, .claude/, CLAUDE.md, .gitattributes, .gitignore — ingen projektmapper
-[ ] BI-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, CLAUDE.md, .gitattributes, .gitignore
+[ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, CLAUDE.md, .gitattributes, .gitignore
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
 [ ] ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
 ```
@@ -30,7 +30,7 @@ Når du:
 1. Opdatere det relevante afsnit i denne CLAUDE.md
 2. Committe ændringen: `git add CLAUDE.md && git commit -m "Opdatér CLAUDE.md: <hvad og hvorfor>"`
 
-Dette gælder også de projektspecifikke `CLAUDE.md`-filer i `BI-OEKONOMI` og `BI-INNOMATE`.
+Dette gælder også de projektspecifikke `CLAUDE.md`-filer i `BI-OEKONOMI` og `SYS-INNOMATE`.
 
 ---
 
@@ -43,7 +43,7 @@ Arbejdsprojekterne ligger i `BI-SOSU/` (samme OneDrive-rod):
 | Projekt | Sti | Indhold |
 |---|---|---|
 | `BI-OEKONOMI` | `../BI-SOSU/BI-OEKONOMI/` | Power BI-rapport og semantisk model for HR/økonomi |
-| `BI-INNOMATE` | `../BI-SOSU/BI-INNOMATE/` | Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE |
+| `SYS-INNOMATE` | `../BI-SOSU/SYS-INNOMATE/` | Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE |
 | `ADM-HÅNDBØGER` | `../ADM-HÅNDBØGER/` | Personalehåndbog og Lederhåndbog — afspejler hinandens emner |
 
 ---
@@ -55,7 +55,7 @@ Arbejdsprojekterne ligger i `BI-SOSU/` (samme OneDrive-rod):
 | Oprette eller redigere en agent | AI OS (`agents/`) |
 | Ændre Claude Code-indstillinger | AI OS (`.claude/`) |
 | Bygge DAX, M-kode eller Power BI-rapporter | `BI-SOSU/BI-OEKONOMI/` |
-| Skrive procesplaner eller mailskabeloner | `BI-SOSU/BI-INNOMATE/` |
+| Skrive procesplaner eller mailskabeloner | `BI-SOSU/SYS-INNOMATE/` |
 | Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
 | Noget der spænder over flere projekter | Start her, koordinér |
 
@@ -105,7 +105,7 @@ Opgaven vedrører agenter eller AI-konfiguration?
           JA  → Skift til BI-OEKONOMI og brug pbi-agenter.
           NEJ →
             Drejer det sig om INNOMATE (onboarding, skabeloner, processer)?
-              JA  → Skift til BI-INNOMATE og brug inno-agenter.
+              JA  → Skift til SYS-INNOMATE og brug inno-agenter.
               NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
 ```
 
@@ -141,7 +141,8 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 
 | Præfiks | Projekttype | GitHub-repo | Lokal mappe |
 |---|---|---|---|
-| `BI-` | Power BI / INNOMATE | `JST-BI/BI-<EMNE>` | `BI-SOSU\BI-<EMNE>` |
+| `BI-` | Power BI-rapporter og datamodeller | `JST-BI/BI-<EMNE>` | `BI-SOSU\BI-<EMNE>` |
+| `SYS-` | Systemkonfiguration og procesautomatisering (fx INNOMATE) | `JST-BI/SYS-<EMNE>` | `BI-SOSU\SYS-<EMNE>` |
 | `ADM-` | Administrative dokumenter (håndbøger, politikker) | `JST-BI/ADM-<EMNE>` | `ADM-<EMNE>\` (i OneDrive-rod) |
 
-**Bemærk**: `BI-`-projekter samles under `BI-SOSU\`. `ADM-`-projekter ligger direkte i OneDrive-roden. GitHub-repo-navne skal være ASCII (undgå æ, ø, å).
+**Bemærk**: `BI-` og `SYS-`-projekter samles under `BI-SOSU\`. `ADM-`-projekter ligger direkte i OneDrive-roden. GitHub-repo-navne skal være ASCII (undgå æ, ø, å).

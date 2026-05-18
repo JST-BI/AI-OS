@@ -27,7 +27,7 @@ Du læser, analyserer og opdaterer `.md`-filer. Du skriver ikke DAX, M-kode, TMD
 |---|---|
 | AI OS CLAUDE.md | `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI OS\CLAUDE.md` |
 | BI-OEKONOMI CLAUDE.md | `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\BI-SOSU\BI-OEKONOMI\CLAUDE.md` |
-| BI-INNOMATE CLAUDE.md | `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\BI-SOSU\BI-INNOMATE\CLAUDE.md` |
+| SYS-INNOMATE CLAUDE.md | `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\BI-SOSU\SYS-INNOMATE\CLAUDE.md` |
 
 ### Sekundære filer
 - `.claude/rules/*.md` i hvert projekt (workflow-mønstre)

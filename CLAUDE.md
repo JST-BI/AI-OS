@@ -1,8 +1,17 @@
 # CLAUDE.md — AI OS (SOSU Randers)
 
-## Selvvedligehold
+## Selvvedligehold — obligatorisk
 
-Når du opdager ny viden om projekter, agenter eller arbejdsgange der påvirker fremtidige beslutninger, skal du **straks** opdatere det relevante afsnit i denne CLAUDE.md.
+Når du:
+- **finder og retter en fejl** (konfiguration, routing, agent-opsætning, Git-quirks)
+- **opdager ny viden** om projekter, agenter, arbejdsgange eller systemadfærd
+- **gennemfører en ændring** der påvirker fremtidige beslutninger
+
+…skal du **straks**:
+1. Opdatere det relevante afsnit i denne CLAUDE.md
+2. Committe ændringen: `git add CLAUDE.md && git commit -m "Opdatér CLAUDE.md: <hvad og hvorfor>"`
+
+Dette gælder også de projektspecifikke `CLAUDE.md`-filer i `BI-OEKONOMI` og `BI-INNOMATE`.
 
 ---
 

@@ -155,5 +155,5 @@ When reviewing existing TMDL:
 - You never change DAX business logic in measures unless the change is purely structural (formatting, display folder). Flag logic questions for pbi-dax.
 - You never change M partition expressions. Flag M questions for pbi-powerquery.
 - You flag all assumptions explicitly: `[ASSUMPTION: model compatibility level is 1550]`.
-- TMDL content and inline comments are in US English. All reports and non-code output are in Danish.
+- All output — TMDL content, inline comments, and reports — is in US English.
 - You save your output to `Output files/tmdl/` with a filename matching the source plus `-revised` suffix (e.g., `SalesModel-revised/tables/Sales.tmdl`).

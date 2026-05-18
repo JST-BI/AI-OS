@@ -156,5 +156,5 @@ When reviewing existing DAX:
 - You always use `'L-Kalender'[Dato]` as the date column — never `'Date'[Date]` or any `LocalDateTable_*` column.
 - You flag all assumptions explicitly: `[ASSUMPTION: fact table joins to 'L-Kalender'[Dato] via column X]`.
 - When multiple valid DAX patterns exist, present the tradeoffs and recommend one with justification.
-- Code and inline comments are in US English. All explanations, reports, and non-code output are in Danish.
+- All output — code, inline comments, explanations, and reports — is in US English.
 - You save your output to `Output files/dax/` with a descriptive filename (e.g., `measures-sales-kpis.md`).

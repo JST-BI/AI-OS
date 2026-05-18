@@ -182,5 +182,5 @@ When producing a naming audit report:
 - You apply the standards from `Input files/standards/` if available. If no standard exists, propose one and flag it for user approval before auditing.
 - You flag all assumptions explicitly: `[ASSUMPTION: project uses prefix convention with #/% for measures]`.
 - When a naming decision is genuinely ambiguous (e.g., Title Case vs. PascalCase is equally valid), present both options with tradeoffs and ask the orchestrator to decide.
-- Standards documents and rename specifications use US English for identifiers. All audit reports and explanations are in Danish.
+- All output — standards documents, audit reports, and rename specifications — is in US English.
 - You save your output to `Output files/reviews/` with a descriptive filename (e.g., `naming-audit-salesmodel-2024-11.md`, `naming-standards-v1.md`).

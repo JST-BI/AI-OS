@@ -47,6 +47,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | `SYS-INNOMATE` | `../AI-SOSU/SYS-INNOMATE/` | Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE |
 | `ADM-HÅNDBØGER` | `../AI-SOSU/ADM-HÅNDBØGER/` | Personalehåndbog og Lederhåndbog — afspejler hinandens emner |
 | `ADM-ØKONOMI` | `../AI-SOSU/ADM-ØKONOMI/` | Regnskabsinstruks, Indkøbspolitik og Strategi for finansiel risiko |
+| `DATA-BUDGET_PROGNOSE` | `../AI-SOSU/DATA-BUDGET_PROGNOSE/` | Finansiel analyse, budget og prognose — Navision finansposter + BRUGER-budget/prognose → .xlsx-output |
 
 ---
 
@@ -60,6 +61,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | Skrive procesplaner eller mailskabeloner | `AI-SOSU/SYS-INNOMATE/` |
 | Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
 | Redigere Regnskabsinstruks, Indkøbspolitik eller finansiel risiko | `ADM-ØKONOMI/` |
+| Finansiel analyse, budget, prognose (Navision-data) | `AI-SOSU/DATA-BUDGET_PROGNOSE/` |
 | Noget der spænder over flere projekter | Start her, koordinér |
 
 ---
@@ -87,6 +89,17 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.claude/agents/`.
 | `inno-logistics` | Procesplaner, tjeklister, rollebeskrivelser, arbejdsgangsoverblik |
 | `inno-mailtemplate` | Mailskabeloner i INNOMATE, merge-felter, CPR-regler |
 
+### DATA-BUDGET_PROGNOSE-agenter (output: .xlsx med danske formater; svar til bruger: dansk)
+
+| Agent | Rolle |
+|---|---|
+| `fin-analysis` | Finansiel analyse — afvigelser, periodisering, budget vs. realiseret, cashflow |
+| `fin-patterns` | Mønstergenkendelse — anomalier, sæsonudsving, strukturelle brud, outliers |
+| `fin-statistics` | Statistisk ekspert — prognoser, regressioner, konfidensintervaller, tidsseriedekomposition |
+| `fin-accounting` | Regnskabsekspert — kontoplan, dimensioner, bogføringsregler, SOSU-specifik regnskabspraksis |
+| `fin-data` | Dataanalyse — datakvalitet, krydskildesammenstilling, oprensning, aggregering |
+| `fin-database` | Databasestruktur — skemadesign, nøgler, relationer, kanoniske kolonnenavne |
+
 ### Generel infrastruktur-agent
 
 | Agent | Rolle |
@@ -107,9 +120,12 @@ Opgaven vedrører agenter eller AI-konfiguration?
         Drejer det sig om Power BI (DAX, M-kode, TMDL, rapporter)?
           JA  → Skift til BI-OEKONOMI og brug pbi-agenter.
           NEJ →
-            Drejer det sig om INNOMATE (onboarding, skabeloner, processer)?
-              JA  → Skift til SYS-INNOMATE og brug inno-agenter.
-              NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
+            Drejer det sig om finansiel analyse, budget eller prognose (Navision-data)?
+              JA  → Skift til DATA-BUDGET_PROGNOSE og brug fin-agenter.
+              NEJ →
+                Drejer det sig om INNOMATE (onboarding, skabeloner, processer)?
+                  JA  → Skift til SYS-INNOMATE og brug inno-agenter.
+                  NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
 ```
 
 ---

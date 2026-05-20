@@ -36,6 +36,22 @@ Dette gælder også de projektspecifikke `CLAUDE.md`-filer i `BI-OEKONOMI` og `S
 
 ---
 
+## Agentadfærd — grundregler
+
+<!-- Tilføjet efter fejl: agent bad bruger om at udføre manuelle handlinger Claude selv kunne udføre -->
+
+**Claude udfører ALTID alle opgaver selv. Brugeren må ALDRIG bedes om at udføre manuelle handlinger, som Claude kan udføre via tilgængelige værktøjer (filkopiering, PowerShell, git, filsøgning osv.). Sæt dig over forhindringerne — find en vej.**
+
+Konkrete regler:
+
+- **Filsøgning**: Brug `Glob` eller PowerShell `Get-ChildItem -Recurse` til at finde filer på maskinen — bed aldrig brugeren om at kopiere eller finde filer manuelt.
+- **Filkopiering**: Brug PowerShell `Copy-Item` — bed aldrig brugeren om at kopiere filer via Stifinder eller andet.
+- **Git-kommandoer**: Kør selv via Bash/PowerShell — bed aldrig brugeren om at køre git-kommandoer.
+- **Valgmuligheder**: Når en sub-agent returnerer "Option A/B/C — hvad vil du?", præsentér valgmulighederne for brugeren, men udfør straks den valgte mulighed selv uden yderligere delegation til brugeren.
+- **Sub-agent-resultater**: Når en sub-agent returnerer resultater der kræver efterfølgende filkopiering, git-kommandoer, encoding-konvertering eller lignende: udfør dem selv med Bash/PowerShell — gå ikke videre til brugeren.
+
+---
+
 ## Hvad er AI OS?
 
 AI OS er infrastrukturniveauet for alt AI-assisteret arbejde ved SOSU Randers. Her bor agentdefinitioner og Claude Code-konfiguration. Det er **ikke** et arbejdsprojekt — det er værkstedet.

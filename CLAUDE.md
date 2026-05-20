@@ -14,6 +14,7 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
@@ -48,6 +49,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | `ADM-HÅNDBØGER` | `../AI-SOSU/ADM-HÅNDBØGER/` | Personalehåndbog og Lederhåndbog — afspejler hinandens emner |
 | `ADM-ØKONOMI` | `../AI-SOSU/ADM-ØKONOMI/` | Regnskabsinstruks, Indkøbspolitik og Strategi for finansiel risiko |
 | `DATA-BUDGET_PROGNOSE` | `../AI-SOSU/DATA-BUDGET_PROGNOSE/` | Finansiel analyse, budget og prognose — Navision finansposter + BRUGER-budget/prognose → .xlsx-output |
+| `ADM-BI` | `../AI-SOSU/ADM-BI/` | BI governance og styringsdokumenter — datastandarder, navnekonventioner, roller og BI-strategi |
 
 ---
 
@@ -61,6 +63,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | Skrive procesplaner eller mailskabeloner | `AI-SOSU/SYS-INNOMATE/` |
 | Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
 | Redigere Regnskabsinstruks, Indkøbspolitik eller finansiel risiko | `ADM-ØKONOMI/` |
+| BI governance, datastandarder, navnekonventioner eller BI-strategi | `ADM-BI/` |
 | Finansiel analyse, budget, prognose (Navision-data) | `AI-SOSU/DATA-BUDGET_PROGNOSE/` |
 | Noget der spænder over flere projekter | Start her, koordinér |
 
@@ -106,6 +109,12 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.claude/agents/`.
 |---|---|
 | `md-optimizer` | Optimering og vedligehold af alle `.md`-filer — særligt CLAUDE.md-hukommelsesfiler. Persisterer ny viden, fejlmønstre og workflowændringer. Bruges proaktivt efter sessioner med fejlrettelser eller arkitekturændringer. |
 
+### ADM-BI-agent (output på dansk)
+
+| Agent | Rolle |
+|---|---|
+| `adm-bi` | BI governance og styringsdokumenter — strategi, datastandarder, navnekonventioner, roller og ansvar |
+
 ---
 
 ## Routing — kør dette først ved enhver opgave
@@ -125,7 +134,10 @@ Opgaven vedrører agenter eller AI-konfiguration?
               NEJ →
                 Drejer det sig om INNOMATE (onboarding, skabeloner, processer)?
                   JA  → Skift til SYS-INNOMATE og brug inno-agenter.
-                  NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
+                  NEJ →
+                    Drejer det sig om BI governance, datastandarder eller BI-strategi?
+                      JA  → Skift til ADM-BI og brug adm-bi agenten.
+                      NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
 ```
 
 ---

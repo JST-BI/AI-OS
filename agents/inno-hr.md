@@ -28,7 +28,7 @@ You map and improve HR workflows. You do not configure systems (that is inno-sys
 
 ### Stakeholder roles at SOSU Randers
 - Hiring manager (ansættelsesansvarlig): initiates process, provides employee data
-- HR (Anni Graversen, agr@sosuranders.dk): central coordinator, contracts, CPR handling
+- HR (John Strøm, jst@sosuranders.dk): central coordinator, contracts, CPR handling
 - IT-support (ITCN): system provisioning (Studie+, AD, Norlys)
 - New employee: tasks, consents, documentation
 

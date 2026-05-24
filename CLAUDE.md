@@ -8,13 +8,18 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 [ ] CLAUDE.md findes i AI OS rod (denne fil)
 [ ] CLAUDE.md findes i AI-SOSU/BI-OEKONOMI/
 [ ] CLAUDE.md findes i AI-SOSU/SYS-INNOMATE/
-[ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer
+[ ] CLAUDE.md findes i AI-SOSU/ADM-HÅNDBØGER/
+[ ] CLAUDE.md findes i AI-SOSU/ADM-ØKONOMI/
+[ ] CLAUDE.md findes i AI-SOSU/DATA-BUDGET_PROGNOSE/
+[ ] CLAUDE.md findes i AI-SOSU/ADM-BI/
+[ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
 [ ] AI OS rod indeholder KUN: agents/, .claude/, CLAUDE.md, .gitattributes, .gitignore — ingen projektmapper
 [ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, CLAUDE.md, .gitattributes, .gitignore
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
+[ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, CLAUDE.md, .gitattributes, .gitignore
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
@@ -32,7 +37,7 @@ Når du:
 1. Opdatere det relevante afsnit i denne CLAUDE.md
 2. Committe ændringen: `git add CLAUDE.md && git commit -m "Opdatér CLAUDE.md: <hvad og hvorfor>"`
 
-Dette gælder også de projektspecifikke `CLAUDE.md`-filer i `BI-OEKONOMI` og `SYS-INNOMATE`.
+Dette gælder også de projektspecifikke `CLAUDE.md`-filer i alle projekter under `AI-SOSU/`.
 
 ---
 
@@ -130,6 +135,20 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.claude/agents/`.
 | Agent | Rolle |
 |---|---|
 | `adm-bi` | BI governance og styringsdokumenter — strategi, datastandarder, navnekonventioner, roller og ansvar |
+
+---
+
+## Tilgængelige skills/plugins
+
+Installerede slash-kommandoer (aktive i alle sessioner):
+
+| Kommando | Hvad den gør |
+|---|---|
+| `/revise-claude-md` | Opdatér CLAUDE.md med læringer fra den aktuelle session |
+| `/claude-md-improver` | Audit og forbedringsforslag til alle CLAUDE.md-filer |
+| `/code-review` | Code review af aktuel diff eller specificeret PR |
+
+Kald dem ved at skrive kommandoen i chatten.
 
 ---
 

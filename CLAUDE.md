@@ -212,3 +212,17 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 | `ADM-` | Administrative dokumenter (håndbøger, politikker) | `JST-BI/ADM-<EMNE>` | `AI-SOSU\ADM-<EMNE>` |
 
 **Bemærk**: Alle projekter samles under `AI-SOSU\`. GitHub-repo-navne skal være ASCII (undgå æ, ø, å).
+
+---
+
+## PowerShell gotchas — TMDL-filer
+
+**ALDRIG `Get-Content` til TMDL-filer** (PS 5.1). Læser UTF-8 som CP1252 → `Ø` → `Ã˜` → double-encoded mojibake → PBI Desktop fejler med `"Property QueryGroup ... refers to an object which cannot be found"`.
+
+Korrekt mønster:
+```powershell
+$utf8 = [System.Text.UTF8Encoding]::new($false)
+$lines = [System.IO.File]::ReadAllLines($path, $utf8)
+# ... modificer $lines ...
+[System.IO.File]::WriteAllLines($path, $lines, $utf8)
+```

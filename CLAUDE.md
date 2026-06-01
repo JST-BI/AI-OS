@@ -231,3 +231,9 @@ $lines = [System.IO.File]::ReadAllLines($path, $utf8)
 
 - **INGEN `/* ... */`-blokkommentarer på objekt-niveau** (measure/column/table). TMDL er indrykningsfølsomt, og blokkommentarer udløser `TMDL Format Error: Parsing error type - Indentation / Invalid indentation` ved load i PBI Desktop. Brug i stedet `///` (beskrivelse, bliver til objektets tooltip) eller `//` (linjekommentar) ved SAMME indrykning som objektet. `/* */` er KUN gyldigt inde i M-source-blokken (`source = ```...````), fordi det er en fritekst-streng. Set 2026-06-01 i `#Measures - STU.tmdl`.
 - **PBI-gemning overskriver disk-edits**: Har brugeren pbix'en åben i PBI Desktop og gemmer, skrives in-memory-modellen hen over mine TMDL/PBIR-diskændringer → de forsvinder. Redigér kun disk når disk == seneste PBI-gem; bed brugeren **genåbne pbix UDEN at gemme først** for at indlæse mine ændringer.
+
+## PBIR-rapporter — gotchas (visuals)
+
+- **Indbygget visualType-navn**: *Stacked column chart* = `columnChart` (IKKE `stackedColumnChart` → `CustomVisualNotFound`). Stablet liggende = `barChart`. Clustered har egne navne (`clusteredColumnChart`/`clusteredBarChart`); 100% = `hundredPercentStacked...`.
+- **Opret IKKE nye visuals fra bunden i PBIR-JSON for at binde data**: håndskrevet `queryState.Y`-binding populerer ikke field-wells i PBI Desktop — visual'et forbliver blankt (set 2026-06-01, både minimal og fuld form). **Pålidelig vej:** byg evt. siden + tom visual-skal via JSON, men lad brugeren trække målene i Y-aksen i UI. At **repointe/redigere EKSISTERENDE (UI-skabte) visuals** via JSON virker fint (skift `Property` + `queryRef` + `nativeQueryRef` i projection, sortDefinition og filterConfig).
+- `queryRef: "#Measures - ELEV.X"` kan være en STALE kosmetisk label — den bindende reference er `field.Measure.Expression.SourceRef.Entity` + `Property`.

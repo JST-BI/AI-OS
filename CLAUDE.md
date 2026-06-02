@@ -215,6 +215,18 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 
 ---
 
+## Datagovernance — Excel og persondata på GitHub
+
+**Regel (JST, 2026-06-02): Excel-filer med persondata (navn, CPR og/eller e-mail) må ALDRIG på GitHub. Rene Excel-filer er tilladt.**
+
+- Håndhæves af en **pre-commit hook** i alle 7 repos (`.git/hooks/pre-commit` + `check_excel_pii.py`): scanner staged `.xlsx/.xlsm` for CPR (`DDMMYY-XXXX`), e-mail, og kolonner med `navn/fornavn/efternavn/cpr/personnummer/mail` → blokerer commit hvis fundet. Override: `git commit --no-verify`.
+- **Hooks er lokale** (`.git/hooks`, ikke versioneret) → følger IKKE med ved frisk `git clone`; skal geninstalleres pr. maskine.
+- Ved untrack af allerede-committet Excel: `git rm --cached --ignore-unmatch '*.xlsx' '*.xls' '*.xlsm' '*.xlsb'` (beholder filerne på disk).
+- `DATA-BUDGET_PROGNOSE` holder desuden `Input/**/*.xlsx` (m.fl.) path-ignoreret (store datagrundlag); rene `Output/`-leverancer må committes.
+- Detaljer + scanner-logik: se hukommelsesfil `no-excel-on-github.md`.
+
+---
+
 ## PowerShell gotchas — TMDL-filer
 
 **ALDRIG `Get-Content` til TMDL-filer** (PS 5.1). Læser UTF-8 som CP1252 → `Ø` → `Ã˜` → double-encoded mojibake → PBI Desktop fejler med `"Property QueryGroup ... refers to an object which cannot be found"`.

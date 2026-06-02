@@ -219,8 +219,9 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 
 **Regel (JST, 2026-06-02): Excel-filer med persondata (navn, CPR og/eller e-mail) må ALDRIG på GitHub. Rene Excel-filer er tilladt.**
 
-- Håndhæves af en **pre-commit hook** i alle 7 repos (`.git/hooks/pre-commit` + `check_excel_pii.py`): scanner staged `.xlsx/.xlsm` for CPR (`DDMMYY-XXXX`), e-mail, og kolonner med `navn/fornavn/efternavn/cpr/personnummer/mail` → blokerer commit hvis fundet. Override: `git commit --no-verify`.
-- **Hooks er lokale** (`.git/hooks`, ikke versioneret) → følger IKKE med ved frisk `git clone`; skal geninstalleres pr. maskine.
+- Håndhæves af en **versioneret pre-commit hook** i alle 7 repos: `.githooks/pre-commit` + `.githooks/check_excel_pii.py` (committet i repoet). Scanner staged `.xlsx/.xlsm` for CPR (`DDMMYY-XXXX`), e-mail, og kolonner med `navn/fornavn/efternavn/cpr/personnummer/mail` → blokerer commit hvis fundet. Override: `git commit --no-verify`.
+- **Aktivér efter `git clone`** (ÉN gang pr. klon — git kører ikke versionerede hooks automatisk af sikkerhedshensyn): `git config core.hooksPath .githooks`. Se `.githooks/README.md`.
+- `.gitattributes` tvinger `eol=lf` på `.githooks/pre-commit` + `check_excel_pii.py` — ellers ville `* text=auto` give CRLF ved Windows-checkout og brække shebang.
 - Ved untrack af allerede-committet Excel: `git rm --cached --ignore-unmatch '*.xlsx' '*.xls' '*.xlsm' '*.xlsb'` (beholder filerne på disk).
 - `DATA-BUDGET_PROGNOSE` holder desuden `Input/**/*.xlsx` (m.fl.) path-ignoreret (store datagrundlag); rene `Output/`-leverancer må committes.
 - Detaljer + scanner-logik: se hukommelsesfil `no-excel-on-github.md`.

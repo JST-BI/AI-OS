@@ -1,6 +1,11 @@
-﻿# OneDrive thumbnails
+# OneDrive thumbnails
 desktop.ini
 Thumbs.db
 
 # Claude Code lokale indstillinger (ikke deles via git)
 .claude/settings.local.json
+# Excel-datafiler må ALDRIG på GitHub (data, ikke kode)
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb

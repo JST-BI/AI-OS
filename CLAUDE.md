@@ -13,13 +13,13 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 [ ] CLAUDE.md findes i AI-SOSU/DATA-BUDGET_PROGNOSE/
 [ ] CLAUDE.md findes i AI-SOSU/ADM-BI/
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
-[ ] AI OS rod indeholder KUN: agents/, .claude/, CLAUDE.md, .gitattributes, .gitignore — ingen projektmapper
-[ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, CLAUDE.md, .gitattributes, .gitignore
-[ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .claude/, CLAUDE.md, .gitattributes, .gitignore
-[ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, CLAUDE.md, .gitattributes, .gitignore
+[ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, CLAUDE.md, .gitattributes, .gitignore — ingen projektmapper
+[ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, CLAUDE.md, .gitattributes, .gitignore
+[ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .githooks/, .claude/, CLAUDE.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .claude/, CLAUDE.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, CLAUDE.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, CLAUDE.md, .gitattributes, .gitignore
+[ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, .githooks/, CLAUDE.md, .gitattributes, .gitignore
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
@@ -212,6 +212,9 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 | `ADM-` | Administrative dokumenter (håndbøger, politikker) | `JST-BI/ADM-<EMNE>` | `AI-SOSU\ADM-<EMNE>` |
 
 **Bemærk**: Alle projekter samles under `AI-SOSU\`. GitHub-repo-navne skal være ASCII (undgå æ, ø, å).
+
+**OBLIGATORISK ved nyt repo** (straks efter `git init`/`git clone`): kør
+`pwsh AI OS/tools/setup-new-repo.ps1 -RepoPath "<sti til nyt repo>"`. Det installerer den versionerede Excel-persondata pre-commit hook (`.githooks/`), sætter `eol=lf` i `.gitattributes` og aktiverer `core.hooksPath`. Commit derefter `.githooks/` + `.gitattributes`. Se datagovernance-afsnittet nedenfor.
 
 ---
 

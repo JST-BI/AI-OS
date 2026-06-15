@@ -12,7 +12,7 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 [ ] CLAUDE.md findes i AI-SOSU/ADM-ØKONOMI/
 [ ] CLAUDE.md findes i AI-SOSU/DATA-BUDGET_PROGNOSE/
 [ ] CLAUDE.md findes i AI-SOSU/ADM-BI/
-[ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
+[ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
 [ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, CLAUDE.md, .gitattributes, .gitignore — ingen projektmapper
 [ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, CLAUDE.md, .gitattributes, .gitignore
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .githooks/, .claude/, CLAUDE.md, .gitattributes, .gitignore
@@ -103,6 +103,7 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.claude/agents/`.
 | `pbi-tmdl` | TMDL-syntaks, beregningsgrupper, model-metadata |
 | `pbi-performance` | VertiPaq, storage modes, refresh-optimering |
 | `pbi-naming` | Navngivningskonventioner, display folders, audits |
+| `pbi-kritik` | Kritisk gate FØR merge — grain, dobbelttælling, fortegn, måling-før-merge; afgiver GO/NO-GO-dom (svar på dansk) |
 
 ### INNOMATE-agenter (output på dansk)
 

@@ -230,6 +230,8 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 - `DATA-BUDGET_PROGNOSE` holder desuden `Input/**/*.xlsx` (m.fl.) path-ignoreret (store datagrundlag); rene `Output/`-leverancer må committes.
 - Detaljer + scanner-logik: se hukommelsesfil `no-excel-on-github.md`.
 
+**Regel (JST, 2026-06-16): Persondata (CPR, navn, e-mail) må ALDRIG returneres til samtalen — kun aggregater.** Værktøjerne kører lokalt, men tool-OUTPUT + filindhold sendes til Anthropics servere (modellen er cloud). Derfor: ved enhver kilde med persondata (Z8050/`cpr_nr`, SD-løn, INNOMATE-eksporter, elevlister m.fl.) skal scripts kun udskrive AGGREGATER (antal, summer, distinkte-tællinger, deltaer, ikke-personhenførbare nøgler som forløbs-/kontokoder) — ALDRIG rå personrækker eller CPR-/navne-/mail-værdier. Læs aldrig en persondata-fil direkte ind i konteksten; skriv i stedet et lokalt script der kun returnerer det aggregerede resultat. Begrundelse + how-to: hukommelsesfil `persondata-kun-aggregater.md`.
+
 ---
 
 ## PowerShell gotchas — TMDL-filer

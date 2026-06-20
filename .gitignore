@@ -4,3 +4,6 @@ Thumbs.db
 
 # Claude Code lokale indstillinger (ikke deles via git)
 .claude/settings.local.json
+
+# Codex lokale indstillinger (ikke deles via git)
+.Codex/settings.local.json

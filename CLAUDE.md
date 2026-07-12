@@ -1,21 +1,23 @@
-# CLAUDE.md — AI OS (SOSU Randers)
+# AI OS (SOSU Randers) — agentregler (Claude Code + Codex)
+
+> **Spejlprincip — Claude Code + Codex**: `CLAUDE.md` (læses af Claude Code) og `AGENTS.md` (læses af Codex) er identiske spejle af samme indhold. Redigér ALTID `CLAUDE.md` først, og kopiér derefter 1:1 til `AGENTS.md`: `Copy-Item CLAUDE.md AGENTS.md`. "Agenten" i teksten betyder den aktive AI-agent, uanset værktøj; funktioner der kun findes i ét værktøj er markeret "(kun Claude Code)" / "(kun Codex)".
+>
+> **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 7 repos. Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
 
 ## Session-startkontrol — kør ved FØRSTE prompt i hver session
 
 Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noget **fejler**:
 
 ```
-[ ] CLAUDE.md findes i AI OS rod (denne fil)
-[ ] CLAUDE.md findes i AI-SOSU/BI-OEKONOMI/
-[ ] CLAUDE.md findes i AI-SOSU/SYS-INNOMATE/
-[ ] CLAUDE.md findes i AI-SOSU/ADM-HÅNDBØGER/
-[ ] CLAUDE.md findes i AI-SOSU/ADM-ØKONOMI/
-[ ] CLAUDE.md findes i AI-SOSU/DATA-BUDGET_PROGNOSE/
-[ ] CLAUDE.md findes i AI-SOSU/ADM-BI/
+[ ] CLAUDE.md + AGENTS.md findes i AI OS rod og er identiske spejle (denne fil)
+[ ] CLAUDE.md + AGENTS.md findes og er identiske spejle i hvert af de 6 projekt-repos:
+    AI-SOSU/BI-OEKONOMI/, AI-SOSU/SYS-INNOMATE/, AI-SOSU/ADM-HÅNDBØGER/,
+    AI-SOSU/ADM-ØKONOMI/, AI-SOSU/DATA-BUDGET_PROGNOSE/, AI-SOSU/ADM-BI/
+[ ] INDEX.md findes i AI OS rod
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
-[ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore — ingen projektmapper
+[ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .Codex/, CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen projektmapper
 [ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
-[ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
@@ -35,17 +37,19 @@ Når du:
 
 …skal du **straks**:
 1. Opdatere det relevante afsnit i denne CLAUDE.md
-2. Committe ændringen: `git add CLAUDE.md && git commit -m "Opdatér CLAUDE.md: <hvad og hvorfor>"`
+2. Spejle til AGENTS.md: `Copy-Item CLAUDE.md AGENTS.md`
+3. Opdatere `INDEX.md` hvis filer er tilføjet, fjernet eller omdøbt
+4. Committe ændringen: `git add CLAUDE.md AGENTS.md INDEX.md && git commit -m "Opdatér CLAUDE.md/AGENTS.md: <hvad og hvorfor>"`
 
-Dette gælder også de projektspecifikke `CLAUDE.md`-filer i alle projekter under `AI-SOSU/`.
+Dette gælder også de projektspecifikke `CLAUDE.md`/`AGENTS.md`-par i alle projekter under `AI-SOSU/`. Instruktionsfil-opdateringer (CLAUDE.md, AGENTS.md, INDEX.md) må committes direkte til `main` — det er den etablerede undtagelse fra projekternes PR-regel.
 
 ---
 
 ## Agentadfærd — grundregler
 
-<!-- Tilføjet efter fejl: agent bad bruger om at udføre manuelle handlinger Claude selv kunne udføre -->
+<!-- Tilføjet efter fejl: agent bad bruger om at udføre manuelle handlinger agenten selv kunne udføre -->
 
-**Claude udfører ALTID alle opgaver selv. Brugeren må ALDRIG bedes om at udføre manuelle handlinger, som Claude kan udføre via tilgængelige værktøjer (filkopiering, PowerShell, git, filsøgning osv.). Sæt dig over forhindringerne — find en vej.**
+**Agenten udfører ALTID alle opgaver selv. Brugeren må ALDRIG bedes om at udføre manuelle handlinger, som agenten kan udføre via tilgængelige værktøjer (filkopiering, PowerShell, git, filsøgning osv.). Sæt dig over forhindringerne — find en vej.**
 
 Konkrete regler:
 
@@ -59,7 +63,7 @@ Konkrete regler:
 
 ## Hvad er AI OS?
 
-AI OS er infrastrukturniveauet for alt AI-assisteret arbejde ved SOSU Randers. Her bor agentdefinitioner og Claude Code-konfiguration. Det er **ikke** et arbejdsprojekt — det er værkstedet.
+AI OS er infrastrukturniveauet for alt AI-assisteret arbejde ved SOSU Randers. Her bor agentdefinitioner og AI-konfiguration (Claude Code: `.claude/`, Codex: `.Codex/`). Det er **ikke** et arbejdsprojekt — det er værkstedet.
 
 Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 
@@ -79,7 +83,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | Situation | Arbejd i |
 |---|---|
 | Oprette eller redigere en agent | AI OS (`agents/`) |
-| Ændre Claude Code-indstillinger | AI OS (`.claude/`) |
+| Ændre Claude Code-/Codex-indstillinger | AI OS (`.claude/` / `.Codex/`) |
 | Bygge DAX, M-kode eller Power BI-rapporter | `AI-SOSU/BI-OEKONOMI/` |
 | Skrive procesplaner eller mailskabeloner | `AI-SOSU/SYS-INNOMATE/` |
 | Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
@@ -92,7 +96,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 
 ## Tilgængelige agenter
 
-Agentfilerne ligger i `agents/` og er symlinket til `~/.claude/agents/`.
+Agentfilerne ligger i `agents/`. Claude Code læser dem via symlink `~/.claude/agents/`; i Codex bruges samme filer som rolleinstrukser direkte fra repoet.
 
 ### Power BI-agenter (output på US English)
 
@@ -129,7 +133,7 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.claude/agents/`.
 
 | Agent | Rolle |
 |---|---|
-| `md-optimizer` | Optimering og vedligehold af alle `.md`-filer — særligt CLAUDE.md-hukommelsesfiler. Persisterer ny viden, fejlmønstre og workflowændringer. Bruges proaktivt efter sessioner med fejlrettelser eller arkitekturændringer. |
+| `md-optimizer` | Optimering og vedligehold af alle `.md`-filer — særligt CLAUDE.md/AGENTS.md-hukommelsesfiler. Persisterer ny viden, fejlmønstre og workflowændringer. Bruges proaktivt efter sessioner med fejlrettelser eller arkitekturændringer. |
 
 ### ADM-BI-agent (output på dansk)
 
@@ -141,7 +145,7 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.claude/agents/`.
 
 ## Tilgængelige skills/plugins
 
-Installerede slash-kommandoer (aktive i alle sessioner):
+Installerede slash-kommandoer (kun Claude Code — Codex har ikke disse kommandoer):
 
 | Kommando | Hvad den gør |
 |---|---|
@@ -160,7 +164,7 @@ Opgaven vedrører agenter eller AI-konfiguration?
   JA  → Arbejd direkte her i AI OS.
   NEJ →
     Drejer det sig om optimering/opdatering af .md-filer eller hukommelse?
-      JA  → Spawn md-optimizer.
+      JA  → Spawn md-optimizer (kun Claude Code; i Codex: følg agents/md-optimizer.md som instruks).
       NEJ →
         Drejer det sig om Power BI (DAX, M-kode, TMDL, rapporter)?
           JA  → Skift til BI-OEKONOMI og brug pbi-agenter.
@@ -180,7 +184,7 @@ Opgaven vedrører agenter eller AI-konfiguration?
 
 ## Sikkerhedsregler — handlinger der ALTID kræver bekræftelse
 
-Uanset hvad tilladelsesindstillingerne tillader automatisk, skal Claude **altid stoppe og spørge** før:
+Uanset hvad tilladelsesindstillingerne tillader automatisk, skal agenten **altid stoppe og spørge** før:
 
 | Handling | Eksempel |
 |---|---|
@@ -198,6 +202,7 @@ Alt andet kører uden prompt.
 
 - **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `AI-SOSU/`.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
+- `INDEX.md` er det samlede filindeks over alle styrede filer i alle 7 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`
 
 ---

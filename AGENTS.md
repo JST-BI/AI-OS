@@ -1,25 +1,27 @@
-# AGENTS.md — AI OS (SOSU Randers)
+# AI OS (SOSU Randers) — agentregler (Claude Code + Codex)
+
+> **Spejlprincip — Claude Code + Codex**: `CLAUDE.md` (læses af Claude Code) og `AGENTS.md` (læses af Codex) er identiske spejle af samme indhold. Redigér ALTID `CLAUDE.md` først, og kopiér derefter 1:1 til `AGENTS.md`: `Copy-Item CLAUDE.md AGENTS.md`. "Agenten" i teksten betyder den aktive AI-agent, uanset værktøj; funktioner der kun findes i ét værktøj er markeret "(kun Claude Code)" / "(kun Codex)".
+>
+> **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 7 repos. Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
 
 ## Session-startkontrol — kør ved FØRSTE prompt i hver session
 
 Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noget **fejler**:
 
 ```
-[ ] AGENTS.md findes i AI OS rod (denne fil)
-[ ] AGENTS.md findes i AI-SOSU/BI-OEKONOMI/
-[ ] AGENTS.md findes i AI-SOSU/SYS-INNOMATE/
-[ ] AGENTS.md findes i AI-SOSU/ADM-HÅNDBØGER/
-[ ] AGENTS.md findes i AI-SOSU/ADM-ØKONOMI/
-[ ] AGENTS.md findes i AI-SOSU/DATA-BUDGET_PROGNOSE/
-[ ] AGENTS.md findes i AI-SOSU/ADM-BI/
+[ ] CLAUDE.md + AGENTS.md findes i AI OS rod og er identiske spejle (denne fil)
+[ ] CLAUDE.md + AGENTS.md findes og er identiske spejle i hvert af de 6 projekt-repos:
+    AI-SOSU/BI-OEKONOMI/, AI-SOSU/SYS-INNOMATE/, AI-SOSU/ADM-HÅNDBØGER/,
+    AI-SOSU/ADM-ØKONOMI/, AI-SOSU/DATA-BUDGET_PROGNOSE/, AI-SOSU/ADM-BI/
+[ ] INDEX.md findes i AI OS rod
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
-[ ] AI OS rod indeholder som minimum: agents/, tools/, .githooks/, .Codex/, AGENTS.md, .gitattributes, .gitignore — ingen projektmapper. .git/, .claude/ og CLAUDE.md er tilladte repo-/migrationsfiler.
-[ ] SYS-INNOMATE rod indeholder som minimum: Input/, Output/, _Arkiv/, .githooks/, .Codex/, AGENTS.md, .gitattributes, .gitignore
-[ ] BI-OEKONOMI rod indeholder som minimum: Input/, Output/, Rapporter/, _Arkiv/, .githooks/, .Codex/, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder som minimum: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .Codex/, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-ØKONOMI rod indeholder som minimum: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .Codex/, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-BI rod indeholder som minimum: Input/, Output/, _Arkiv/, .githooks/, .Codex/, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder som minimum: Input/, Output/, _Arkiv/, .githooks/, .Codex/, AGENTS.md, .gitattributes, .gitignore
+[ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .Codex/, CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen projektmapper
+[ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
+[ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
@@ -34,18 +36,20 @@ Når du:
 - **gennemfører en ændring** der påvirker fremtidige beslutninger
 
 …skal du **straks**:
-1. Opdatere det relevante afsnit i denne AGENTS.md
-2. Committe ændringen: `git add AGENTS.md && git commit -m "Opdatér AGENTS.md: <hvad og hvorfor>"`
+1. Opdatere det relevante afsnit i denne CLAUDE.md
+2. Spejle til AGENTS.md: `Copy-Item CLAUDE.md AGENTS.md`
+3. Opdatere `INDEX.md` hvis filer er tilføjet, fjernet eller omdøbt
+4. Committe ændringen: `git add CLAUDE.md AGENTS.md INDEX.md && git commit -m "Opdatér CLAUDE.md/AGENTS.md: <hvad og hvorfor>"`
 
-Dette gælder også de projektspecifikke `AGENTS.md`-filer i alle projekter under `AI-SOSU/`.
+Dette gælder også de projektspecifikke `CLAUDE.md`/`AGENTS.md`-par i alle projekter under `AI-SOSU/`. Instruktionsfil-opdateringer (CLAUDE.md, AGENTS.md, INDEX.md) må committes direkte til `main` — det er den etablerede undtagelse fra projekternes PR-regel.
 
 ---
 
 ## Agentadfærd — grundregler
 
-<!-- Tilføjet efter fejl: agent bad bruger om at udføre manuelle handlinger Codex selv kunne udføre -->
+<!-- Tilføjet efter fejl: agent bad bruger om at udføre manuelle handlinger agenten selv kunne udføre -->
 
-**Codex udfører ALTID alle opgaver selv. Brugeren må ALDRIG bedes om at udføre manuelle handlinger, som Codex kan udføre via tilgængelige værktøjer (filkopiering, PowerShell, git, filsøgning osv.). Sæt dig over forhindringerne — find en vej.**
+**Agenten udfører ALTID alle opgaver selv. Brugeren må ALDRIG bedes om at udføre manuelle handlinger, som agenten kan udføre via tilgængelige værktøjer (filkopiering, PowerShell, git, filsøgning osv.). Sæt dig over forhindringerne — find en vej.**
 
 Konkrete regler:
 
@@ -59,7 +63,7 @@ Konkrete regler:
 
 ## Hvad er AI OS?
 
-AI OS er infrastrukturniveauet for alt AI-assisteret arbejde ved SOSU Randers. Her bor agentdefinitioner og Codex-konfiguration. Det er **ikke** et arbejdsprojekt — det er værkstedet.
+AI OS er infrastrukturniveauet for alt AI-assisteret arbejde ved SOSU Randers. Her bor agentdefinitioner og AI-konfiguration (Claude Code: `.claude/`, Codex: `.Codex/`). Det er **ikke** et arbejdsprojekt — det er værkstedet.
 
 Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 
@@ -79,7 +83,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | Situation | Arbejd i |
 |---|---|
 | Oprette eller redigere en agent | AI OS (`agents/`) |
-| Ændre Codex-indstillinger | AI OS (`.Codex/`) |
+| Ændre Claude Code-/Codex-indstillinger | AI OS (`.claude/` / `.Codex/`) |
 | Bygge DAX, M-kode eller Power BI-rapporter | `AI-SOSU/BI-OEKONOMI/` |
 | Skrive procesplaner eller mailskabeloner | `AI-SOSU/SYS-INNOMATE/` |
 | Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
@@ -92,7 +96,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 
 ## Tilgængelige agenter
 
-Agentfilerne ligger i `agents/` og er symlinket til `~/.Codex/agents/`.
+Agentfilerne ligger i `agents/`. Claude Code læser dem via symlink `~/.claude/agents/`; i Codex bruges samme filer som rolleinstrukser direkte fra repoet.
 
 ### Power BI-agenter (output på US English)
 
@@ -129,7 +133,7 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.Codex/agents/`.
 
 | Agent | Rolle |
 |---|---|
-| `md-optimizer` | Optimering og vedligehold af alle `.md`-filer — særligt AGENTS.md-hukommelsesfiler. Persisterer ny viden, fejlmønstre og workflowændringer. Bruges proaktivt efter sessioner med fejlrettelser eller arkitekturændringer. |
+| `md-optimizer` | Optimering og vedligehold af alle `.md`-filer — særligt CLAUDE.md/AGENTS.md-hukommelsesfiler. Persisterer ny viden, fejlmønstre og workflowændringer. Bruges proaktivt efter sessioner med fejlrettelser eller arkitekturændringer. |
 
 ### ADM-BI-agent (output på dansk)
 
@@ -141,12 +145,12 @@ Agentfilerne ligger i `agents/` og er symlinket til `~/.Codex/agents/`.
 
 ## Tilgængelige skills/plugins
 
-Installerede slash-kommandoer (aktive i alle sessioner):
+Installerede slash-kommandoer (kun Claude Code — Codex har ikke disse kommandoer):
 
 | Kommando | Hvad den gør |
 |---|---|
-| `/revise-Codex-md` | Opdatér AGENTS.md med læringer fra den aktuelle session |
-| `/Codex-md-improver` | Audit og forbedringsforslag til alle AGENTS.md-filer |
+| `/revise-claude-md` | Opdatér CLAUDE.md med læringer fra den aktuelle session |
+| `/claude-md-improver` | Audit og forbedringsforslag til alle CLAUDE.md-filer |
 | `/code-review` | Code review af aktuel diff eller specificeret PR |
 
 Kald dem ved at skrive kommandoen i chatten.
@@ -160,7 +164,7 @@ Opgaven vedrører agenter eller AI-konfiguration?
   JA  → Arbejd direkte her i AI OS.
   NEJ →
     Drejer det sig om optimering/opdatering af .md-filer eller hukommelse?
-      JA  → Spawn md-optimizer.
+      JA  → Spawn md-optimizer (kun Claude Code; i Codex: følg agents/md-optimizer.md som instruks).
       NEJ →
         Drejer det sig om Power BI (DAX, M-kode, TMDL, rapporter)?
           JA  → Skift til BI-OEKONOMI og brug pbi-agenter.
@@ -180,7 +184,7 @@ Opgaven vedrører agenter eller AI-konfiguration?
 
 ## Sikkerhedsregler — handlinger der ALTID kræver bekræftelse
 
-Uanset hvad tilladelsesindstillingerne tillader automatisk, skal Codex **altid stoppe og spørge** før:
+Uanset hvad tilladelsesindstillingerne tillader automatisk, skal agenten **altid stoppe og spørge** før:
 
 | Handling | Eksempel |
 |---|---|
@@ -198,6 +202,7 @@ Alt andet kører uden prompt.
 
 - **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `AI-SOSU/`.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
+- `INDEX.md` er det samlede filindeks over alle styrede filer i alle 7 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`
 
 ---
@@ -251,6 +256,7 @@ $lines = [System.IO.File]::ReadAllLines($path, $utf8)
 - **INGEN `/* ... */`-blokkommentarer på objekt-niveau** (measure/column/table). TMDL er indrykningsfølsomt, og blokkommentarer udløser `TMDL Format Error: Parsing error type - Indentation / Invalid indentation` ved load i PBI Desktop. Brug i stedet `///` (beskrivelse, bliver til objektets tooltip) eller `//` (linjekommentar) ved SAMME indrykning som objektet. `/* */` er KUN gyldigt inde i M-source-blokken (`source = ```...````), fordi det er en fritekst-streng. Set 2026-06-01 i `#Measures - STU.tmdl`.
 - **PBI-gemning overskriver disk-edits**: Har brugeren pbix'en åben i PBI Desktop og gemmer, skrives in-memory-modellen hen over mine TMDL/PBIR-diskændringer → de forsvinder. Redigér kun disk når disk == seneste PBI-gem; bed brugeren **genåbne pbix UDEN at gemme først** for at indlæse mine ændringer.
 - **DAX VAR-navne SKAL være ren ASCII** (set 2026-06-02): æøå/Å (og andre ikke-ASCII-tegn) i et `VAR`-navn giver `Invalid token, Line X, Offset Y, <tegn>` ved parsing. Et mål med denne fejl loades som objekt (vises i Data-ruden med rød trekant) men er ugyldigt → PBI dropper det stille fra visual-field-wells OG filterpanel, så en korrekt visual-binding ser blank ud. Brug fx `_AarStart`/`_AarSlut` i stedet for `_ÅrStart`/`_ÅrSlut`. Tabel-/kolonne-/målnavne MÅ gerne have æøå (de står i `'...'`-quotes); det er kun bare VAR-identifikatorer der skal være ASCII.
+- **En dim-tabel der er relations-MÅL må IKKE være en kalkuleret tabel afledt af de samme fact-kolonner den relaterer til** (set 2026-06-20). Lavede en delt forløbs-dim som `calculated` = `DISTINCT(UNION(VALUES(Fact1[col]), VALUES(Fact2[col])))` OG lagde relationer `Fact1[col]→Dim[col]` osv. → PBI fejler ved LOAD (før refresh) med `Relationship '<guid>' uses an invalid column ID <n>`. Årsag: cirkulær/ordnings-afhængighed — en kalk-tabels kolonner materialiseres FØRST ved processering (refresh), men relationer valideres ved load, så kolonnen har intet gyldigt ID at binde til. (En CALENDAR-kalk-tabel virker som relations-mål fordi den ikke afhænger af de facts den relaterer til.) **Fix: kild dim'en fra de RÅ M-queries i stedet** (M/import-tabel: `Table.Combine` af `Table.SelectColumns(#"RawQuery", {"col"})` fra hver kilde → `SelectRows(<>null and <>"")` → `Table.Distinct` → `type text`). En M/import-tabel har statisk kolonne-metadata der binder ved åbning uafhængigt af processering. Single-direction many→one relationer, dim'en skal indeholde UNIONEN af alle facts' værdier (ellers blank-member-rækker).
 
 ## PBIR-rapporter — gotchas (visuals)
 

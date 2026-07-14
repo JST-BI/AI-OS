@@ -21,6 +21,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/.githooks/pre-commit` + `check_excel_pii.py` | Versioneret pre-commit hook: blokerer Excel med persondata (findes i alle 7 repos) |
 | `AI OS/.githooks/README.md` | Aktivering af hook efter clone (findes i alle 7 repos) |
 | `AI OS/.claude/` | Claude Code-indstillinger |
+| `AI OS/.claude/skills/pbi-live-maaling/SKILL.md` | Skill (kun Claude Code): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
 | `AI OS/.Codex/` | Codex-indstillinger (`settings.json`, `settings.local.json`) |
 
 ### Agentdefinitioner — `AI OS/agents/` (bruges af begge værktøjer)

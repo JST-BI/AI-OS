@@ -14,7 +14,7 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
     AI-SOSU/BI-OEKONOMI/, AI-SOSU/SYS-INNOMATE/, AI-SOSU/ADM-HÅNDBØGER/,
     AI-SOSU/ADM-ØKONOMI/, AI-SOSU/DATA-BUDGET_PROGNOSE/, AI-SOSU/ADM-BI/
 [ ] INDEX.md findes i AI OS rod
-[ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
+[ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, pbi-design, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
 [ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .Codex/, CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen projektmapper
 [ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
@@ -108,6 +108,7 @@ Agentfilerne ligger i `agents/`. Claude Code læser dem via symlink `~/.claude/a
 | `pbi-performance` | VertiPaq, storage modes, refresh-optimering |
 | `pbi-naming` | Navngivningskonventioner, display folders, audits |
 | `pbi-kritik` | Kritisk gate FØR merge — grain, dobbelttælling, fortegn, måling-før-merge; afgiver GO/NO-GO-dom (svar på dansk) |
+| `pbi-design` | OBLIGATORISK design-standard for alle visuals/PBIR-sider — cards uden rå målernavne, ingen trunkering/scrollbars, semantisk stak-farverækkefølge (grøn→gul→rød→sort→grå), dynamiske slicer-defaults, visuel verifikation før merge (svar på dansk; JST-krav 2026-07-17) |
 
 ### INNOMATE-agenter (output på dansk)
 

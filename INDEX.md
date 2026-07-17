@@ -34,6 +34,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `agents/pbi-performance.md` | VertiPaq, storage modes, refresh-optimering |
 | `agents/pbi-naming.md` | Navngivningskonventioner, display folders, audits |
 | `agents/pbi-kritik.md` | Kritisk GO/NO-GO-gate før merge (grain, dobbelttælling, fortegn) |
+| `agents/pbi-design.md` | Obligatorisk visual-design-standard (cards, matrix, stak-farver, verifikation) |
 | `agents/inno-hr.md` | Medarbejderlivscyklus, ansættelses-/fratrædelsesprocesser |
 | `agents/inno-system.md` | INNOMATE-systemopsætning, handlinger, onboarding-konfiguration |
 | `agents/inno-logistics.md` | Procesplaner, tjeklister, rollebeskrivelser |

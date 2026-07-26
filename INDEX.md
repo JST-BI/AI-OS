@@ -18,6 +18,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/INDEX.md` | Dette indeks |
 | `AI OS/tools/setup-new-repo.ps1` | Opsætning af nyt repo: persondata-hook, `.gitattributes`, `core.hooksPath` |
 | `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv |
+| `AI OS/tools/validate-tmdl.ps1` | Offline TMDL-validering med PBI's egen TOM-deserializer — pre-flight-gate før PBI-åbning |
 | `AI OS/.githooks/pre-commit` + `check_excel_pii.py` | Versioneret pre-commit hook: blokerer Excel med persondata (findes i alle 7 repos) |
 | `AI OS/.githooks/README.md` | Aktivering af hook efter clone (findes i alle 7 repos) |
 | `AI OS/.claude/` | Claude Code-indstillinger |

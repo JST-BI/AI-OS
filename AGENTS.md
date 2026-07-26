@@ -254,6 +254,23 @@ $lines = [System.IO.File]::ReadAllLines($path, $utf8)
 
 ## TMDL-syntaks — gotchas
 
+**OBLIGATORISK før du beder om (eller selv laver) en PBI-åbning efter TMDL-edits**: kør
+`powershell -File "AI OS\tools\validate-tmdl.ps1" -DefinitionPath "<model>.SemanticModel\definition"`.
+Værktøjet kører filerne gennem SAMME TOM-deserializer som PBI Desktop og svarer på ~5 sekunder
+i stedet for en 60-sekunders åbning der ender i "Issues were found". `GRØN` = strukturen holder
+(`GRØN` gives også når parsingen standser til sidst på kompatibilitetsniveau — biblioteket kender
+ikke DAX UDF'er, og på det tidspunkt er ALT parset). `RØD` udskriver fejlen + hvilket TMDL-dokument
+den står i. Fanger ukendte properties, forkert indrykning og dublerede properties.
+
+- **`///`-docstring på en RELATION brækker modellen**: `Property 'description' is unknown and is not
+  expected in the situation it appears`. Relationer har ingen beskrivelses-egenskab — læg forklaringen
+  i CLAUDE.md eller commit-beskeden i stedet. Samme fejlklasse rammer alle objekttyper der ikke
+  understøtter description; validatoren ovenfor fanger dem alle (set 2026-07-26).
+- **PBI's fejl-dialog har INTET fejltidspunkt**: `Timestamp` i frown-rapporten er tidspunktet hvor
+  brugeren klikkede "Copy details to clipboard" — dialogen kan have stået åben i timevis, og fejlen
+  kan for længst være rettet. Før du jagter en rapporteret åbningsfejl: sammenhold filens mtime med
+  fixet, og tjek PBI-vinduets titel + `IsEnabled` via UIA (`Untitled` + `enabled=False` = instansen
+  hænger stadig i den GAMLE modal). Verificér ved at genåbne — ikke ved at læse stack-tracen igen.
 - **INGEN `/* ... */`-blokkommentarer på objekt-niveau** (measure/column/table). TMDL er indrykningsfølsomt, og blokkommentarer udløser `TMDL Format Error: Parsing error type - Indentation / Invalid indentation` ved load i PBI Desktop. Brug i stedet `///` (beskrivelse, bliver til objektets tooltip) eller `//` (linjekommentar) ved SAMME indrykning som objektet. `/* */` er KUN gyldigt inde i M-source-blokken (`source = ```...````), fordi det er en fritekst-streng. Set 2026-06-01 i `#Measures - STU.tmdl`.
 - **PBI-gemning overskriver disk-edits**: Har brugeren pbix'en åben i PBI Desktop og gemmer, skrives in-memory-modellen hen over mine TMDL/PBIR-diskændringer → de forsvinder. Redigér kun disk når disk == seneste PBI-gem; bed brugeren **genåbne pbix UDEN at gemme først** for at indlæse mine ændringer.
 - **DAX VAR-navne SKAL være ren ASCII** (set 2026-06-02): æøå/Å (og andre ikke-ASCII-tegn) i et `VAR`-navn giver `Invalid token, Line X, Offset Y, <tegn>` ved parsing. Et mål med denne fejl loades som objekt (vises i Data-ruden med rød trekant) men er ugyldigt → PBI dropper det stille fra visual-field-wells OG filterpanel, så en korrekt visual-binding ser blank ud. Brug fx `_AarStart`/`_AarSlut` i stedet for `_ÅrStart`/`_ÅrSlut`. Tabel-/kolonne-/målnavne MÅ gerne have æøå (de står i `'...'`-quotes); det er kun bare VAR-identifikatorer der skal være ASCII.

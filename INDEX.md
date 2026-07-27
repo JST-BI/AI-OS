@@ -138,7 +138,7 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 
 ---
 
-## BI-OPGAVEOVERSIGT — `AI-SOSU/BI-OPGAVEOVERSIGT/`
+## BI-OPGAVEOVERSIGT — `AI-SOSU/BI-OPGAVEOVERSIGT/` (repo: [JST-BI/BI-OPGAVEOVERSIGT](https://github.com/JST-BI/BI-OPGAVEOVERSIGT))
 
 Power BI-rapport: medarbejderes opgaveoversigt mod arbejdstidsnorm. Kilde: Budgetskema.xlsx på SharePoint + Studie+-udtræk (Z8004, Z8082).
 

@@ -22,6 +22,7 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 [ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-KANTINE (projektmappe — IKKE git-repo, se note nedenfor) indeholder: Input/, Output/, tools/, CLAUDE.md, AGENTS.md
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
@@ -75,6 +76,9 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | `ADM-ØKONOMI` | `../AI-SOSU/ADM-ØKONOMI/` | Regnskabsinstruks, Indkøbspolitik og Strategi for finansiel risiko |
 | `DATA-BUDGET_PROGNOSE` | `../AI-SOSU/DATA-BUDGET_PROGNOSE/` | Finansiel analyse, budget og prognose — Navision finansposter + BRUGER-budget/prognose → .xlsx-output |
 | `ADM-BI` | `../AI-SOSU/ADM-BI/` | BI governance og styringsdokumenter — datastandarder, navnekonventioner, roller og BI-strategi |
+| `ADM-KANTINE` | `../AI-SOSU/ADM-KANTINE/` | Kantinens menukort og prisskilte — tilrettede udgaver af leverandørens ugemenu |
+
+**Note om `ADM-KANTINE`**: mappen er endnu **ikke** et git-repo (ingen `.git`, ingen `.githooks/`, ingen GitHub-remote). Den følger `Input/`→`Output/`-mønstret og har egne `CLAUDE.md`/`AGENTS.md`-spejle, men er ikke omfattet af pre-commit-hooken. Skal den versionsstyres, køres først `pwsh "AI OS\tools\setup-new-repo.ps1" -RepoPath "<sti>"` efter `git init` — afventer JSTs beslutning.
 
 ---
 
@@ -89,6 +93,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
 | Redigere Regnskabsinstruks, Indkøbspolitik eller finansiel risiko | `ADM-ØKONOMI/` |
 | BI governance, datastandarder, navnekonventioner eller BI-strategi | `ADM-BI/` |
+| Kantinens menukort, ugemenu eller prisskilt | `ADM-KANTINE/` |
 | Finansiel analyse, budget, prognose (Navision-data) | `AI-SOSU/DATA-BUDGET_PROGNOSE/` |
 | Noget der spænder over flere projekter | Start her, koordinér |
 
@@ -178,7 +183,10 @@ Opgaven vedrører agenter eller AI-konfiguration?
                   NEJ →
                     Drejer det sig om BI governance, datastandarder eller BI-strategi?
                       JA  → Skift til ADM-BI og brug adm-bi agenten.
-                      NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
+                      NEJ →
+                        Drejer det sig om kantinen (menukort, ugemenu, prisskilt)?
+                          JA  → Skift til ADM-KANTINE (ingen dedikeret agent — arbejd direkte).
+                          NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
 ```
 
 ---

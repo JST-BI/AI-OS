@@ -1,10 +1,10 @@
 # INDEX.md — samlet filindeks (SOSU Randers AI-økosystem)
 
-> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS, de 6 projekt-repos og projektmappen `ADM-KANTINE` (ikke versionsstyret).
+> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 7 projekt-repos.
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `CLAUDE.md`).
 > **Spejlprincip**: I alle repos er `CLAUDE.md` (Claude Code) og `AGENTS.md` (Codex) identiske spejle — redigér `CLAUDE.md`, kopiér til `AGENTS.md`.
 > **Stier**: Relative til OneDrive-roden `…\OneDrive - Social og Sundhedsskolen Randers\`.
-> Rådata i projekternes `Input/`-mapper (xlsx/pdf m.m.) er gitignored og indekseres ikke enkeltvis.
+> Rådata i projekternes `Input/`-mapper (xlsx/pdf m.m.) er gitignored og indekseres ikke enkeltvis — **undtagen `ADM-KANTINE`**, hvor de små, persondatafrie menu-PDF'er committes.
 
 ---
 
@@ -19,8 +19,8 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/setup-new-repo.ps1` | Opsætning af nyt repo: persondata-hook, `.gitattributes`, `core.hooksPath` |
 | `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv |
 | `AI OS/tools/validate-tmdl.ps1` | Offline TMDL-validering med PBI's egen TOM-deserializer — pre-flight-gate før PBI-åbning |
-| `AI OS/.githooks/pre-commit` + `check_excel_pii.py` | Versioneret pre-commit hook: blokerer Excel med persondata (findes i alle 7 repos) |
-| `AI OS/.githooks/README.md` | Aktivering af hook efter clone (findes i alle 7 repos) |
+| `AI OS/.githooks/pre-commit` + `check_excel_pii.py` | Versioneret pre-commit hook: blokerer Excel med persondata (findes i alle 8 repos) |
+| `AI OS/.githooks/README.md` | Aktivering af hook efter clone (findes i alle 8 repos) |
 | `AI OS/.claude/` | Claude Code-indstillinger |
 | `AI OS/.claude/skills/pbi-live-maaling/SKILL.md` | Skill (kun Claude Code): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
 | `AI OS/.Codex/` | Codex-indstillinger (`settings.json`, `settings.local.json`) |
@@ -137,10 +137,10 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 
 ---
 
-## ADM-KANTINE — `AI-SOSU/ADM-KANTINE/` (endnu ikke et git-repo)
+## ADM-KANTINE — `AI-SOSU/ADM-KANTINE/` (repo: [JST-BI/ADM-KANTINE](https://github.com/JST-BI/ADM-KANTINE))
 
 Kantinens menukort: tilrettede udgaver af leverandørens ugemenu (Jespers Torvekøkken).
-**Bemærk**: mappen er ikke versionsstyret (ingen `.git`/`.githooks/`) og er derfor ikke omfattet af persondata-hooken.
+**Bemærk**: `Input/` committes her (små, persondatafrie PDF'er = dokumentation for hvert ugekort). `.gitattributes` sætter `*.pdf binary`.
 
 | Fil | Beskrivelse |
 |---|---|
@@ -153,7 +153,7 @@ Kantinens menukort: tilrettede udgaver af leverandørens ugemenu (Jespers Torvek
 
 ---
 
-## Fælles på tværs af alle 7 repos
+## Fælles på tværs af alle 8 repos
 
 | Fil | Beskrivelse |
 |---|---|

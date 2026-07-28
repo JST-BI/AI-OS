@@ -2,7 +2,7 @@
 
 > **Spejlprincip — Claude Code + Codex**: `CLAUDE.md` (læses af Claude Code) og `AGENTS.md` (læses af Codex) er identiske spejle af samme indhold. Redigér ALTID `CLAUDE.md` først, og kopiér derefter 1:1 til `AGENTS.md`: `Copy-Item CLAUDE.md AGENTS.md`. "Agenten" i teksten betyder den aktive AI-agent, uanset værktøj; funktioner der kun findes i ét værktøj er markeret "(kun Claude Code)" / "(kun Codex)".
 >
-> **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 7 repos. Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
+> **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 8 repos. Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
 
 ## Session-startkontrol — kør ved FØRSTE prompt i hver session
 
@@ -10,9 +10,10 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 
 ```
 [ ] CLAUDE.md + AGENTS.md findes i AI OS rod og er identiske spejle (denne fil)
-[ ] CLAUDE.md + AGENTS.md findes og er identiske spejle i hvert af de 6 projekt-repos:
+[ ] CLAUDE.md + AGENTS.md findes og er identiske spejle i hvert af de 7 projekt-repos:
     AI-SOSU/BI-OEKONOMI/, AI-SOSU/SYS-INNOMATE/, AI-SOSU/ADM-HÅNDBØGER/,
-    AI-SOSU/ADM-ØKONOMI/, AI-SOSU/DATA-BUDGET_PROGNOSE/, AI-SOSU/ADM-BI/
+    AI-SOSU/ADM-ØKONOMI/, AI-SOSU/DATA-BUDGET_PROGNOSE/, AI-SOSU/ADM-BI/,
+    AI-SOSU/ADM-KANTINE/
 [ ] INDEX.md findes i AI OS rod
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, pbi-design, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
 [ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .Codex/, CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen projektmapper
@@ -22,7 +23,7 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 [ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-KANTINE (projektmappe — IKKE git-repo, se note nedenfor) indeholder: Input/, Output/, tools/, CLAUDE.md, AGENTS.md
+[ ] AI-SOSU/ADM-KANTINE rod indeholder: Input/, Output/, tools/, .githooks/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
@@ -78,7 +79,7 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | `ADM-BI` | `../AI-SOSU/ADM-BI/` | BI governance og styringsdokumenter — datastandarder, navnekonventioner, roller og BI-strategi |
 | `ADM-KANTINE` | `../AI-SOSU/ADM-KANTINE/` | Kantinens menukort og prisskilte — tilrettede udgaver af leverandørens ugemenu |
 
-**Note om `ADM-KANTINE`**: mappen er endnu **ikke** et git-repo (ingen `.git`, ingen `.githooks/`, ingen GitHub-remote). Den følger `Input/`→`Output/`-mønstret og har egne `CLAUDE.md`/`AGENTS.md`-spejle, men er ikke omfattet af pre-commit-hooken. Skal den versionsstyres, køres først `pwsh "AI OS\tools\setup-new-repo.ps1" -RepoPath "<sti>"` efter `git init` — afventer JSTs beslutning.
+**Note om `ADM-KANTINE`** (oprettet 2026-07-28): repo [JST-BI/ADM-KANTINE](https://github.com/JST-BI/ADM-KANTINE) (privat). Ingen dedikeret agent — arbejd direkte. I modsætning til de øvrige projekter **committes `Input/` her**: leverandørens PDF'er er små og persondatafri, og de dokumenterer hvad et givet ugekort er bygget på.
 
 ---
 
@@ -211,7 +212,7 @@ Alt andet kører uden prompt.
 
 - **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `AI-SOSU/`.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
-- `INDEX.md` er det samlede filindeks over alle styrede filer i alle 7 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
+- `INDEX.md` er det samlede filindeks over alle styrede filer i alle 8 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`
 
 ---
@@ -230,6 +231,9 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 
 **OBLIGATORISK ved nyt repo** (straks efter `git init`/`git clone`): kør
 `pwsh AI OS/tools/setup-new-repo.ps1 -RepoPath "<sti til nyt repo>"`. Det installerer den versionerede Excel-persondata pre-commit hook (`.githooks/`), sætter `eol=lf` i `.gitattributes` og aktiverer `core.hooksPath`. Commit derefter `.githooks/` + `.gitattributes`. Se datagovernance-afsnittet nedenfor.
+**Bemærk**: `pwsh` findes ikke på denne maskine (kun Windows PowerShell 5.1) — kald scriptet direkte: `& "AI OS\tools\setup-new-repo.ps1" -RepoPath "<sti>"`.
+
+**OGSÅ OBLIGATORISK ved nyt repo — binær-attributter FØR første commit** (set 2026-07-28 i ADM-KANTINE): tilføj `*.pdf binary` (+ `*.png`/`*.jpg`/`*.xlsx`) i `.gitattributes`. Git detekterer binærfiler på NUL-bytes tidligt i filen, og **små, ukomprimerede PDF'er (fx reportlab-genererede) fejldetekteres som TEKST** → CRLF-konvertering ved checkout → filen er korrupt og kan ikke åbnes. Advarslen ved `git add` er den eneste indikation: `warning: ... LF will be replaced by CRLF`. Verificér med `git check-attr text -- <fil>` (skal give `text: unset`) og — efter push — ved at klone til en KORT sti (`C:\Temp\x`; lange stier giver `fatal: cannot write keep file ... Filename too long`) og sammenligne `Get-FileHash`.
 
 ---
 
@@ -237,7 +241,7 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 
 **Regel (JST, 2026-06-02): Excel-filer med persondata (navn, CPR og/eller e-mail) må ALDRIG på GitHub. Rene Excel-filer er tilladt.**
 
-- Håndhæves af en **versioneret pre-commit hook** i alle 7 repos: `.githooks/pre-commit` + `.githooks/check_excel_pii.py` (committet i repoet). Scanner staged `.xlsx/.xlsm` for CPR (`DDMMYY-XXXX`), e-mail, og kolonner med `navn/fornavn/efternavn/cpr/personnummer/mail` → blokerer commit hvis fundet. Override: `git commit --no-verify`.
+- Håndhæves af en **versioneret pre-commit hook** i alle 8 repos: `.githooks/pre-commit` + `.githooks/check_excel_pii.py` (committet i repoet). Scanner staged `.xlsx/.xlsm` for CPR (`DDMMYY-XXXX`), e-mail, og kolonner med `navn/fornavn/efternavn/cpr/personnummer/mail` → blokerer commit hvis fundet. Override: `git commit --no-verify`.
 - **Aktivér efter `git clone`** (ÉN gang pr. klon — git kører ikke versionerede hooks automatisk af sikkerhedshensyn): `git config core.hooksPath .githooks`. Se `.githooks/README.md`.
 - `.gitattributes` tvinger `eol=lf` på `.githooks/pre-commit` + `check_excel_pii.py` — ellers ville `* text=auto` give CRLF ved Windows-checkout og brække shebang.
 - Ved untrack af allerede-committet Excel: `git rm --cached --ignore-unmatch '*.xlsx' '*.xls' '*.xlsm' '*.xlsb'` (beholder filerne på disk).

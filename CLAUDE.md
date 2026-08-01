@@ -61,6 +61,24 @@ Konkrete regler:
 - **Valgmuligheder**: Når en sub-agent returnerer "Option A/B/C — hvad vil du?", præsentér valgmulighederne for brugeren, men udfør straks den valgte mulighed selv uden yderligere delegation til brugeren.
 - **Sub-agent-resultater**: Når en sub-agent returnerer resultater der kræver efterfølgende filkopiering, git-kommandoer, encoding-konvertering eller lignende: udfør dem selv med Bash/PowerShell — gå ikke videre til brugeren.
 
+### Læs kilden — antag aldrig et navn (indført 2026-08-01)
+
+<!-- Tilføjet efter kalender-sessionen 30-07..01-08: fire selvstændige tidsspild, samme rod -->
+
+Alle fire tidsspild i kalender-sessionen havde samme årsag: **jeg skrev et navn eller en egenskab
+fra hukommelsen i stedet for at læse det der faktisk stod.** Konkret: PBIR-egenskaber gættet to
+gange (`activeProjections` findes ikke og blokerede rapportens åbning), Deneb-feltnavne gættet
+gennem fire spec-forsøg og tre forkerte ugedagsformler mens editorens datapanel viste dem hele
+tiden, og JST sendt på jagt efter en Deneb-indstilling der ikke eksisterer.
+
+Regler:
+
+- **Feltnavne, kolonnenavne, måler-navne**: læs dem fra kilden (datapanel, TMDL-fil, `dax-query.ps1`) før du skriver dem. Aldrig fra hukommelsen.
+- **PBIR-/TMDL-egenskabsnavne**: verificér mod en eksisterende fil der virker, eller mod `validate-tmdl.ps1`. En opfundet egenskab kan blokere hele rapportens åbning — ikke bare fejle stille.
+- **Før du erklærer noget løst**: verificér på det tilfælde der FEJLEDE, ikke på et tilfældigt tilfælde der tilfældigvis virker. (Slicer-fejlen blev meldt løst efter ét klik med et periodevalg der lige akkurat ikke udløste scroll.)
+- **Mål den metrik grænsen faktisk gælder** — ikke en nærliggende der er lettere at hente. (Målte "rækker med værdi" = 2.867, mens visualets loft gjaldt "rækker sendt til visualet" = 10.000.)
+- **Send aldrig brugeren efter en indstilling du ikke selv har set** i UI'et eller i dokumentationen.
+
 ---
 
 ## Hvad er AI OS?

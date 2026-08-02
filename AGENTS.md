@@ -79,6 +79,27 @@ Regler:
 - **Mål den metrik grænsen faktisk gælder** — ikke en nærliggende der er lettere at hente. (Målte "rækker med værdi" = 2.867, mens visualets loft gjaldt "rækker sendt til visualet" = 10.000.)
 - **Send aldrig brugeren efter en indstilling du ikke selv har set** i UI'et eller i dokumentationen.
 
+### Luk fejlklassen, ikke tilfældet (indført 2026-08-02)
+
+Ti gate-runder på kalenderens testharnisk fandt **hver eneste gang** det næste tilfælde af
+den klasse jeg lige havde erklæret lukket — som regel tredive linjer væk i samme fil. Det
+gjaldt guard-opslag der kaster, håndkoblede konstantpar, krav over tomme mængder og negative
+sammenligninger der bliver sande på `NaN`. Fra femte runde lå fundene i kode jeg havde
+skrevet netop for at lukke klassen.
+
+- **Erklær aldrig en fejlklasse lukket uden at have søgt hele filen** for samme mønster.
+  Skriver commit-beskeden "klassen er lukket", så skal det være efterprøvet, ikke antaget.
+- **Et krav der ikke kan fejle er intet værn.** Verificér for hvert nyt krav at det FAKTISK
+  fejler, ved at mutere det led det vogter og køre hele kæden. Kodelæsning finder det ikke.
+  De seks former: `Math.abs(NaN) > tol` er falsk (skriv positivt); `[].every()` er sand
+  (bind til det forventede ANTAL); literal mod literal; ensidet grænse; `!== null` fanger
+  ikke `undefined`; og et kastende opslag i selve **kravteksten**, som evalueres uanset
+  udfald.
+- **Formulér kravet på VIRKNINGEN, ikke på konstanten.** "Ingen skillestreg må skære en
+  søjle" overlever en refaktorering; "offsettet er 0,14" gør ikke.
+- **Læg vagten inde i kravet, ikke i nabokravet.** Et krav skal kunne bære sin egen
+  formulering alene.
+
 ---
 
 ## Hvad er AI OS?

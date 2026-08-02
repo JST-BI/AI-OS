@@ -99,6 +99,16 @@ skrevet netop for at lukke klassen.
   søjle" overlever en refaktorering; "offsettet er 0,14" gør ikke.
 - **Læg vagten inde i kravet, ikke i nabokravet.** Et krav skal kunne bære sin egen
   formulering alene.
+- **Et krav der kun står som en kommentar er intet værn.** Kravet om at Vega-pinnet skulle
+  følge Denebs version stod som `comment-vega` i `package.json` — og installationen gled fra
+  5.30 til 5.33 mens Deneb kørte 6.2.0. Enhver "husk at"-note skal skrives som et krav der
+  læser begge sider.
+- **Mål på produktionens konfiguration.** En test der render uden den config produktionen
+  bruger, måler et render der ikke findes — og efterlader selve produktionsknappen uvogtet.
+  Deneb-suiten parsede uden `jsonConfig`, så en hvid gitterfarve i configen ville slette
+  gitteret i rapporten med grøn test.
+- **Klassen findes også i den lille fil.** `config.json` er elleve linjer; jeg lukkede den
+  ene nøgle og søgte ikke de to andre. Filstørrelse er ingen undskyldning for ikke at søge.
 
 ---
 

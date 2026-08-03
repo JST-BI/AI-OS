@@ -91,10 +91,17 @@ skrevet netop for at lukke klassen.
   Skriver commit-beskeden "klassen er lukket", så skal det være efterprøvet, ikke antaget.
 - **Et krav der ikke kan fejle er intet værn.** Verificér for hvert nyt krav at det FAKTISK
   fejler, ved at mutere det led det vogter og køre hele kæden. Kodelæsning finder det ikke.
-  De seks former: `Math.abs(NaN) > tol` er falsk (skriv positivt); `[].every()` er sand
+  De syv former: `Math.abs(NaN) > tol` er falsk (skriv positivt); `[].every()` er sand
   (bind til det forventede ANTAL); literal mod literal; ensidet grænse; `!== null` fanger
-  ikke `undefined`; og et kastende opslag i selve **kravteksten**, som evalueres uanset
-  udfald.
+  ikke `undefined`; et kastende opslag i selve **kravteksten**, som evalueres uanset
+  udfald; og — **fixturen indeholder ikke det tilfælde, det målte overhovedet afhænger af**
+  (set 2026-08-03).
+- **Et tidsafhængigt træk kræver en fixture der er relativ til i dag.** Rammen om dags dato
+  blev tilføjet til Deneb-kalenderen, og hele testsuiten bestod **uændret på 138 krav**:
+  suitens fixturer har faste august-datoer, så `idag`-serien var tom i dem alle og marken
+  blev aldrig tegnet. Et krav der måler et mark der ikke findes, vogter ingenting. Byg
+  fixturen fra `new Date()`, og læg altid en **negativ kontrol** ved siden af (fixture uden
+  i dag → 0 rammer) — ellers kan "der er præcis én" ikke fejle på noget der altid tegner.
 - **Formulér kravet på VIRKNINGEN, ikke på konstanten.** "Ingen skillestreg må skære en
   søjle" overlever en refaktorering; "offsettet er 0,14" gør ikke.
 - **Læg vagten inde i kravet, ikke i nabokravet.** Et krav skal kunne bære sin egen

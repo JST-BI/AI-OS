@@ -103,7 +103,35 @@ skrevet netop for at lukke klassen.
   fixturen fra `new Date()`, og læg altid en **negativ kontrol** ved siden af (fixture uden
   i dag → 0 rammer) — ellers kan "der er præcis én" ikke fejle på noget der altid tegner.
 - **Formulér kravet på VIRKNINGEN, ikke på konstanten.** "Ingen skillestreg må skære en
-  søjle" overlever en refaktorering; "offsettet er 0,14" gør ikke.
+  søjle" overlever en refaktorering; "offsettet er 0,14" gør ikke. Er kravet tosidet i
+  virkeligheden, skal det være tosidet i koden: "rammen er diskret, men stadig tydelig"
+  blev til bredde i 1–1,5 px og stiplings-**dækningsgrad** 25–90 %, fordi begge yderpunkter
+  er reelle fejl. Et krav på tallene `[5,3]` ville falde ved enhver finjustering uden at
+  sige noget om hvordan stregen ser ud.
+
+### Fra visuelt brudt til plausibelt forkert er den værste retning (gate-doktrin 2026-08-03)
+
+En måler der peger på en slettet tabel giver en rød trekant — grim, men **synlig**. Skriver man
+den om, så den kører igennem og leverer et forkert tal, er fejlen usynlig og lander i en rapport
+nogen træffer beslutninger på. Gaten gav NO-GO på netop den bevægelse i årsværk-sporet.
+
+- **En omskrivning af en måler hvis kilde er FORSVUNDET, kan ikke verificeres mod sig selv.**
+  Der findes intet før-tal at sammenligne med. Så skal der et EKSTERNT facit til (årsrapporten,
+  en kendt total) — eller også skal måleren udfases bevidst til `BLANK()`, ikke gættes.
+- **Efterprøv altid en påstand om GRAIN mod kilden.** Docstringen påstod at den slettede tabel
+  var "en dedupliceret projektion" på én nøgle; dens M-kode i arkivet grupperede på **31
+  kolonner**. Målingen afgjorde det: 56 og 121 nøgler havde varierende værdi, hvor facit for
+  ækvivalens er 0.
+- **"Ingen interne forbrugere" er en påstand, ikke et argument** — men den kan efterprøves, og
+  gør man det, er `BLANK()` + `isHidden` den rigtige udfasningsform: navnet bevares, så eksterne
+  referencer ikke fejler hårdt, og den røde trekant forsvinder. Slet ikke målerne.
+
+### Tæl forekomsterne før en replace-all (set 2026-08-03)
+
+Jeg rullede én projektion i et visual tilbage med en blind streng-erstatning og ramte **6
+forekomster hvor kun 1 skulle ændres** — de øvrige 5 var allerede korrekte i main. `git diff`
+mod udgangspunktet afslørede det med det samme. Tæl først, erstat derefter, og verificér
+diffen mod den kilde du tror du ruller tilbage til.
 - **Læg vagten inde i kravet, ikke i nabokravet.** Et krav skal kunne bære sin egen
   formulering alene.
 - **Et krav der kun står som en kommentar er intet værn.** Kravet om at Vega-pinnet skulle

@@ -324,6 +324,25 @@ i stedet for en 60-sekunders åbning der ender i "Issues were found". `GRØN` = 
 ikke DAX UDF'er, og på det tidspunkt er ALT parset). `RØD` udskriver fejlen + hvilket TMDL-dokument
 den står i. Fanger ukendte properties, forkert indrykning og dublerede properties.
 
+**MEN validatoren er BLIND for DAX** (set 2026-08-03). Den parser TMDL-*strukturen*; indholdet af et
+`source =`/measure-udtryk er bare en tekstblok for den. En syntaksfejl inde i DAX'en giver derfor
+`GRØN` og opdages først når motoren evaluerer objektet. Konkret: en flerlinjet `//`-kommentar hvor
+fortsættelseslinjen manglede sine `//` — prosaen blev læst som DAX, hele den kalkulerede tabel
+`L-Kalender` faldt ud, og hver eneste visual der hang på datotabellen viste "Error fetching data for
+this visual". **Skriv aldrig en flerlinjet kommentar uden `//` på HVER linje** — den fejler ikke stille,
+den tager tabellen med sig.
+
+**Motoren er den eneste fuldstændige fejlliste.** Efter genåbning spørger du den kørende model direkte
+— det dækker HELE modellen på én gang, ikke bare den fil du lige rørte:
+```powershell
+# State 1 = OK. Alt andet (5 = fejl) har en ErrorMessage der peger på linje + tegn i udtrykket.
+& "AI OS\tools\dax-query.ps1" -Port <port> -Catalog <guid> -Query "SELECT [Name],[State],[ErrorMessage] FROM `$SYSTEM.TMSCHEMA_PARTITIONS WHERE [State] <> 1"
+# gentag for TMSCHEMA_MEASURES og TMSCHEMA_COLUMNS ([ExplicitName] i stedet for [Name])
+```
+Fejlteksten er præcis (`Ugyldigt token, linje 20, forskydning 13, Å`) — linjenummeret tælles fra
+FØRSTE linje EFTER `source =`, ikke fra filens start. Kør de tre queries som fast afsluttende kontrol
+efter enhver model-ændring; det er sådan man ser at man lukkede fejlKLASSEN og ikke bare sit ene tilfælde.
+
 - **`///`-docstring på en RELATION brækker modellen**: `Property 'description' is unknown and is not
   expected in the situation it appears`. Relationer har ingen beskrivelses-egenskab — læg forklaringen
   i CLAUDE.md eller commit-beskeden i stedet. Samme fejlklasse rammer alle objekttyper der ikke

@@ -7,3 +7,8 @@ Thumbs.db
 
 # Codex lokale indstillinger (ikke deles via git)
 .Codex/settings.local.json
+
+# Obsidian-maskintilstand (stabile vault-indstillinger versionsstyres)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache

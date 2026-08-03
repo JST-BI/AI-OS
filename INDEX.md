@@ -25,6 +25,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/.claude/` | Claude Code-indstillinger |
 | `AI OS/.claude/skills/pbi-live-maaling/SKILL.md` | Skill (kun Claude Code): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
 | `AI OS/.Codex/` | Codex-indstillinger (`settings.json`, `settings.local.json`) |
+| `AI OS/.obsidian/` | Stabil Obsidian-konfiguration for vaulten med `AI OS/` som rod; maskinspecifik `workspace*.json` og cache er gitignored |
 
 ### Agentdefinitioner — `AI OS/agents/` (bruges af begge værktøjer)
 

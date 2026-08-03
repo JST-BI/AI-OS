@@ -296,6 +296,7 @@ Alt andet kører uden prompt.
 ## Regler for denne mappe
 
 - **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `AI-SOSU/`.
+- **Obsidian-vault**: Vault-roden er `AI OS/`. `.obsidian/` er kun vaultens konfigurationsmappe. Åbn aldrig `.obsidian/` som en separat vault; så skjules `INDEX.md`, `AGENTS.md` og `agents/`, og Obsidian opretter fejlagtigt `.obsidian/.obsidian/`.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
 - `INDEX.md` er det samlede filindeks over alle styrede filer i alle 8 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`

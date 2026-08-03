@@ -3,6 +3,8 @@
 > **Spejlprincip — Claude Code + Codex**: `CLAUDE.md` (læses af Claude Code) og `AGENTS.md` (læses af Codex) er identiske spejle af samme indhold. Redigér ALTID `CLAUDE.md` først, og kopiér derefter 1:1 til `AGENTS.md`: `Copy-Item CLAUDE.md AGENTS.md`. "Agenten" i teksten betyder den aktive AI-agent, uanset værktøj; funktioner der kun findes i ét værktøj er markeret "(kun Claude Code)" / "(kun Codex)".
 >
 > **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 8 repos. Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
+>
+> **Én Markdown-kilde — Obsidian + Claude Code + Codex**: De versionsstyrede `.md`-filer i `AI OS/` og `AI-SOSU/` er de kanoniske kilder. Claude Code læser `CLAUDE.md`, Codex læser det identiske `AGENTS.md`-spejl, og Obsidian læser de samme fysiske filer gennem vault-roden `AI OS/` samt junctionen `AI OS/AI-SOSU/`. Opret aldrig kopier eller eksporter i `.obsidian/`; de bliver forældede.
 
 ## Session-startkontrol — kør ved FØRSTE prompt i hver session
 
@@ -16,7 +18,8 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
     AI-SOSU/ADM-KANTINE/, AI-SOSU/BI-OPGAVEOVERSIGT/
 [ ] INDEX.md findes i AI OS rod
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, pbi-design, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
-[ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .Codex/, .obsidian/, .codex-tmp/, .vscode/, CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen projektmapper
+[ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .Codex/, .obsidian/, .codex-tmp/, .vscode/, AI-SOSU/ (junction), CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen fysiske projektmapper
+[ ] AI OS/AI-SOSU er en directory junction til søstermappen ../AI-SOSU — aldrig en kopi eller fysisk projektmappe
 [ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
@@ -27,6 +30,8 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
+
+**Selvreparation af Obsidian-junction (eneste undtagelse):** Hvis `AI OS/AI-SOSU` mangler, men den fysiske søstermappe `../AI-SOSU` findes, skal agenten selv genskabe junctionen med `New-Item -ItemType Junction -Path "AI-SOSU" -Target "..\AI-SOSU"` og køre startkontrollen igen. Hvis `AI-SOSU` allerede findes som andet end en junction, eller junctionen peger forkert, skal agenten stoppe uden at overskrive den.
 
 ---
 
@@ -41,7 +46,8 @@ Når du:
 1. Opdatere det relevante afsnit i denne CLAUDE.md
 2. Spejle til AGENTS.md: `Copy-Item CLAUDE.md AGENTS.md`
 3. Opdatere `INDEX.md` hvis filer er tilføjet, fjernet eller omdøbt
-4. Committe ændringen: `git add CLAUDE.md AGENTS.md INDEX.md && git commit -m "Opdatér CLAUDE.md/AGENTS.md: <hvad og hvorfor>"`
+4. Verificere at `CLAUDE.md` og `AGENTS.md` er byte-identiske i det berørte repo; Obsidian kræver ingen separat synkronisering, fordi vaulten læser de samme filer direkte
+5. Committe ændringen: `git add CLAUDE.md AGENTS.md INDEX.md && git commit -m "Opdatér CLAUDE.md/AGENTS.md: <hvad og hvorfor>"`
 
 Dette gælder også de projektspecifikke `CLAUDE.md`/`AGENTS.md`-par i alle projekter under `AI-SOSU/`. Instruktionsfil-opdateringer (CLAUDE.md, AGENTS.md, INDEX.md) må committes direkte til `main` — det er den etablerede undtagelse fra projekternes PR-regel.
 
@@ -296,7 +302,8 @@ Alt andet kører uden prompt.
 ## Regler for denne mappe
 
 - **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `AI-SOSU/`.
-- **Obsidian-vault**: Vault-roden er `AI OS/`. `.obsidian/` er kun vaultens konfigurationsmappe. Åbn aldrig `.obsidian/` som en separat vault; så skjules `INDEX.md`, `AGENTS.md` og `agents/`, og Obsidian opretter fejlagtigt `.obsidian/.obsidian/`.
+- **Obsidian-vault**: Vault-roden er `AI OS/`. `.obsidian/` er kun vaultens konfigurationsmappe, og `AI OS/AI-SOSU/` er en directory junction til den fysiske søstermappe `../AI-SOSU/`. Dermed læser Obsidian, Claude Code og Codex altid de samme aktuelle `.md`-filer. Åbn aldrig `.obsidian/` som en separat vault, og kopier aldrig projektfiler ind i vaulten.
+- **Obsidian-livekontrol**: Verificér en åbnet fil via den aktive tabs `state.state.file` under `main` i `.obsidian/workspace.json` (eller den synlige vinduestitel). Brug ikke `lastOpenFiles` som facit; listen kan halte, selv om filen er åbnet korrekt.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
 - `INDEX.md` er det samlede filindeks over alle styrede filer i alle 8 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`

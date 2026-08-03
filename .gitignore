@@ -12,3 +12,6 @@ Thumbs.db
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 .obsidian/cache
+
+# Lokal Obsidian-junction til projektroden; projekterne har egne Git-repos
+/AI-SOSU/

@@ -3,6 +3,7 @@
 > **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 8 projekt-repos.
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `CLAUDE.md`).
 > **Spejlprincip**: I alle repos er `CLAUDE.md` (Claude Code) og `AGENTS.md` (Codex) identiske spejle — redigér `CLAUDE.md`, kopiér til `AGENTS.md`.
+> **Obsidian**: Vault-roden er `AI OS/`; den lokale junction `AI OS/AI-SOSU/` viser de fysiske projektfiler direkte. Der findes ingen særskilte Obsidian-kopier af `.md`-filerne.
 > **Stier**: Relative til OneDrive-roden `…\OneDrive - Social og Sundhedsskolen Randers\`.
 > Rådata i projekternes `Input/`-mapper (xlsx/pdf m.m.) er gitignored og indekseres ikke enkeltvis — **undtagen `ADM-KANTINE`**, hvor de små, persondatafrie menu-PDF'er committes.
 
@@ -26,6 +27,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/.claude/skills/pbi-live-maaling/SKILL.md` | Skill (kun Claude Code): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
 | `AI OS/.Codex/` | Codex-indstillinger (`settings.json`, `settings.local.json`) |
 | `AI OS/.obsidian/` | Stabil Obsidian-konfiguration for vaulten med `AI OS/` som rod; maskinspecifik `workspace*.json` og cache er gitignored |
+| `AI OS/AI-SOSU/` | Lokal, gitignored directory junction til `../AI-SOSU/`, så Obsidian læser alle projekt-repos direkte uden kopier |
 
 ### Agentdefinitioner — `AI OS/agents/` (bruges af begge værktøjer)
 

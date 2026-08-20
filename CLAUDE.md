@@ -323,6 +323,19 @@ også gælder det andet — de læser hver sit format fra hver sin mappe:
 **JSON-filer i `.codex/` har ingen virkning.** AI OS havde indtil 2026-08-20 en `.Codex/settings.json`
 med Claude Codes `permissions.allow`-format. Codex læste den aldrig — den så bare rigtig ud.
 
+### Lav friktion uden fuld adgang (indført 2026-08-20)
+
+AI OS' `.codex/config.toml` bruger `sandbox_mode = "workspace-write"`,
+`approval_policy = "on-request"` og `approvals_reviewer = "auto_review"`. Dermed kører sikre
+arbejdshandlinger uden brugerprompt, mens undtagelser risikovurderes automatisk; netværk er fortsat
+lukket som standard, og AGENTS.md's strengere bekræftelseskrav gælder stadig.
+
+`AI OS/AI-SOSU` er en junction, men Windows opløser den til den fysiske søstermappe
+`../AI-SOSU`. Sandkassen følger den kanoniske sti, ikke junctionens synlige placering. Derfor skal
+den fysiske `AI-SOSU`-rod stå i `sandbox_workspace_write.writable_roots`; ellers udløser helt
+almindelige projektedits gentagne godkendelser. Konfigurationsændringer indlæses først i en ny
+Codex-session.
+
 ### Tre ting der skal gøres én gang pr. maskine
 
 1. **Markér projekterne som betroede.** Codex indlæser kun projekt-lokale `.codex/`-lag

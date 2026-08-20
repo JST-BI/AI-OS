@@ -27,7 +27,15 @@ project_doc_fallback_filenames = ["CLAUDE.md"]
 # uanset hvad der staar her - de er strengere end sandkassen.
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+approvals_reviewer = "auto_review"
 
 [sandbox_workspace_write]
 # Ingen netvaerksadgang uden godkendelse. Persondata maa ikke forlade maskinen.
 network_access = false
+
+# AI OS/AI-SOSU er en junction til den fysiske soestermappe. Giv den kanoniske
+# projektrod eksplicit skriveadgang, saa almindelige projektedits ikke udloeser
+# sandbox-godkendelse blot fordi Windows oploeser junctionen.
+writable_roots = [
+  'C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI-SOSU',
+]

@@ -5,8 +5,8 @@ Thumbs.db
 # Claude Code lokale indstillinger (ikke deles via git)
 .claude/settings.local.json
 
-# Codex lokale indstillinger (ikke deles via git)
-.Codex/settings.local.json
+# Codex har ingen repo-lokal "settings.local"-fil. Personlige Codex-indstillinger
+# hoerer i ~/.codex/config.toml; .codex/config.toml i repoet deles bevidst.
 
 # Obsidian-maskintilstand (stabile vault-indstillinger versionsstyres)
 .obsidian/workspace.json

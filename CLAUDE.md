@@ -1,8 +1,10 @@
 # AI OS (SOSU Randers) — agentregler (Claude Code + Codex)
 
-> **Spejlprincip — Claude Code + Codex**: `CLAUDE.md` (læses af Claude Code) og `AGENTS.md` (læses af Codex) er identiske spejle af samme indhold. Redigér ALTID `CLAUDE.md` først, og kopiér derefter 1:1 til `AGENTS.md`: `Copy-Item CLAUDE.md AGENTS.md`. "Agenten" i teksten betyder den aktive AI-agent, uanset værktøj; funktioner der kun findes i ét værktøj er markeret "(kun Claude Code)" / "(kun Codex)".
+> **Spejlprincip — Claude Code + Codex**: `CLAUDE.md` (læses af Claude Code) og `AGENTS.md` (læses af Codex) er identiske spejle af samme indhold. Redigér ALTID `CLAUDE.md` først, og spejl derefter 1:1 til `AGENTS.md`: `Copy-Item CLAUDE.md AGENTS.md` — eller på tværs af alle projekter på én gang med `& "AI OS\tools\sync-agents-md.ps1"`. "Agenten" i teksten betyder den aktive AI-agent, uanset værktøj; funktioner der kun findes i ét værktøj er markeret "(kun Claude Code)" / "(kun Codex)".
 >
-> **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 8 repos. Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
+> **Spejlet håndhæves ved commit** (indført 2026-08-20): `.githooks/check_md_mirror.py` blokerer enhver commit hvor `CLAUDE.md` og `AGENTS.md` i samme mappe ikke er byte-identiske, eller hvor kun den ene halvdel af parret er med. Drift kan altså ikke længere ske ubemærket — men hooken kører kun i kloner hvor `git config core.hooksPath .githooks` er sat.
+>
+> **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 11 projekter. Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
 >
 > **Én Markdown-kilde — Obsidian + Claude Code + Codex**: De versionsstyrede `.md`-filer i `AI OS/` og `AI-SOSU/` er de kanoniske kilder. Claude Code læser `CLAUDE.md`, Codex læser det identiske `AGENTS.md`-spejl, og Obsidian læser de samme fysiske filer gennem vault-roden `AI OS/` samt junctionen `AI OS/AI-SOSU/`. Opret aldrig kopier eller eksporter i `.obsidian/`; de bliver forældede.
 
@@ -11,25 +13,32 @@
 Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noget **fejler**:
 
 ```
-[ ] CLAUDE.md + AGENTS.md findes i AI OS rod og er identiske spejle (denne fil)
-[ ] CLAUDE.md + AGENTS.md findes og er identiske spejle i hvert af de 8 projekt-repos:
-    AI-SOSU/BI-OEKONOMI/, AI-SOSU/SYS-INNOMATE/, AI-SOSU/ADM-HÅNDBØGER/,
-    AI-SOSU/ADM-ØKONOMI/, AI-SOSU/DATA-BUDGET_PROGNOSE/, AI-SOSU/ADM-BI/,
-    AI-SOSU/ADM-KANTINE/, AI-SOSU/BI-OPGAVEOVERSIGT/
+[ ] Spejlkontrol på tværs af alle projekter — kør scriptet, gæt ikke:
+        & "AI OS\tools\sync-agents-md.ps1" -Check
+    Exitkode 0 = alle CLAUDE.md/AGENTS.md-par er identiske. Exitkode 1 = drift; scriptet
+    udskriver præcis hvilke projekter der afviger.
 [ ] INDEX.md findes i AI OS rod
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, pbi-design, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
-[ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .Codex/, .obsidian/, .codex-tmp/, .vscode/, AI-SOSU/ (junction), CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen fysiske projektmapper
+[ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .codex/, .obsidian/, .codex-tmp/, .vscode/, AI-SOSU/ (junction), CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen fysiske projektmapper
 [ ] AI OS/AI-SOSU er en directory junction til søstermappen ../AI-SOSU — aldrig en kopi eller fysisk projektmappe
-[ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
-[ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .Codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-KANTINE rod indeholder: Input/, Output/, tools/, .githooks/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
+[ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/ADM-KANTINE rod indeholder: Input/, Output/, tools/, .githooks/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] AI-SOSU/BI-OPGAVEOVERSIGT rod indeholder: .githooks/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore + PBIP-artefakterne
+[ ] De tre projekter tilføjet 2026-08-20 har CLAUDE.md + AGENTS.md + .codex/config.toml:
+    AI-SOSU/ADM-AFTALER/, AI-SOSU/ADM-BLANKET/, AI-SOSU/BI-OPTAG FRAVÆR/
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
+
+**Mappenavnet er `.codex` med små bogstaver.** Codex leder kun efter det navn. Windows er
+case-insensitivt, så en fejlkapitaliseret `.Codex/` ser rigtig ud lokalt og virker tilfældigvis
+— men navnet gemmes med stort C i git, og på ethvert andet system (Linux, CI, en frisk klon)
+finder Codex ingenting. Fejlen var reel her indtil 2026-08-20. Opret aldrig `.Codex/` igen.
 
 **Selvreparation af Obsidian-junction (eneste undtagelse):** Hvis `AI OS/AI-SOSU` mangler, men den fysiske søstermappe `../AI-SOSU` findes, skal agenten selv genskabe junctionen med `New-Item -ItemType Junction -Path "AI-SOSU" -Target "..\AI-SOSU"` og køre startkontrollen igen. Hvis `AI-SOSU` allerede findes som andet end en junction, eller junctionen peger forkert, skal agenten stoppe uden at overskrive den.
 
@@ -44,10 +53,14 @@ Når du:
 
 …skal du **straks**:
 1. Opdatere det relevante afsnit i denne CLAUDE.md
-2. Spejle til AGENTS.md: `Copy-Item CLAUDE.md AGENTS.md`
+2. Spejle til AGENTS.md: `Copy-Item CLAUDE.md AGENTS.md` (eller `& "AI OS\tools\sync-agents-md.ps1"` for alle projekter på én gang)
 3. Opdatere `INDEX.md` hvis filer er tilføjet, fjernet eller omdøbt
-4. Verificere at `CLAUDE.md` og `AGENTS.md` er byte-identiske i det berørte repo; Obsidian kræver ingen separat synkronisering, fordi vaulten læser de samme filer direkte
+4. Verificere at `CLAUDE.md` og `AGENTS.md` er byte-identiske i det berørte repo — `& "AI OS\tools\sync-agents-md.ps1" -Check` gør det for alle projekter. Obsidian kræver ingen separat synkronisering, fordi vaulten læser de samme filer direkte
 5. Committe ændringen: `git add CLAUDE.md AGENTS.md INDEX.md && git commit -m "Opdatér CLAUDE.md/AGENTS.md: <hvad og hvorfor>"`
+
+**Glemmer du trin 2, stopper pre-commit-hooken dig** (`.githooks/check_md_mirror.py`). Ret spejlet
+frem for at bruge `--no-verify`: et brudt spejl betyder at Claude Code og Codex arbejder efter
+hver sin udgave af reglerne, og forskellen viser sig først når en agent handler forkert.
 
 Dette gælder også de projektspecifikke `CLAUDE.md`/`AGENTS.md`-par i alle projekter under `AI-SOSU/`. Instruktionsfil-opdateringer (CLAUDE.md, AGENTS.md, INDEX.md) må committes direkte til `main` — det er den etablerede undtagelse fra projekternes PR-regel.
 
@@ -155,7 +168,7 @@ diffen mod den kilde du tror du ruller tilbage til.
 
 ## Hvad er AI OS?
 
-AI OS er infrastrukturniveauet for alt AI-assisteret arbejde ved SOSU Randers. Her bor agentdefinitioner og AI-konfiguration (Claude Code: `.claude/`, Codex: `.Codex/`). Det er **ikke** et arbejdsprojekt — det er værkstedet.
+AI OS er infrastrukturniveauet for alt AI-assisteret arbejde ved SOSU Randers. Her bor agentdefinitioner og AI-konfiguration (Claude Code: `.claude/settings.json`, Codex: `.codex/config.toml`). Det er **ikke** et arbejdsprojekt — det er værkstedet.
 
 Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 
@@ -169,8 +182,15 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | `ADM-BI` | `../AI-SOSU/ADM-BI/` | BI governance og styringsdokumenter — datastandarder, navnekonventioner, roller og BI-strategi |
 | `ADM-KANTINE` | `../AI-SOSU/ADM-KANTINE/` | Kantinens menukort og prisskilte — tilrettede udgaver af leverandørens ugemenu |
 | `BI-OPGAVEOVERSIGT` | `../AI-SOSU/BI-OPGAVEOVERSIGT/` | Power BI-rapport: medarbejderes opgaveoversigt mod arbejdstidsnorm (Budgetskema.xlsx på SharePoint) |
+| `BI-OPTAG FRAVÆR` | `../AI-SOSU/BI-OPTAG FRAVÆR/` | Power BI-rapport: elevoptag og skoleforløbsfravær (Studie+ Z8312 + Z8224S) |
+| `ADM-AFTALER` | `../AI-SOSU/ADM-AFTALER/` | Samarbejds- og samhandelsaftaler med eksterne parter |
+| `ADM-BLANKET` | `../AI-SOSU/ADM-BLANKET/` | Administrative blanketter og formularer (fx kørselsbemyndigelser) |
 
 **Note om `ADM-KANTINE`** (oprettet 2026-07-28): repo [JST-BI/ADM-KANTINE](https://github.com/JST-BI/ADM-KANTINE) (privat). Ingen dedikeret agent — arbejd direkte. I modsætning til de øvrige projekter **committes `Input/` her**: leverandørens PDF'er er små og persondatafri, og de dokumenterer hvad et givet ugekort er bygget på.
+
+**Note om de tre projekter tilføjet 2026-08-20** (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`): de fik `CLAUDE.md`/`AGENTS.md`, `.codex/config.toml` og de versionerede hooks, da opsætningen blev gjort dual-læsbar. De har **lokale git-repos uden remote** — der er bevidst hverken oprettet GitHub-repo eller pushet noget, fordi fortrolighedsniveauet ikke er afklaret. `ADM-BLANKET` og `ADM-AFTALER` har `Input/` i `.gitignore` som forsigtig standard: begge indeholder personhenførbart materiale. Afklar med JST før de lægges på GitHub.
+
+**Mapper der IKKE er projekter** (verificeret 2026-08-20 — opret ikke instruktionsfiler i dem): `ADM-MØDER/` (én løs .docx), `ADM-REVISION/` (tom), `BI-SOSU/` (mappe med en ugyldig `.git` — `git status` fejler med "not a git repository"). Bliver en af dem til et rigtigt projekt, så kør `tools/setup-new-repo.ps1` og tilføj den her.
 
 ---
 
@@ -179,8 +199,12 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | Situation | Arbejd i |
 |---|---|
 | Oprette eller redigere en agent | AI OS (`agents/`) |
-| Ændre Claude Code-/Codex-indstillinger | AI OS (`.claude/` / `.Codex/`) |
+| Ændre Claude Code-indstillinger | AI OS (`.claude/settings.json`) |
+| Ændre Codex-indstillinger | AI OS (`.codex/config.toml`) — projektskabelon: `tools/codex-config.template.toml` |
 | Bygge DAX, M-kode eller Power BI-rapporter | `AI-SOSU/BI-OEKONOMI/` |
+| Elevoptag eller skoleforløbsfravær i Power BI | `AI-SOSU/BI-OPTAG FRAVÆR/` |
+| Læse, sammenligne eller revidere en aftale | `AI-SOSU/ADM-AFTALER/` |
+| Blanketter og formularer | `AI-SOSU/ADM-BLANKET/` |
 | Skrive procesplaner eller mailskabeloner | `AI-SOSU/SYS-INNOMATE/` |
 | Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
 | Redigere Regnskabsinstruks, Indkøbspolitik eller finansiel risiko | `ADM-ØKONOMI/` |
@@ -193,7 +217,31 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 
 ## Tilgængelige agenter
 
-Agentfilerne ligger i `agents/`. Claude Code læser dem via symlink `~/.claude/agents/`; i Codex bruges samme filer som rolleinstrukser direkte fra repoet.
+Agentfilerne ligger i `agents/` og er værktøjsuafhængige: YAML-frontmatter (`name`, `description`, `tools`, `model`) efterfulgt af selve rolleinstruksen i ren Markdown.
+
+**Sådan bruges de i hvert værktøj:**
+
+| Værktøj | Mekanisme |
+|---|---|
+| Claude Code | Læser `agents/` via symlink `~/.claude/agents/` og **spawner dem som selvstændige subagenter** med egen kontekst. |
+| Codex | Har **ikke** subagenter. Læs `agents/<navn>.md`, ignorér frontmatter, og påtag dig rollen direkte i den aktuelle session. Skal flere agenter køre efter hinanden (se workflow-mønstrene nedenfor), gennemføres trinene sekventielt i samme session. |
+
+Frontmatter-feltet `tools` er en Claude Code-begrænsning. I Codex er den kun vejledende — den
+siger hvilke slags handlinger rollen forventes at udføre, ikke hvad der er teknisk muligt.
+
+**Workflow-mønstre** (rækkefølge-regler for agentkæder) ligger i `.claude/rules/` i det enkelte
+projekt-repo — i dag `BI-OEKONOMI/.claude/rules/pbi-workflows.md` og
+`SYS-INNOMATE/.claude/rules/inno-workflows.md`. **Ingen af de to værktøjer indlæser dem
+automatisk**; de er dokumentation, ikke konfiguration. Læs filen eksplicit — uanset om du kører
+Claude Code eller Codex — når en opgave involverer flere agenter i det pågældende projekt.
+
+> **`.codex/rules/` er ikke stedet for dem** (rettet 2026-08-20). Mappenavnet ser ud som et
+> naturligt spejl af `.claude/rules/`, men `.codex/rules/` er et rigtigt Codex-koncept med et
+> helt andet formål: **Starlark-baserede `.rules`-filer der styrer om en kommando må køre**
+> (`prefix_rule(pattern = [...], decision = "prompt", ...)`). Codex scanner mappen ved opstart.
+> Workflow-prosa i Markdown hører ikke til der og lå der fejlagtigt indtil 2026-08-20. Mappen
+> står nu tom med `.gitkeep`, klar til ægte `.rules`-filer, hvis kommandotilladelser en dag
+> skal styres pr. projekt. Læg aldrig `.md` i `.codex/rules/`.
 
 ### Power BI-agenter (output på US English)
 
@@ -253,6 +301,66 @@ Installerede slash-kommandoer (kun Claude Code — Codex har ikke disse kommando
 
 Kald dem ved at skrive kommandoen i chatten.
 
+I Codex findes hverken skills eller slash-kommandoer. Skal en af dem udføres der, læses den
+tilsvarende instruks og udføres i hånden — fx et CLAUDE.md-eftersyn ved at følge
+`agents/md-optimizer.md`.
+
+---
+
+## Codex-opsætning på en ny maskine (indført 2026-08-20)
+
+De to værktøjer konfigureres **helt forskelligt**. Antag aldrig at en indstilling for det ene
+også gælder det andet — de læser hver sit format fra hver sin mappe:
+
+| | Claude Code | Codex |
+|---|---|---|
+| Instruktionsfil | `CLAUDE.md` | `AGENTS.md` (byte-identisk spejl) |
+| Projektkonfiguration | `.claude/settings.json` | `.codex/config.toml` — **små bogstaver, TOML** |
+| Personlig konfiguration | `~/.claude/` | `~/.codex/config.toml` |
+| Agenter | `agents/` via `~/.claude/agents/` (spawnes som subagenter) | samme filer læses som rolleinstruks (ingen subagenter) |
+| Kommandotilladelser | `permissions.allow` i JSON | `sandbox_mode` + `approval_policy`, og evt. Starlark i `.codex/rules/*.rules` |
+
+**JSON-filer i `.codex/` har ingen virkning.** AI OS havde indtil 2026-08-20 en `.Codex/settings.json`
+med Claude Codes `permissions.allow`-format. Codex læste den aldrig — den så bare rigtig ud.
+
+### Tre ting der skal gøres én gang pr. maskine
+
+1. **Markér projekterne som betroede.** Codex indlæser kun projekt-lokale `.codex/`-lag
+   (config, rules, hooks) hvis projektet er betroet. Er det ikke det, springes hele laget over
+   uden fejlmeddelelse — en bevidst sikring mod at et klonet repo medbringer sine egne
+   løsslupne indstillinger. Trust sættes i din **personlige** `~/.codex/config.toml`, ikke i
+   repoet, netop fordi repoet ellers kunne erklære sig selv betroet:
+
+   ```toml
+   [projects]
+   "C:\\Users\\jst\\OneDrive - Social og Sundhedsskolen Randers\\AI OS".trust_level = "trusted"
+   "C:\\Users\\jst\\OneDrive - Social og Sundhedsskolen Randers\\AI-SOSU\\BI-OEKONOMI".trust_level = "trusted"
+   # ... én linje pr. projekt
+   ```
+
+2. **Verificér at `project_doc_max_bytes` slår igennem.** Standardloftet er 65536 bytes.
+   `BI-OEKONOMI/AGENTS.md` var **91.960 bytes** da loftet blev hævet — Codex afkortede den
+   altså og mistede de nederste ~26 KB regler, uden at sige det. Loftet hæves til 262144 i hvert
+   repos `.codex/config.toml`, men **kun hvis projektet er betroet** (punkt 1). Springes trust
+   over, er man tilbage ved 64 KB.
+
+3. **Aktivér de versionerede hooks:** `git config core.hooksPath .githooks` — én gang pr. klon.
+   Git kører ikke versionerede hooks automatisk. Uden dette virker hverken Excel-persondata-
+   spærringen eller spejlkontrollen.
+
+### AGENTS.md findes ved at gå opad — ikke på tværs
+
+Codex leder efter `AGENTS.md` fra arbejdsmappen og opad mod projektroden (mappen med `.git`).
+Arbejder du i `AI-SOSU/BI-OEKONOMI/`, læses **kun** det projekts `AGENTS.md` — ikke AI OS'.
+Derfor skal enhver regel, der gælder på tværs af projekter, stå i hvert projekts egen fil eller
+udtrykkeligt henvise til `../../AI OS/AGENTS.md`. Det samme gælder Claude Code og `CLAUDE.md`.
+
+`project_doc_fallback_filenames = ["CLAUDE.md"]` i hver `.codex/config.toml` gør at Codex falder
+tilbage på Claude Codes fil, hvis `AGENTS.md` mangler. Det er et sikkerhedsnet mod et brudt
+spejl — ikke en erstatning for det.
+
+**Kilder** (verificeret 2026-08-20): [Konfigurationsreference](https://learn.chatgpt.com/docs/config-file/config-reference) · [Rules](https://learn.chatgpt.com/docs/agent-configuration/rules)
+
 ---
 
 ## Routing — kør dette først ved enhver opgave
@@ -278,7 +386,16 @@ Opgaven vedrører agenter eller AI-konfiguration?
                       NEJ →
                         Drejer det sig om kantinen (menukort, ugemenu, prisskilt)?
                           JA  → Skift til ADM-KANTINE (ingen dedikeret agent — arbejd direkte).
-                          NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
+                          NEJ →
+                            Drejer det sig om elevoptag eller skoleforloebsfravaer?
+                              JA  → Skift til BI-OPTAG FRAVÆR og brug pbi-agenter.
+                              NEJ →
+                                Drejer det sig om en aftale eller kontrakt?
+                                  JA  → Skift til ADM-AFTALER (ingen dedikeret agent).
+                                  NEJ →
+                                    Drejer det sig om en blanket eller formular?
+                                      JA  → Skift til ADM-BLANKET (ingen dedikeret agent).
+                                      NEJ → Afklar med brugeren hvilket projekt opgaven tilhører.
 ```
 
 ---

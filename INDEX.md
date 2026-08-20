@@ -1,8 +1,8 @@
 # INDEX.md — samlet filindeks (SOSU Randers AI-økosystem)
 
-> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 8 projekt-repos.
+> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 11 projekter.
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `CLAUDE.md`).
-> **Spejlprincip**: I alle repos er `CLAUDE.md` (Claude Code) og `AGENTS.md` (Codex) identiske spejle — redigér `CLAUDE.md`, kopiér til `AGENTS.md`.
+> **Spejlprincip**: I alle repos er `CLAUDE.md` (Claude Code) og `AGENTS.md` (Codex) identiske spejle — redigér `CLAUDE.md`, spejl med `tools/sync-agents-md.ps1`. Håndhæves ved commit af `.githooks/check_md_mirror.py`.
 > **Obsidian**: Vault-roden er `AI OS/`; den lokale junction `AI OS/AI-SOSU/` viser de fysiske projektfiler direkte. Der findes ingen særskilte Obsidian-kopier af `.md`-filerne.
 > **Stier**: Relative til OneDrive-roden `…\OneDrive - Social og Sundhedsskolen Randers\`.
 > Rådata i projekternes `Input/`-mapper (xlsx/pdf m.m.) er gitignored og indekseres ikke enkeltvis — **undtagen `ADM-KANTINE`**, hvor de små, persondatafrie menu-PDF'er committes.
@@ -17,15 +17,19 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 |---|---|
 | `AI OS/CLAUDE.md` / `AGENTS.md` | Overordnede agentregler: startkontrol, routing, sikkerhedsregler, datagovernance, TMDL/PBIR-gotchas (spejle) |
 | `AI OS/INDEX.md` | Dette indeks |
-| `AI OS/tools/setup-new-repo.ps1` | Opsætning af nyt repo: persondata-hook, `.gitattributes`, `core.hooksPath` |
+| `AI OS/tools/setup-new-repo.ps1` | Opsætning af nyt repo: begge pre-commit hooks, `.gitattributes`, `.codex/config.toml`, `core.hooksPath` |
+| `AI OS/tools/sync-agents-md.ps1` | Spejler CLAUDE.md → AGENTS.md i alle projekter; `-Check` rapporterer drift (exit 1) |
+| `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
 | `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv |
 | `AI OS/tools/validate-tmdl.ps1` | Offline TMDL-validering med PBI's egen TOM-deserializer — pre-flight-gate før PBI-åbning |
 | `AI OS/tools/tmsl-refresh.ps1` | Tabel-scoped TMSL-refresh mod kørende PBI Desktop-instans (undgår fuld model-refresh) |
-| `AI OS/.githooks/pre-commit` + `check_excel_pii.py` | Versioneret pre-commit hook: blokerer Excel med persondata (findes i alle 9 repos) |
-| `AI OS/.githooks/README.md` | Aktivering af hook efter clone (findes i alle 9 repos) |
+| `AI OS/.githooks/pre-commit` | Versioneret pre-commit hook; kalder begge checks nedenfor (findes i alle 12 repos) |
+| `AI OS/.githooks/check_excel_pii.py` | Blokerer commit af Excel med persondata (CPR/e-mail/navnekolonner) |
+| `AI OS/.githooks/check_md_mirror.py` | Blokerer commit hvor CLAUDE.md og AGENTS.md ikke er identiske spejle |
+| `AI OS/.githooks/README.md` | Aktivering af hooks efter clone (findes i alle 12 repos) |
 | `AI OS/.claude/` | Claude Code-indstillinger |
 | `AI OS/.claude/skills/pbi-live-maaling/SKILL.md` | Skill (kun Claude Code): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
-| `AI OS/.Codex/` | Codex-indstillinger (`settings.json`, `settings.local.json`) |
+| `AI OS/.codex/config.toml` | Codex-konfiguration (TOML). Hæver `project_doc_max_bytes`, sætter sandkasse og AGENTS.md-fallback. Erstattede 2026-08-20 en virkningsløs `.Codex/settings.json` i Claude Codes JSON-format |
 | `AI OS/.obsidian/` | Stabil Obsidian-konfiguration for vaulten med `AI OS/` som rod; maskinspecifik `workspace*.json` og cache er gitignored |
 | `AI OS/AI-SOSU/` | Lokal, gitignored directory junction til `../AI-SOSU/`, så Obsidian læser alle projekt-repos direkte uden kopier |
 
@@ -62,7 +66,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | Fil | Beskrivelse |
 |---|---|
 | `CLAUDE.md` / `AGENTS.md` | Projektregler: modelarkitektur, DAX/M-konventioner, workflow, gotchas (spejle) |
-| `.claude/rules/pbi-workflows.md` / `.Codex/rules/pbi-workflows.md` | Agent-workflow-mønstre for PBI-arbejde (spejle) |
+| `.claude/rules/pbi-workflows.md` | Agent-workflow-mønstre for PBI-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20: dén mappe er til Starlark-`.rules`, ikke Markdown) |
 | `Rapporter/HR_OEKONOMI/` | Selve rapporten som `.pbip`: `HR_OEKONOMI.SemanticModel/` (TMDL) + `HR_OEKONOMI.Report/` (PBIR) |
 | `Input/standards/power-query-step-naming.md` | Referencestandard for M-step-navngivning (VerbObject-Konkret) |
 | `Output/tmdl/elevproduktion-integration/README.md` | Dokumentation af elevproduktions-integrationen |
@@ -84,7 +88,7 @@ Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE.
 | Fil | Beskrivelse |
 |---|---|
 | `CLAUDE.md` / `AGENTS.md` | Projektregler: orkestrator-rolle, CPR-regel, merge-felter, workflow (spejle) |
-| `.claude/rules/inno-workflows.md` / `.Codex/rules/inno-workflows.md` | Agent-workflow-mønstre for INNOMATE-arbejde (spejle) |
+| `.claude/rules/inno-workflows.md` | Agent-workflow-mønstre for INNOMATE-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20, se ovenfor) |
 | `generate-procesplan-v3.js` (+ `package.json`) | Procesplan-generator (Node.js) |
 | `Input/Oprettelse af medarbejder/`, `Input/Nedlæggelse af medarbejder/`, `Input/Generelle skabeloner/` | Kildefiler: procesplaner, INNOMATE-skabeloner, korrespondance |
 | `Output/` (samme undermapper) | Genererede skabeloner og procesplaner |
@@ -172,13 +176,54 @@ Power BI-rapport: medarbejderes opgaveoversigt mod arbejdstidsnorm. Kilde: Budge
 
 ---
 
-## Fælles på tværs af alle 9 repos
+## BI-OPTAG FRAVÆR — `AI-SOSU/BI-OPTAG FRAVÆR/` (lokalt repo, intet GitHub-remote)
+
+Power BI-rapport: elevoptag og skoleforløbsfravær. Kilde: Studie+-udtræk `Z8312` (alle holdplaceringer) og `Z8224S` (skoleforløbsfravær). Bragt under AI-styring 2026-08-20.
 
 | Fil | Beskrivelse |
 |---|---|
-| `.githooks/pre-commit` + `check_excel_pii.py` + `README.md` | Persondata-scan af staged Excel (aktivér pr. klon: `git config core.hooksPath .githooks`) |
+| `CLAUDE.md` / `AGENTS.md` | Projektregler: datagrundlag, målergrupper, agentbrug, skærpet persondata-opmærksomhed (spejle) |
+| `SOSU BI OPTAG FRAVÆR.pbip` | PBIP-projektfil |
+| `…SemanticModel/definition/tables/` | Målergrupper (`#Measures - ELEV/HRLØN/KPI/TEMATIK/ØKONOMI`), `L-Kalender`, `L-STU Dim…`-dimensioner, `L-STU Fact Z8224S…` |
+| `.codex/config.toml` | Codex-projektkonfiguration |
+
+---
+
+## ADM-AFTALER — `AI-SOSU/ADM-AFTALER/` (lokalt repo, intet GitHub-remote)
+
+Samarbejds- og samhandelsaftaler med eksterne parter. Bragt under AI-styring 2026-08-20. `Input/` er gitignored som forsigtig standard: aftaler indeholder navne og underskrifter, og fortrolighedsniveauet er ikke afklaret.
+
+| Fil | Beskrivelse |
+|---|---|
+| `CLAUDE.md` / `AGENTS.md` | Projektregler: versionssammenligning af aftaletekst, juridisk forbehold, persondata (spejle) |
+| `.codex/config.toml` | Codex-projektkonfiguration |
+
+---
+
+## ADM-BLANKET — `AI-SOSU/ADM-BLANKET/` (lokalt repo, intet GitHub-remote)
+
+Administrative blanketter og formularer (i dag kørselsbemyndigelser). Bragt under AI-styring 2026-08-20. `Input/` er gitignored: blanketterne er personhenførbare af natur.
+
+| Fil | Beskrivelse |
+|---|---|
+| `CLAUDE.md` / `AGENTS.md` | Projektregler: blanketstruktur, skærpet persondata-advarsel mod `--no-verify` (spejle) |
+| `.codex/config.toml` | Codex-projektkonfiguration |
+
+---
+
+## Fælles på tværs af alle 12 repos
+
+| Fil | Beskrivelse |
+|---|---|
+| `.githooks/pre-commit` | Kalder begge checks nedenfor (aktivér pr. klon: `git config core.hooksPath .githooks`) |
+| `.githooks/check_excel_pii.py` | Persondata-scan af staged Excel (CPR, e-mail, navnekolonner) |
+| `.githooks/check_md_mirror.py` | Blokerer commit hvor CLAUDE.md og AGENTS.md ikke er identiske spejle |
+| `.githooks/README.md` | Aktiveringsvejledning efter clone |
+| `.codex/config.toml` | Codex-projektkonfiguration fra `AI OS/tools/codex-config.template.toml` |
 | `.gitattributes` | `eol=lf` på hook-filerne, ellers `* text=auto` |
 | `.gitignore` | Bl.a. Excel-/rådata-ignorering hvor relevant |
 | `_Arkiv/` | Udgåede versioner (projekt-repos) |
+
+**12 repos** = AI OS + 11 projekter. Tre af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
 
 **Bemærk (kun Claude Code)**: Claude Codes persistente hukommelse ligger lokalt under `~/.claude/projects/<AI OS-projekt>/memory/` med eget indeks `MEMORY.md` — den er personlig, ikke versionsstyret og ikke en del af repo-strukturen.

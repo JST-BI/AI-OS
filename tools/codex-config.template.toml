@@ -1,0 +1,33 @@
+# Codex-konfiguration for dette repo (SOSU Randers)
+#
+# Kanonisk kilde: AI OS/tools/codex-config.template.toml
+# Udrulles af AI OS/tools/setup-new-repo.ps1. Ret skabelonen, ikke kopierne.
+#
+# Dette er Codex' modstykke til .claude/settings.json. Codex laeser KUN TOML fra
+# .codex/ (smaa bogstaver); Claude Codes JSON-format har ingen virkning her.
+# Naeglereference: https://learn.chatgpt.com/docs/config-file/config-reference
+#
+# VIGTIGT: Codex loader kun projekt-lokale .codex/-lag hvis projektet er markeret
+# som betroet i din personlige ~/.codex/config.toml - ikke her. Se afsnittet
+# "Codex-opsaetning paa en ny maskine" i AI OS/AGENTS.md.
+
+# --- AGENTS.md-indlaesning ------------------------------------------------
+# AGENTS.md er det byte-identiske spejl af CLAUDE.md og vokser hver gang en ny
+# laering skrives ind. Standardloftet er 65536 bytes. BI-OEKONOMI/AGENTS.md laa
+# allerede paa 91960 bytes, da loftet blev haevet - Codex afkortede den UDEN
+# varsel og mistede de nederste ~26 KB regler. Hold loftet hoejt nok her.
+project_doc_max_bytes = 262144
+
+# Falder tilbage til Claude Codes fil hvis AGENTS.md mangler. Samme indhold, saa
+# et brudt spejl giver reducerede regler frem for ingen regler.
+project_doc_fallback_filenames = ["CLAUDE.md"]
+
+# --- Sandkasse og godkendelser -------------------------------------------
+# Laes og skriv frit i arbejdsmappen, spoerg foer noget raekker udenfor.
+# Sikkerhedsreglerne i AGENTS.md gaelder uanset hvad der staar her.
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+[sandbox_workspace_write]
+# Ingen netvaerksadgang uden godkendelse. Persondata maa ikke forlade maskinen.
+network_access = false

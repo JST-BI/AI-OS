@@ -1,0 +1,6 @@
+{
+  "folder": "vault/journal",
+  "format": "YYYY-MM-DD",
+  "template": "vault/_templates/Daily.md",
+  "autorun": false
+}

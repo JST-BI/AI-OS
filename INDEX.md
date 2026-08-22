@@ -30,7 +30,10 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/.claude/` | Claude Code-indstillinger |
 | `AI OS/.claude/skills/pbi-live-maaling/SKILL.md` | Skill (kun Claude Code): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
 | `AI OS/.codex/config.toml` | Codex-konfiguration (TOML). Hæver `project_doc_max_bytes`, sætter sandkasse og AGENTS.md-fallback. Erstattede 2026-08-20 en virkningsløs `.Codex/settings.json` i Claude Codes JSON-format |
-| `AI OS/.obsidian/` | Stabil Obsidian-konfiguration for vaulten med `AI OS/` som rod; maskinspecifik `workspace*.json` og cache er gitignored |
+| `AI OS/.obsidian/` | Stabil Obsidian-konfiguration for vaulten med `AI OS/` som rod; maskinspecifik `workspace*.json` og cache er gitignored. `app.json`/`daily-notes.json`/`templates.json` dirigerer nye noter til `vault/` — uden dem skrev daily-notes-pluginet i roden |
+| `AI OS/vault/` | De frie Obsidian-noter (`inbox/`, `journal/`, `notes/{,people,decisions}/`, `meetings/`, `resources/`, `_templates/`, `_attachments/`). Adskilt fra de styrede filer — se CLAUDE.md → *Obsidian-vaultregler* |
+| `AI OS/vault/Index - Vault.md` | Vaultens MOC: mappeoversigt, routing og noteliste. Ikke det samme som dette indeks, der dækker **styrede** filer |
+| `AI OS/vault/_templates/*.md` | Note-skabeloner med obligatorisk frontmatter: `Daily`, `Note`, `Meeting`, `Decision` |
 | `AI OS/AI-SOSU/` | Lokal, gitignored directory junction til `../AI-SOSU/`, så Obsidian læser alle projekt-repos direkte uden kopier |
 
 ### Agentdefinitioner — `AI OS/agents/` (bruges af begge værktøjer)

@@ -1,1 +1,8 @@
-{}
+{
+  "newFileLocation": "folder",
+  "newFileFolderPath": "vault/inbox",
+  "attachmentFolderPath": "vault/_attachments",
+  "useMarkdownLinks": false,
+  "newLinkFormat": "shortest",
+  "alwaysUpdateLinks": true
+}

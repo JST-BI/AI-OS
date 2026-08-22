@@ -19,7 +19,7 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
     udskriver præcis hvilke projekter der afviger.
 [ ] INDEX.md findes i AI OS rod
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, pbi-design, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
-[ ] AI OS rod indeholder KUN: agents/, tools/, .githooks/, .claude/, .agents/, .codex/, .obsidian/, .codex-tmp/, .vscode/, AI-SOSU/ (junction), CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen fysiske projektmapper
+[ ] AI OS rod indeholder KUN: agents/, tools/, vault/, .githooks/, .claude/, .agents/, .codex/, .obsidian/, .codex-tmp/, .vscode/, AI-SOSU/ (junction), CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen fysiske projektmapper, og INGEN loese .md/.canvas/.base-filer (de hoerer i vault/)
 [ ] AI OS/AI-SOSU er en directory junction til søstermappen ../AI-SOSU — aldrig en kopi eller fysisk projektmappe
 [ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
@@ -437,6 +437,96 @@ Alt andet kører uden prompt.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
 - `INDEX.md` er det samlede filindeks over alle styrede filer i alle 8 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`
+
+---
+
+## Obsidian-vaultregler (indført 2026-08-22)
+
+Vaulten er AI OS-roden, men den indeholder to slags filer med **hver sit regelsæt**. Bland dem aldrig sammen.
+
+### Scope — hvad reglerne herunder gælder
+
+| Filer | Regelsæt |
+|---|---|
+| **`vault/**`** — frie noter (daily, møder, personer, beslutninger, ressourcer) | **Dette afsnit.** Frontmatter, wikilinks, routing, index-vedligehold, AI-metadatablok. |
+| `CLAUDE.md`, `AGENTS.md`, `INDEX.md` | Spejlprincippet og selvvedligeholds-pligten øverst i filen. **Ingen note-frontmatter** — de læses af Claude Code og Codex som instruktion. |
+| `agents/*.md` | Claude Codes agent-frontmatter (`name`, `description`, `tools`, `model`). **Skriv aldrig `tags`/`created`/`status` i dem** — det brækker agent-indlæsningen. |
+| Alt under `AI-SOSU/` (via junctionen) | Det pågældende projekts egen `CLAUDE.md`. Vaulten *læser* dem; den styrer dem ikke. |
+
+**Projekt-noter hører i projektets eget repo**, ikke i `vault/`. Routing-tabellens `/projects`-linje er derfor ikke i brug her — `vault/projects/` findes bevidst ikke.
+
+### Grundregler
+
+- **Aldrig absolutte stier i interne links.** Wikilinks: `[[Notenavn]]`, `[[Notenavn|alias]]`, embeds `![[fil]]`, callouts `> [!note] Titel` (note, tip, warning, info, example, abstract, todo). Undgå `[tekst](sti)` til interne noter.
+- **Slet, omdøb eller overskriv aldrig JSTs egne noter og formuleringer uden en direkte instruktion.** Uopfordrede tilføjelser lægges nederst under `## AI Indsigter (YYYY-MM-DD)`. Ved større omstrukturering: foreslå først.
+- **Brug den reelle dags dato** i `created:`/`updated:` — slå den op, gæt den ikke. `updated:` sættes ved **enhver** redigering.
+- **Ved tvivl om placering, navngivning eller indhold: spørg.** Gæt ikke — det er samme regel som *Læs kilden — antag aldrig et navn* ovenfor.
+- Markér AI-berørte noter med `#ai-assisted` når det er relevant.
+
+### Frontmatter — obligatorisk på nye vault-noter
+
+```yaml
+---
+tags: []          # kebab-case, genbrug eksisterende tags
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+status: draft     # draft | review | permanent | archived
+aliases: []
+type:             # meeting | project | note | resource | daily | person | decision | index
+---
+```
+
+Skabeloner ligger i `vault/_templates/` ([[Daily]], [[Note]], [[Meeting]], [[Decision]]).
+
+### Routing
+
+| Indholdstype | Placering | Filnavn | `type:` |
+|---|---|---|---|
+| Daglig note | `vault/journal/` | `YYYY-MM-DD.md` | daily |
+| Møde | `vault/meetings/` | `YYYY-MM-DD - Mødetitel.md` | meeting |
+| Permanent note | `vault/notes/` | `Titel.md` | note |
+| Person | `vault/notes/people/` | `Fornavn Efternavn.md` | person |
+| Beslutning | `vault/notes/decisions/` | `YYYY-MM-DD - Beslutning.md` | decision |
+| Ressource/kilde | `vault/resources/` | `Titel.md` | resource |
+| Uforarbejdet | `vault/inbox/` | `YYYY-MM-DD - Kort titel.md` | – |
+| Index/MOC | `vault/` | `Index - Emne.md` | index |
+
+Filnavne i Title Case eller `YYYY-MM-DD - Titel`. Undgå `/ \ : * ? " < > |`.
+**Opret aldrig en ny mappe i `vault/` uden at sige det** — og aldrig en ny mappe i AI OS-roden, som er dækket af startkontrollen.
+
+Obsidian er konfigureret til at følge dette: `.obsidian/app.json` lægger nye filer i `vault/inbox/`, `daily-notes.json` peger på `vault/journal/`, og `templates.json` på `vault/_templates/`. **Uden den opsætning skrev daily-notes-pluginet i roden** — det var kilden til de tomme `2026-08-18.md` og `Unavngivet*`-filer der lå der indtil 2026-08-22.
+
+> [!warning] Obsidian skriver sin egen konfiguration tilbage
+> En kørende Obsidian holder indstillingerne i hukommelsen og skriver **hele** `.obsidian/*.json`
+> til disk, når noget ændres i UI'et. Redigerer du filerne mens programmet kører, kan ændringen
+> derfor blive overskrevet uden varsel. **Genstart Obsidian, efter du har rørt `.obsidian/`** — og
+> verificér bagefter på den faktiske adfærd (opret en note og se hvor den lander), ikke på filens
+> indhold. Samme fejlklasse som PBI-gem der overskriver disk-edits.
+
+### Index/MOC-vedligehold
+
+[[Index - Vault]] er vaultens MOC. `INDEX.md` i roden er noget andet: filindekset over **styrede** filer i alle 11 projekter. Vault-noter hører ikke i `INDEX.md`.
+
+- Opretter du en note der hører under et eksisterende index → **tilføj wikilinket der**. Ny kategori → foreslå et nyt index.
+- **Tjek altid for dubletter før du tilføjer**, og fjern dem du støder på. Brug det kanoniske filnavn frem for aliaset, medmindre aliaset er tydeligt mere læsbart.
+- Sortér alfabetisk, medmindre kronologisk er mere meningsfuldt. Bliver et index for langt → foreslå opdeling.
+- Opdatér `updated:` i indexet. Er ændringen større, notér den under `## AI Indsigter (YYYY-MM-DD)`.
+
+### Svarprotokol ved vault-ændringer
+
+Når — og **kun** når — du opretter, opdaterer eller omstrukturerer filer i `vault/`, indled svaret med:
+
+```yaml
+# AI_ACTION_METADATA
+action: [created | updated | restructured]
+target_file: "vault/relativ/sti.md"
+frontmatter_updated: [true | false]
+indexes_updated: ["Index - Vault"]
+changes_summary: "Kort, præcis beskrivelse"
+ai_confidence: [high | medium | low]
+```
+
+Udelades ved læsning, analyse og almindelige spørgsmål — og ved alt arbejde uden for `vault/` (TMDL, PBIR, instruktionsfiler, projektfiler). Blokken er til vault-noter, ikke til hver eneste filændring i systemet.
 
 ---
 

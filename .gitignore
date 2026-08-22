@@ -15,3 +15,10 @@ Thumbs.db
 
 # Lokal Obsidian-junction til projektroden; projekterne har egne Git-repos
 /AI-SOSU/
+
+# Codex' arbejdsmappe: screenshots, backups og mellemresultater fra sessioner.
+# Maskin-lokal — hoerer ikke i historikken (CLAUDE.md tillader mappen i roden).
+/.codex-tmp/
+
+# VS Code-arbejdsmappe: mcp.json peger paa lokale MCP-serverstier
+/.vscode/

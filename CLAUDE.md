@@ -243,63 +243,24 @@ Claude Code eller Codex — når en opgave involverer flere agenter i det pågæ
 > står nu tom med `.gitkeep`, klar til ægte `.rules`-filer, hvis kommandotilladelser en dag
 > skal styres pr. projekt. Læg aldrig `.md` i `.codex/rules/`.
 
-### Power BI-agenter (output på US English)
+### Agentgrupper og sprogkrav
 
-| Agent | Rolle |
-|---|---|
-| `pbi-dax` | DAX measures, KPIs, tidsintelligens, filterkontext |
-| `pbi-powerquery` | M-kode, query folding, relationer, stjerneskema |
-| `pbi-tmdl` | TMDL-syntaks, beregningsgrupper, model-metadata |
-| `pbi-performance` | VertiPaq, storage modes, refresh-optimering |
-| `pbi-naming` | Navngivningskonventioner, display folders, audits |
-| `pbi-kritik` | Kritisk gate FØR merge — grain, dobbelttælling, fortegn, måling-før-merge; afgiver GO/NO-GO-dom (svar på dansk) |
-| `pbi-design` | OBLIGATORISK design-standard for alle visuals/PBIR-sider — cards uden rå målernavne, ingen trunkering/scrollbars, semantisk stak-farverækkefølge (grøn→gul→rød→sort→grå), dynamiske slicer-defaults, visuel verifikation før merge (svar på dansk; JST-krav 2026-07-17) |
+Rollebeskrivelserne står i hver agents `description`-frontmatter i `agents/` (og i sessionens agent-liste) —
+de gentages ikke her. Det frontmatter IKKE siger, er sprogkrav og obligatoriske gates:
 
-### INNOMATE-agenter (output på dansk)
-
-| Agent | Rolle |
-|---|---|
-| `inno-hr` | Medarbejderlivscyklus, ansættelses- og fratrædelsesprocesser |
-| `inno-system` | INNOMATE-systemopsætning, handlinger, onboarding-konfiguration |
-| `inno-logistics` | Procesplaner, tjeklister, rollebeskrivelser, arbejdsgangsoverblik |
-| `inno-mailtemplate` | Mailskabeloner i INNOMATE, merge-felter, CPR-regler |
-
-### DATA-BUDGET_PROGNOSE-agenter (output: .xlsx med danske formater; svar til bruger: dansk)
-
-| Agent | Rolle |
-|---|---|
-| `fin-analysis` | Finansiel analyse — afvigelser, periodisering, budget vs. realiseret, cashflow |
-| `fin-patterns` | Mønstergenkendelse — anomalier, sæsonudsving, strukturelle brud, outliers |
-| `fin-statistics` | Statistisk ekspert — prognoser, regressioner, konfidensintervaller, tidsseriedekomposition |
-| `fin-accounting` | Regnskabsekspert — kontoplan, dimensioner, bogføringsregler, SOSU-specifik regnskabspraksis |
-| `fin-data` | Dataanalyse — datakvalitet, krydskildesammenstilling, oprensning, aggregering |
-| `fin-database` | Databasestruktur — skemadesign, nøgler, relationer, kanoniske kolonnenavne |
-
-### Generel infrastruktur-agent
-
-| Agent | Rolle |
-|---|---|
-| `md-optimizer` | Optimering og vedligehold af alle `.md`-filer — særligt CLAUDE.md/AGENTS.md-hukommelsesfiler. Persisterer ny viden, fejlmønstre og workflowændringer. Bruges proaktivt efter sessioner med fejlrettelser eller arkitekturændringer. |
-
-### ADM-BI-agent (output på dansk)
-
-| Agent | Rolle |
-|---|---|
-| `adm-bi` | BI governance og styringsdokumenter — strategi, datastandarder, navnekonventioner, roller og ansvar |
+| Gruppe | Agenter | Output-sprog / krav |
+|---|---|---|
+| Power BI | `pbi-dax`, `pbi-powerquery`, `pbi-tmdl`, `pbi-performance`, `pbi-naming`, `pbi-kritik`, `pbi-design` | US English i model og rapport; `pbi-kritik` (OBLIGATORISK gate før merge, GO/NO-GO) og `pbi-design` (OBLIGATORISK for alle visuals/PBIR-sider, JST-krav 2026-07-17) svarer på dansk |
+| INNOMATE | `inno-hr`, `inno-system`, `inno-logistics`, `inno-mailtemplate` | dansk |
+| DATA-BUDGET_PROGNOSE | `fin-analysis`, `fin-patterns`, `fin-statistics`, `fin-accounting`, `fin-data`, `fin-database` | .xlsx med danske formater; svar til bruger på dansk |
+| Infrastruktur | `md-optimizer` | dansk — brug proaktivt efter sessioner med fejlrettelser eller arkitekturændringer |
+| ADM-BI | `adm-bi` | dansk |
 
 ---
 
 ## Tilgængelige skills/plugins
 
-Installerede slash-kommandoer (kun Claude Code — Codex har ikke disse kommandoer):
-
-| Kommando | Hvad den gør |
-|---|---|
-| `/revise-claude-md` | Opdatér CLAUDE.md med læringer fra den aktuelle session |
-| `/claude-md-improver` | Audit og forbedringsforslag til alle CLAUDE.md-filer |
-| `/code-review` | Code review af aktuel diff eller specificeret PR |
-
-Kald dem ved at skrive kommandoen i chatten.
+Slash-kommandoer og skills (kun Claude Code) står i sessionens skill-liste og gentages ikke her — kald dem ved at skrive kommandoen i chatten.
 
 I Codex findes hverken skills eller slash-kommandoer. Skal en af dem udføres der, læses den
 tilsvarende instruks og udføres i hånden — fx et CLAUDE.md-eftersyn ved at følge
@@ -581,93 +542,9 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 
 ---
 
-## PowerShell gotchas — TMDL-filer
+## Power BI-gotchas (PowerShell/TMDL/PBIR) — flyttet
 
-**ALDRIG `Get-Content` til TMDL-filer** (PS 5.1). Læser UTF-8 som CP1252 → `Ø` → `Ã˜` → double-encoded mojibake → PBI Desktop fejler med `"Property QueryGroup ... refers to an object which cannot be found"`.
-
-Korrekt mønster:
-```powershell
-$utf8 = [System.Text.UTF8Encoding]::new($false)
-$lines = [System.IO.File]::ReadAllLines($path, $utf8)
-# ... modificer $lines ...
-[System.IO.File]::WriteAllLines($path, $lines, $utf8)
-```
-
-## TMDL-syntaks — gotchas
-
-**OBLIGATORISK før du beder om (eller selv laver) en PBI-åbning efter TMDL-edits**: kør
-`powershell -File "AI OS\tools\validate-tmdl.ps1" -DefinitionPath "<model>.SemanticModel\definition"`.
-Værktøjet kører filerne gennem SAMME TOM-deserializer som PBI Desktop og svarer på ~5 sekunder
-i stedet for en 60-sekunders åbning der ender i "Issues were found". `GRØN` = strukturen holder
-(`GRØN` gives også når parsingen standser til sidst på kompatibilitetsniveau — biblioteket kender
-ikke DAX UDF'er, og på det tidspunkt er ALT parset). `RØD` udskriver fejlen + hvilket TMDL-dokument
-den står i. Fanger ukendte properties, forkert indrykning og dublerede properties.
-
-**MEN validatoren er BLIND for DAX** (set 2026-08-03). Den parser TMDL-*strukturen*; indholdet af et
-`source =`/measure-udtryk er bare en tekstblok for den. En syntaksfejl inde i DAX'en giver derfor
-`GRØN` og opdages først når motoren evaluerer objektet. Konkret: en flerlinjet `//`-kommentar hvor
-fortsættelseslinjen manglede sine `//` — prosaen blev læst som DAX, hele den kalkulerede tabel
-`L-Kalender` faldt ud, og hver eneste visual der hang på datotabellen viste "Error fetching data for
-this visual". **Skriv aldrig en flerlinjet kommentar uden `//` på HVER linje** — den fejler ikke stille,
-den tager tabellen med sig.
-
-**Motoren er den eneste fuldstændige fejlliste.** Efter genåbning spørger du den kørende model direkte
-— det dækker HELE modellen på én gang, ikke bare den fil du lige rørte:
-```powershell
-# State 1 = OK. Alt andet (5 = fejl) har en ErrorMessage der peger på linje + tegn i udtrykket.
-& "AI OS\tools\dax-query.ps1" -Port <port> -Catalog <guid> -Query "SELECT [Name],[State],[ErrorMessage] FROM `$SYSTEM.TMSCHEMA_PARTITIONS WHERE [State] <> 1"
-# gentag for TMSCHEMA_MEASURES og TMSCHEMA_COLUMNS ([ExplicitName] i stedet for [Name])
-```
-Fejlteksten er præcis (`Ugyldigt token, linje 20, forskydning 13, Å`) — linjenummeret tælles fra
-FØRSTE linje EFTER `source =`, ikke fra filens start. Kør de tre queries som fast afsluttende kontrol
-efter enhver model-ændring; det er sådan man ser at man lukkede fejlKLASSEN og ikke bare sit ene tilfælde.
-
-- **`///`-docstring på en RELATION brækker modellen**: `Property 'description' is unknown and is not
-  expected in the situation it appears`. Relationer har ingen beskrivelses-egenskab — læg forklaringen
-  i CLAUDE.md eller commit-beskeden i stedet. Samme fejlklasse rammer alle objekttyper der ikke
-  understøtter description; validatoren ovenfor fanger dem alle (set 2026-07-26).
-- **PBI's fejl-dialog har INTET fejltidspunkt**: `Timestamp` i frown-rapporten er tidspunktet hvor
-  brugeren klikkede "Copy details to clipboard" — dialogen kan have stået åben i timevis, og fejlen
-  kan for længst være rettet. Før du jagter en rapporteret åbningsfejl: sammenhold filens mtime med
-  fixet, og tjek PBI-vinduets titel + `IsEnabled` via UIA (`Untitled` + `enabled=False` = instansen
-  hænger stadig i den GAMLE modal). Verificér ved at genåbne — ikke ved at læse stack-tracen igen.
-- **INGEN `/* ... */`-blokkommentarer på objekt-niveau** (measure/column/table). TMDL er indrykningsfølsomt, og blokkommentarer udløser `TMDL Format Error: Parsing error type - Indentation / Invalid indentation` ved load i PBI Desktop. Brug i stedet `///` (beskrivelse, bliver til objektets tooltip) eller `//` (linjekommentar) ved SAMME indrykning som objektet. `/* */` er KUN gyldigt inde i M-source-blokken (`source = ```...````), fordi det er en fritekst-streng. Set 2026-06-01 i `#Measures - STU.tmdl`.
-- **Tabel-scoped refresh uden PBI's UI**: `powershell -File "AI OS\tools\tmsl-refresh.ps1" -Port <port> -Catalog <guid> -Table "<tabel>"` sender en TMSL `refresh` via ADOMD til den kørende instans. Uden `-Table` refreshes hele databasen (undgå — timeouter typisk over VPN). Kør den med `run_in_background`, og poll `COUNTROWS(<tabel>)` — et hængende kald betyder næsten altid en usynlig modal (se næste punkt), ikke en langsom kilde.
-- **Hårde `Stop-Process -Force`-drab på PBI kan efterlade cloud-credentials i limbo** (set 2026-07-27). Symptom: TMSL-refresh mod en SharePoint-/cloud-kilde hænger uden fejl, PBI-hovedvinduet har `IsEnabled=False` (usynlig credential-modal — UIA finder ingen knapper under PBI-processen), og et Edge-vindue melder "Authentication Complete". Fejlteksten `AADSTS9002313: Invalid request` er et SPOR, ikke roden. Fix: luk PBI helt og genåbn `.pbip` — refresh virker så uden auth-prompt. Samme familie som `pbi-aabningsfejl-token-comma` (rådden sessionstilstand): **genstart før du fejlsøger**.
-- **PBI nægter ofte `CloseMainWindow()`** (set to gange 2026-08-02). Vinduet kan stå
-  `IsEnabled=False` med en modal der ikke kan findes hverken under processen eller på
-  skrivebordet — og selv med `Responding=True` lukker den ikke. Hårdt drab + genåbning er
-  så den rigtige vej: det er samtidig kuren mod credential-limbo-tilstanden ovenfor.
-  **Tjek altid hash på de filer du har redigeret før og efter drabet** — så ved du at PBI
-  ikke nåede at skrive noget. Genåbning tager ~2 min; vent på at titlen skifter fra
-  `Untitled - Power BI Desktop`.
-- **`.pbip` åbnes via explorer, ikke via exe'en**: `Start-Process "<pbidesktop.exe>"` fejler med `Adgang nægtet` (Store-app under `WindowsApps`). Brug `Start-Process explorer.exe -ArgumentList "`"<sti til .pbip>`""`. Vent på at vinduestitlen skifter fra `Untitled - Power BI Desktop` til projektnavnet før du måler.
-- **PBI-gemning overskriver disk-edits**: Har brugeren pbix'en åben i PBI Desktop og gemmer, skrives in-memory-modellen hen over mine TMDL/PBIR-diskændringer → de forsvinder. Redigér kun disk når disk == seneste PBI-gem; bed brugeren **genåbne pbix UDEN at gemme først** for at indlæse mine ændringer.
-- **DAX VAR-navne SKAL være ren ASCII** (set 2026-06-02): æøå/Å (og andre ikke-ASCII-tegn) i et `VAR`-navn giver `Invalid token, Line X, Offset Y, <tegn>` ved parsing. Et mål med denne fejl loades som objekt (vises i Data-ruden med rød trekant) men er ugyldigt → PBI dropper det stille fra visual-field-wells OG filterpanel, så en korrekt visual-binding ser blank ud. Brug fx `_AarStart`/`_AarSlut` i stedet for `_ÅrStart`/`_ÅrSlut`. Tabel-/kolonne-/målnavne MÅ gerne have æøå (de står i `'...'`-quotes); det er kun bare VAR-identifikatorer der skal være ASCII.
-- **Partition-`queryGroup` SKAL være deklareret i model.tmdl** (set 2026-07-17). En partition med `queryGroup: STU\BUDGET` hvor gruppen ikke findes blandt model.tmdl's `queryGroup`-deklarationer → PBI kan slet ikke åbne projektet: `Cannot resolve all the paths while de-serializing Database. Resolution Errors: Property QueryGroup of object "partition X" refers to an object which cannot be found`. Fix: brug en eksisterende gruppe (fx `STU\DATA`) eller deklarér den nye i model.tmdl. NB: samme fejltekst ("Property QueryGroup ... cannot be found") opstår OGSÅ ved encoding-mojibake i gruppenavnet (se PowerShell-gotcha ovenfor) — tjek begge årsager.
-- **CALCULATE-filterargumenter evalueres i den YDRE filterkontekst** (set 2026-07-21): et `FILTER('Fakta', interval-betingelse)`-argument er allerede relations-reduceret (fx af en aktiv dato-relation) FØR modifiers som `CROSSFILTER(...,NONE)`/`REMOVEFILTERS` får virkning — de påvirker kun den indre evaluering. Events-in-progress-målere ("aktive pr. dag") SKAL derfor bruge `FILTER(ALL('Fakta'), start<=d && slut>=d)` (og dokumentere at eksterne fakta-filtre dermed ignoreres).
-- **M-råværdien bag en model-STRING-kolonne kan være datetime** (set 2026-07-21): modellens visning ("01-05-2025") siger intet om M-typen — en `(x as nullable text)`-funktion kaster på typecheck og alle celler bliver stille null. Og `Date.FromText(x, [Culture="da-DK"])` fejlede på ALLE rækker i denne PBI-version. Robust interval-dato-parsing: type-agnostisk `(x as any)` — date/datetime returneres direkte (`Date.From`), tekst parses manuelt med `Text.Split(Text.Start(t,10), "-")` → `#date(år, md, dag)`.
-- **En dim-tabel der er én-siden i en relation må IKKE unpivoteres** (set 2026-07-27). Lagde tre normvarianter om fra kolonner til rækker (`Normtype`/`Normtimer`) i en dim med relationen `Fakta[Initialer] → Dim[Initialer]` → refresh fejler med `Column 'Initialer' ... contains a duplicate value ... not allowed for columns on the one side of a many-to-one relationship`. TMDL-validatoren fanger det IKKE (den validerer struktur, ikke data). Tjek relationsretningen FØR enhver grain-ændring på en dim; nye varianter tilføjes som kolonner.
-- **En dim-tabel der er relations-MÅL må IKKE være en kalkuleret tabel afledt af de samme fact-kolonner den relaterer til** (set 2026-06-20). Lavede en delt forløbs-dim som `calculated` = `DISTINCT(UNION(VALUES(Fact1[col]), VALUES(Fact2[col])))` OG lagde relationer `Fact1[col]→Dim[col]` osv. → PBI fejler ved LOAD (før refresh) med `Relationship '<guid>' uses an invalid column ID <n>`. Årsag: cirkulær/ordnings-afhængighed — en kalk-tabels kolonner materialiseres FØRST ved processering (refresh), men relationer valideres ved load, så kolonnen har intet gyldigt ID at binde til. (En CALENDAR-kalk-tabel virker som relations-mål fordi den ikke afhænger af de facts den relaterer til.) **Fix: kild dim'en fra de RÅ M-queries i stedet** (M/import-tabel: `Table.Combine` af `Table.SelectColumns(#"RawQuery", {"col"})` fra hver kilde → `SelectRows(<>null and <>"")` → `Table.Distinct` → `type text`). En M/import-tabel har statisk kolonne-metadata der binder ved åbning uafhængigt af processering. Single-direction many→one relationer, dim'en skal indeholde UNIONEN af alle facts' værdier (ellers blank-member-rækker).
-
-## PBIR-rapporter — gotchas (visuals)
-
-- **Indbygget visualType-navn**: *Stacked column chart* = `columnChart` (IKKE `stackedColumnChart` → `CustomVisualNotFound`). Stablet liggende = `barChart`. Clustered har egne navne (`clusteredColumnChart`/`clusteredBarChart`); 100% = `hundredPercentStacked...`.
-- **Fra-bunden PBIR-JSON-visuals BINDER faktisk** (rettet 2026-06-02): håndskrevet `queryState`-binding på en helt ny side + visual-skal populerer field-wells og renderer fint ved kold genstart af PBI Desktop — INKL. Y/Column-projektioner, ikke kun Category. Den tidligere konklusion ("binder ikke / kræver UI-træk", set 2026-06-01) var **fejldiagnosticeret**: de refererede mål havde en DAX-fejl (se DAX-VAR-ASCII-gotcha nedenfor), og PBI dropper stille et fejlramt mål fra både field-well OG filterpanel → visual'et så blankt ud, selvom JSON'en var korrekt. **Tjek altid at de refererede mål er fejlfri (ingen rød trekant i Data-ruden) FØR du konkluderer at binding ikke virker.** Repointing af eksisterende UI-skabte visuals virker også (skift `Property` + `queryRef` + `nativeQueryRef` i projection, sortDefinition og filterConfig).
-- **Hot-reload af PBIR kræver kold genstart**: PBI Desktop genindlæser ikke altid disk-redigeret PBIR ved blot at åbne filen igen — luk HELE PBI Desktop (ikke kun fanen) og genåbn `.pbip` for at se mine disk-ændringer. TMDL-model-ændringer reloader lettere end PBIR-layout.
-- `queryRef: "#Measures - ELEV.X"` kan være en STALE kosmetisk label — den bindende reference er `field.Measure.Expression.SourceRef.Entity` + `Property`.
-- **Dynamisk slicer-default** ("altid indeværende år"): gemte slicer-valg er statiske — lav en beregnet label-kolonne (fx `IF([År]=YEAR(TODAY()),"Indeværende år",FORMAT([År],"0"))` m. sortByColumn) og gem valget på LABELEN; den følger så med ved refresh.
-- **Slicer-header-tekst** kan overstyres (`objects.header.text`) → feltnavnet skjules uden titel-boks (Periode-stil). Et Advanced-målerfilter UDEN filter-body er inaktiv placeholder.
-- **sortByColumn må IKKE pege på en DAX-kalk-kolonne afledt af den sorterede kolonne** (set 2026-07-21): `[Status]` sorteret af kalk-kolonnen `SWITCH([Status],...)` → PBI nægter at åbne projektet ("A circular dependency was detected"). 'År (vælger)'-mønsteret er det OMVENDTE (kalk-kolonne sorteret AF basiskolonnen) og lovligt. Løsning: byg sortkolonnen som M-STEP i partitionen (import-kolonne). OG: M-mapningen skal være CASE-INSENSITIV + hårdt normaliseret (`Text.Lower`+`Text.Clean`+NBSP) — Vertipaq-dictionary er case-ufølsom og kollapser rå-varianter til én modelværdi, så to varianter med forskellig sortværdi giver 1:1-brud.
-- **SVG-side-baggrunde KRÆVER registrering i report.json** (`resourcePackages → RegisteredResources → items`) — filen i `StaticResources\RegisteredResources` alene er IKKE nok (siden renderer da uden baggrund, stille). Set 2026-07-21: 48 uregistrerede ELEV-SVG'er = alle E-O-/E-A-baggrunde havde været væk længe.
-- **Felt-omdøbning i visuals**: `displayName` sættes PR. PROJEKTION (sammen med queryRef/nativeQueryRef) — et `columnProperties`-objekt på `/visual`-niveau AFVISES af PBIR-skemaet ("additional property") og blokerer rapport-åbning (set 2026-07-20).
-- **formatString-% ganger SELV med 100**: et u-escapet `%` i formatString multiplicerer værdien (0,951 → "95,1 %"); `\ %` escaper KUN mellemrummet, ikke procenttegnet. Målere skal derfor returnere ANDELE (0-1), aldrig selv gange med 100 (gav "9510 %", set 2026-07-20). Procentpoint-målere uden %-format ganger selv.
-- **Stacked PRs (git/GitHub)**: `gh pr merge --squash --delete-branch` på base-PR'en LUKKER den stackede child-PR (GitHub retargeter IKKE når base-branchen slettes). Fix: genskab base-branchen (`git push origin <sha>:refs/heads/<navn>`), `gh api PATCH state=open`, derefter SEPARAT `PATCH base=main` (base kan ikke ændres på lukket PR; `gh pr edit` kræver read:org-scope — brug REST). Og: merge af main ind i en branch med PBI-gem-churn kan GENINDSÆTTE serializer-flyttede TMDL-kolonneblokke som DUBLETTER (`-X ours` er utilstrækkelig — hunks er ikke-konfliktende) → brug `git merge -s ours` (tag hele branch-træet) + dublet-tjek på `^\tcolumn`-navne før push (set 2026-07-20).
-- **Et CARD med en BLANK måler skriver "(Blank)" på lærredet** (set 2026-08-02): et "usynligt" advarselskort stod med rød `(Blank)` midt på produktionssiden. Brug `IF(<betingelse>, tekst, "")` — tom streng giver et reelt usynligt card. Generelt: at målerens VÆRDI er rigtig siger intet om hvordan visualet VISER den — test det led der faktisk er i spil.
-- **Efter merge af en ændring i en M-tabels kode er tabellen UPROCESSERET ved næste åbning** (set 2026-08-02): tabellen er tom, og alt der bygger på den bliver blankt — for brugeren ser hele rapporten ødelagt ud. Kør den tabel-scoped refresh (`tools/tmsl-refresh.ps1`, ~140 sek.), **skriv det ikke bare i commit-beskeden**. Ændrer man kun en MÅLER, bevares data-cachen ved genåbning.
-- **Sammenligning på et symbol-tegn (`LEFT(t,1) = "⚠"`) kræver bytes-tjek i BEGGE ender** (gate-fund 2026-08-02): en variation selector (`U+FE0F`) der er sneget med i den ene ende gør at sammenligningen aldrig matcher — advarslen forsvinder STILLE. Verificér med hex-dump af udtrykket både på disk og i `TMSCHEMA_MEASURES`. NB: en model-måler der refererer en anden MODEL-måler binder ikke til query-scoped `DEFINE MEASURE`-overrides — vil du tvinge en unåelig gren frem i en test, kræver det en kontroltest, ellers ligner det et brudt værn.
-- **Referencetjek før sletning skal dække HELE repoet** (set 2026-08-02): jeg grep'ede en sidesletning i `HR_OEKONOMI.Report` og meldte "ingen referencer" — men `tools/deneb-kalender/embed.py` pegede på siden, og det dokumenterede værktøjstrin ville have fejlet EFTER at have skrevet halvt færdigt. Søg i `.md`, `.py`, `.mjs`, `.ps1`, `.dax`, `.json`, ikke kun i den mappe ændringen ligger i.
-- **Et script du committer skal kunne køre FRA repoet** (set 2026-08-02): `byg-spec.py` havde hårdkodede stier ind i sessionens scratchpad inkl. session-GUID — værktøjet virkede kun for én session på én maskine, og det opdagede ingen før gaten forlangte det kørt. Brug `os.path.dirname(os.path.abspath(__file__))`, læg nødvendige datafiler ind i repoet, og test fra en ren mappe.
-- **Værktøjer der skriver PBIR/pages.json skal skrive UDEN afsluttende linjeskift og med eksplicit LF** — PBI serialiserer uden, så et ekstra `\n` giver støjende diff ved hvert brugergem; og Pythons tekst-mode giver CRLF på Windows, som `.gitattributes` normaliserer, så filen står permanent "ændret" uden at være det. Kontrol: kør værktøjet to gange — `git diff` skal være TOM.
-- **Pin en test-motors version EKSAKT når testen asserterer pixelværdier** (set 2026-08-02): render-testen af en Deneb-spec kørte Vega 5.33.1 mens Deneb 1.9.1.0 leverer 6.2.0 (aflæses i `visual.objects.vega[0].properties.version`; Deneb-versionen står i `developer[0]`). En caret lod versionen glide ubemærket. Et værn der måler mod en anden motor end produktionen er et værn uden dækning.
-- Selvkørt PBI-cyklus (luk/åbn via UIA-recents/TMSL-refresh): opskrift i BI-OEKONOMI/CLAUDE.md.
+Afsnittene *PowerShell gotchas — TMDL-filer*, *TMDL-syntaks — gotchas* og *PBIR-rapporter — gotchas (visuals)*
+ligger fra 2026-08-25 i `AI-SOSU/BI-OEKONOMI/CLAUDE.md` (spejlet i `AGENTS.md`), fordi de kun gælder
+Power BI-arbejde, som routing-tabellen sender dertil. **De gælder ALLE BI-projekter** (`BI-OEKONOMI`,
+`BI-OPTAG FRAVÆR`, `BI-OPGAVEOVERSIGT`) — læs dem dér før enhver TMDL-/PBIR-edit, uanset hvilket repo du står i.

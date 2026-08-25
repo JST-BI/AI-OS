@@ -13,7 +13,7 @@ Formål: måle DAX-aggregater direkte mod den model brugeren har åben i PBI Des
    ```powershell
    Get-Process msmdsrv | Get-NetTCPConnection -State Listen | Select-Object LocalPort
    ```
-   Ingen msmdsrv-proces ⇒ PBI Desktop er lukket — bed brugeren åbne .pbip, eller brug selvkørt PBI-cyklus (opskrift i BI-OEKONOMI/CLAUDE.md).
+   Ingen msmdsrv-proces ⇒ PBI Desktop er lukket — bed brugeren åbne .pbip, eller brug selvkørt PBI-cyklus (opskrift i `BI-OEKONOMI/tools/pbi-desktop-cyklus.md`; scripts `AI OS/tools/pbi-reopen.ps1` + `pbi-screenshot.ps1`).
 
 2. **Find katalog-GUID** (kræves som Initial Catalog):
    ```powershell

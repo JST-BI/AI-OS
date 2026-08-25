@@ -74,8 +74,14 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `.claude/rules/pbi-workflows.md` | Agent-workflow-mønstre for PBI-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20: dén mappe er til Starlark-`.rules`, ikke Markdown) |
 | `Rapporter/HR_OEKONOMI/` | Selve rapporten som `.pbip`: `HR_OEKONOMI.SemanticModel/` (TMDL) + `HR_OEKONOMI.Report/` (PBIR) |
 | `Input/standards/power-query-step-naming.md` | Referencestandard for M-step-navngivning (VerbObject-Konkret) |
+| `Input/standards/pbir-visual-json.md` | PBIR visual-JSON: farvearkitektur (selector.metadata vs. data), queryGroup-placering, auto-date-time, sourceColumn ved rename, PBIR-struktur og formatering (flyttet fra CLAUDE.md 2026-08-25) |
+| `Input/standards/tmdl-integration.md` | Erfaringer ved import af tabeller fra en fremmed TMDL-model: expressions vs. model-tabeller, sanitering, transitive M-afhængigheder (flyttet fra CLAUDE.md 2026-08-25) |
 | `Output/tmdl/elevproduktion-integration/README.md` | Dokumentation af elevproduktions-integrationen |
 | `tools/spor2-byggeplan.md` | Byggeplan for Spor 2 (Formål-dekomponering af resultatopgørelsen) |
+| `tools/pbi-desktop-cyklus.md` | Selvkørt PBI Desktop-cyklus: luk/åbn via UIA, TMSL-refresh, gem via keystroke, screenshots, disk-cache-fælder (flyttet fra CLAUDE.md 2026-08-25) |
+| `tools/z8050-elevside-laeringer.md` | Z8050-elevsiden: unikke elever, frafaldsdefinition, Bullet Chart 2.4.2.0-grænser, variansanalysens gate-læringer (PR #61–#64; flyttet fra CLAUDE.md 2026-08-25) |
+| `tools/deneb-kalender/SÅDAN-GØR-DU.md` | Deneb-kalenderens byggekæde (byg-spec → render-test → embed) + geometri-/testharnisk-læringer |
+| `tools/kalender-ansoegere-konceptafklaring.md` | Konceptafklaring for kalender-visual og ansøger-subtotal + de flyttede undersøgelseslogs (L3/Z8005, lokalafdeling, optags-matrix, frakoblet dim) |
 | `tools/README-regnskabsforklaring.md` | Dokumentation af regnskabsforklarings-snapshotkæden |
 | `tools/snapshot-regnskabsforklaring.ps1` + `snapshot_excel_merge.py` | Scripts til per-konto Forventet-snapshot (Spor 1) |
 | `tools/dax-udf-forberedelse.md` | Kandidatliste og forberedelse til DAX UDF-migreringer |

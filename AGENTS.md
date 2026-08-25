@@ -440,7 +440,7 @@ Alt andet kører uden prompt.
 
 ---
 
-## Obsidian-vaultregler (indført 2026-08-22)
+## Obsidian-vaultregler (indført 2026-08-22, opdateret 2026-08-25 efter JSTs systemprompt *Obsidian AI Assistant v4.2*)
 
 Vaulten er AI OS-roden, men den indeholder to slags filer med **hver sit regelsæt**. Bland dem aldrig sammen.
 
@@ -457,11 +457,12 @@ Vaulten er AI OS-roden, men den indeholder to slags filer med **hver sit regels�
 
 ### Grundregler
 
-- **Aldrig absolutte stier i interne links.** Wikilinks: `[[Notenavn]]`, `[[Notenavn|alias]]`, embeds `![[fil]]`, callouts `> [!note] Titel` (note, tip, warning, info, example, abstract, todo). Undgå `[tekst](sti)` til interne noter.
+- **Aldrig absolutte stier i interne links.** Wikilinks: `[[Notenavn]]`, `[[Notenavn|alias]]`, embeds `![[fil]]` / `![[fil|bredde]]`, callouts `> [!note] Titel` (note, tip, warning, info, example, abstract, todo). Undgå `[tekst](sti)` til interne noter.
 - **Slet, omdøb eller overskriv aldrig JSTs egne noter og formuleringer uden en direkte instruktion.** Uopfordrede tilføjelser lægges nederst under `## AI Indsigter (YYYY-MM-DD)`. Ved større omstrukturering: foreslå først.
 - **Brug den reelle dags dato** i `created:`/`updated:` — slå den op, gæt den ikke. `updated:` sættes ved **enhver** redigering.
 - **Ved tvivl om placering, navngivning eller indhold: spørg.** Gæt ikke — det er samme regel som *Læs kilden — antag aldrig et navn* ovenfor.
 - Markér AI-berørte noter med `#ai-assisted` når det er relevant.
+- Svar på samme sprog som brugeren (her: dansk).
 
 ### Frontmatter — obligatorisk på nye vault-noter
 
@@ -489,10 +490,16 @@ Skabeloner ligger i `vault/_templates/` ([[Daily]], [[Note]], [[Meeting]], [[Dec
 | Beslutning | `vault/notes/decisions/` | `YYYY-MM-DD - Beslutning.md` | decision |
 | Ressource/kilde | `vault/resources/` | `Titel.md` | resource |
 | Uforarbejdet | `vault/inbox/` | `YYYY-MM-DD - Kort titel.md` | – |
-| Index/MOC | `vault/` | `Index - Emne.md` | index |
+| Index/MOC | `vault/` | `Index - Emne.md` (alt. `MOC - Emne.md`) | index |
+| Vedhæftning (billede, PDF) | `vault/_attachments/` | beskrivende filnavn | – |
 
 Filnavne i Title Case eller `YYYY-MM-DD - Titel`. Undgå `/ \ : * ? " < > |`.
 **Opret aldrig en ny mappe i `vault/` uden at sige det** — og aldrig en ny mappe i AI OS-roden, som er dækket af startkontrollen.
+
+**Routing-principper** (i rækkefølge):
+1. Tjek eksisterende mapper og noter først — findes emnet allerede, så udvid frem for at oprette.
+2. Hører noten til et projekt → den hører i projektets eget repo under `AI-SOSU/`, ikke i `vault/`.
+3. Ved tvivl → foreslå muligheder, eller læg noten midlertidigt i `vault/inbox/` og sig det.
 
 Obsidian er konfigureret til at følge dette: `.obsidian/app.json` lægger nye filer i `vault/inbox/`, `daily-notes.json` peger på `vault/journal/`, og `templates.json` på `vault/_templates/`. **Uden den opsætning skrev daily-notes-pluginet i roden** — det var kilden til de tomme `2026-08-18.md` og `Unavngivet*`-filer der lå der indtil 2026-08-22.
 
@@ -507,10 +514,19 @@ Obsidian er konfigureret til at følge dette: `.obsidian/app.json` lægger nye f
 
 [[Index - Vault]] er vaultens MOC. `INDEX.md` i roden er noget andet: filindekset over **styrede** filer i alle 11 projekter. Vault-noter hører ikke i `INDEX.md`.
 
-- Opretter du en note der hører under et eksisterende index → **tilføj wikilinket der**. Ny kategori → foreslå et nyt index.
-- **Tjek altid for dubletter før du tilføjer**, og fjern dem du støder på. Brug det kanoniske filnavn frem for aliaset, medmindre aliaset er tydeligt mere læsbart.
+- Index-noter er **rene oversigter**: korte beskrivelser + lister med wikilinks. Ingen brødtekst.
+- Opretter du en note der hører under et eksisterende index → **tilføj wikilinket der**. Ny kategori → foreslå et nyt index (opret det kun efter tilladelse).
+- **Tjek altid for dubletter før du tilføjer**, og fjern dem du støder på — og nævn kort i svaret at du har ryddet op. Brug det kanoniske filnavn frem for aliaset, medmindre aliaset er tydeligt mere læsbart.
 - Sortér alfabetisk, medmindre kronologisk er mere meningsfuldt. Bliver et index for langt → foreslå opdeling.
 - Opdatér `updated:` i indexet. Er ændringen større, notér den under `## AI Indsigter (YYYY-MM-DD)`.
+
+### Arbejdsflow ved enhver vault-opgave
+
+1. Læs relevant kontekst (eksisterende noter, index, tags) før du skriver.
+2. Anvend routing-tabellen og -principperne ovenfor.
+3. Tjek om den nye/ændrede note skal linkes ind i et eksisterende index/MOC — og opdatér det uden dubletter.
+4. Foreslå wikilinks til relaterede noter (eksisterende tags og noter frem for nye).
+5. Rapportér kort hvad du har oprettet/ændret, hvor det ligger, og hvilke indexes du har opdateret — det er indholdet af metadatablokken nedenfor.
 
 ### Svarprotokol ved vault-ændringer
 

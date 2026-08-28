@@ -6,7 +6,7 @@
 >
 > **Stier**: `<OneDrive>` betyder `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers`. Arbejdskopierne er `<OneDrive>\AI OS` og `<OneDrive>\AI SOSU`; `Y:\…` er delte kopier (se *Placering* nedenfor).
 >
-> **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 11 projekter. Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
+> **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 11 projekter (12 repos inkl. AI OS). Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
 >
 > **Én Markdown-kilde — Obsidian + Claude Code + Codex**: De versionsstyrede `.md`-filer i `<OneDrive>\AI OS\` og den fysiske projektmappe `<OneDrive>\AI SOSU\` er de kanoniske kilder. Claude Code læser `CLAUDE.md`, og Codex læser det identiske `AGENTS.md`-spejl direkte fra hvert repo. Obsidian-vaulten har rod i `<OneDrive>\AI OS\`; projektfilerne forbliver i den separate kanoniske projektmappe og må aldrig kopieres eller eksporteres til `.obsidian/`.
 
@@ -23,8 +23,8 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, pbi-design, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
 [ ] AI OS rod indeholder KUN: agents/, tools/, vault/, .githooks/, .claude/, .agents/, .codex/, .obsidian/, .codex-tmp/, .vscode/, CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen fysiske projektmapper, og INGEN loese .md/.canvas/.base-filer (de hoerer i vault/)
 [ ] <OneDrive>\AI SOSU findes (omdøbt fra `AI-SOSU` 2026-08-29) og er den ENESTE aktive arbejdskopi. Y:\AI SOSU og Y:\AI OS er delte samarbejdskopier for kollegerne — arbejd ALDRIG direkte i dem (se *Placering*)
-[ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
-[ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] <OneDrive>\AI SOSU\SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
+[ ] <OneDrive>\AI SOSU\BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] <OneDrive>\AI SOSU\ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] <OneDrive>\AI SOSU\ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
 [ ] <OneDrive>\AI SOSU\ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
@@ -42,7 +42,7 @@ case-insensitivt, så en fejlkapitaliseret `.Codex/` ser rigtig ud lokalt og vir
 — men navnet gemmes med stort C i git, og på ethvert andet system (Linux, CI, en frisk klon)
 finder Codex ingenting. Fejlen var reel her indtil 2026-08-20. Opret aldrig `.Codex/` igen.
 
-**Placering — én arbejdskopi, delte kopier på Y: (korrigeret 2026-08-29):** Alt arbejde foregår i OneDrive: `<OneDrive>\AI OS\` (dette repo + Obsidian-vault) og `<OneDrive>\AI SOSU\` (de 11 projektkloner, git + PBIP). `Y:\AI OS\` og `Y:\AI SOSU\` på SMB-drevet er **delte samarbejdskopier** til kollegerne — ikke arbejdsmapper: de holdes ajour fra GitHub (`git pull --ff-only` i hver klon; `Y:\AI OS` er en ren filkopi uden `.git`), og agenten skriver aldrig direkte i dem (git og PBI Desktop over VPN'en til Y: er 6–14× langsommere og filserveren afviser junctions/symlinks). Opdages arbejde der KUN findes på Y: (nyere commits eller ucommitterede ændringer), skal agenten stoppe og rapportere i stedet for at overskrive. Historik: 20-08 blev projektroden erklæret flyttet til `Y:\AI SOSU`, men arbejdet fortsatte i OneDrive (`AI-SOSU`); Y:-kopierne var derfor et 20-08-snapshot indtil 29-08.
+**Placering — én arbejdskopi, delte kopier på Y: (korrigeret 2026-08-29):** Alt arbejde foregår i OneDrive: `<OneDrive>\AI OS\` (dette repo + Obsidian-vault) og `<OneDrive>\AI SOSU\` (de 11 projektkloner, git + PBIP). `Y:\AI OS\` og `Y:\AI SOSU\` på SMB-drevet er **delte samarbejdskopier** til kollegerne — ikke arbejdsmapper: de holdes ajour fra GitHub (`git pull --ff-only` i hver klon; `Y:\AI OS` er en ren filkopi uden `.git`), og agenten skriver aldrig direkte i dem (git og PBI Desktop over VPN'en til Y: er 6–14× langsommere og filserveren afviser junctions/symlinks). Opdages arbejde der KUN findes på Y: (nyere commits eller ucommitterede ændringer), skal agenten stoppe og rapportere i stedet for at overskrive. Historik: 20-08 blev projektroden erklæret flyttet til `Y:\AI SOSU`, men arbejdet fortsatte i OneDrive (`AI-SOSU`); Y:-kopierne var derfor et 20-08-snapshot indtil 29-08. Opdatering af Y: (kun efter JSTs ønske): `git pull --ff-only origin main` i hver `Y:\AI SOSU\<repo>` med remote (stash lokale ændringer først, og rapportér dem), og `robocopy "<OneDrive>\AI OS" "Y:\AI OS" /E /XO /XD .git .claude .codex-tmp .obsidian node_modules /XF workspace.json` for AI OS — kør robocopy fra PowerShell, ikke Bash (stier konverteres forkert).
 
 ---
 
@@ -208,10 +208,10 @@ Arbejdsprojekterne ligger fysisk i den separate kanoniske projektmappe `<OneDriv
 | Læse, sammenligne eller revidere en aftale | `<OneDrive>\AI SOSU\ADM-AFTALER\` |
 | Blanketter og formularer | `<OneDrive>\AI SOSU\ADM-BLANKET\` |
 | Skrive procesplaner eller mailskabeloner | `<OneDrive>\AI SOSU\SYS-INNOMATE\` |
-| Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
-| Redigere Regnskabsinstruks, Indkøbspolitik eller finansiel risiko | `ADM-ØKONOMI/` |
-| BI governance, datastandarder, navnekonventioner eller BI-strategi | `ADM-BI/` |
-| Kantinens menukort, ugemenu eller prisskilt | `ADM-KANTINE/` |
+| Redigere Personalehåndbog eller Lederhåndbog | `<OneDrive>\AI SOSU\ADM-HÅNDBØGER\` |
+| Redigere Regnskabsinstruks, Indkøbspolitik eller finansiel risiko | `<OneDrive>\AI SOSU\ADM-ØKONOMI\` |
+| BI governance, datastandarder, navnekonventioner eller BI-strategi | `<OneDrive>\AI SOSU\ADM-BI\` |
+| Kantinens menukort, ugemenu eller prisskilt | `<OneDrive>\AI SOSU\ADM-KANTINE\` |
 | Finansiel analyse, budget, prognose (Navision-data) | `<OneDrive>\AI SOSU\DATA-BUDGET_PROGNOSE\` |
 | Noget der spænder over flere projekter | Start her, koordinér |
 
@@ -396,7 +396,7 @@ Alt andet kører uden prompt.
 - **Obsidian-vault**: Vault-roden er `<OneDrive>\AI OS\`, og `.obsidian/` er kun vaultens konfigurationsmappe. Arbejdsprojekterne ligger separat og kanonisk i `<OneDrive>\AI SOSU\`; opret aldrig kopier eller links til dem under vaulten. Åbn aldrig `.obsidian/` som en separat vault.
 - **Obsidian-livekontrol**: Verificér en åbnet fil via den aktive tabs `state.state.file` under `main` i `.obsidian/workspace.json` (eller den synlige vinduestitel). Brug ikke `lastOpenFiles` som facit; listen kan halte, selv om filen er åbnet korrekt.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
-- `INDEX.md` er det samlede filindeks over alle styrede filer i alle 12 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
+- `INDEX.md` er det samlede filindeks over alle styrede filer i alle 11 projekter + AI OS — opdatér det når filer tilføjes, fjernes eller omdøbes.
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`
 
 ---

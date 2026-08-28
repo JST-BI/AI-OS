@@ -25,20 +25,20 @@ Du læser, analyserer og opdaterer `.md`-filer. Du skriver ikke DAX, M-kode, TMD
 ### Primære hukommelsesfiler
 | Fil | Sti |
 |---|---|
-| AI OS CLAUDE.md | `Y:\AI OS\CLAUDE.md` |
-| BI-OEKONOMI CLAUDE.md | `Y:\AI SOSU\BI-OEKONOMI\CLAUDE.md` |
-| SYS-INNOMATE CLAUDE.md | `Y:\AI SOSU\SYS-INNOMATE\CLAUDE.md` |
-| ADM-HÅNDBØGER CLAUDE.md | `Y:\AI SOSU\ADM-HÅNDBØGER\CLAUDE.md` |
-| ADM-ØKONOMI CLAUDE.md | `Y:\AI SOSU\ADM-ØKONOMI\CLAUDE.md` |
-| ADM-BI CLAUDE.md | `Y:\AI SOSU\ADM-BI\CLAUDE.md` |
-| DATA-BUDGET_PROGNOSE CLAUDE.md | `Y:\AI SOSU\DATA-BUDGET_PROGNOSE\CLAUDE.md` |
-| ADM-KANTINE CLAUDE.md | `Y:\AI SOSU\ADM-KANTINE\CLAUDE.md` |
-| BI-OPGAVEOVERSIGT CLAUDE.md | `Y:\AI SOSU\BI-OPGAVEOVERSIGT\CLAUDE.md` |
-| BI-OPTAG FRAVÆR CLAUDE.md | `Y:\AI SOSU\BI-OPTAG FRAVÆR\CLAUDE.md` |
-| ADM-AFTALER CLAUDE.md | `Y:\AI SOSU\ADM-AFTALER\CLAUDE.md` |
-| ADM-BLANKET CLAUDE.md | `Y:\AI SOSU\ADM-BLANKET\CLAUDE.md` |
+| AI OS CLAUDE.md | `<OneDrive>\AI OS\CLAUDE.md` |
+| BI-OEKONOMI CLAUDE.md | `<OneDrive>\AI SOSU\BI-OEKONOMI\CLAUDE.md` |
+| SYS-INNOMATE CLAUDE.md | `<OneDrive>\AI SOSU\SYS-INNOMATE\CLAUDE.md` |
+| ADM-HÅNDBØGER CLAUDE.md | `<OneDrive>\AI SOSU\ADM-HÅNDBØGER\CLAUDE.md` |
+| ADM-ØKONOMI CLAUDE.md | `<OneDrive>\AI SOSU\ADM-ØKONOMI\CLAUDE.md` |
+| ADM-BI CLAUDE.md | `<OneDrive>\AI SOSU\ADM-BI\CLAUDE.md` |
+| DATA-BUDGET_PROGNOSE CLAUDE.md | `<OneDrive>\AI SOSU\DATA-BUDGET_PROGNOSE\CLAUDE.md` |
+| ADM-KANTINE CLAUDE.md | `<OneDrive>\AI SOSU\ADM-KANTINE\CLAUDE.md` |
+| BI-OPGAVEOVERSIGT CLAUDE.md | `<OneDrive>\AI SOSU\BI-OPGAVEOVERSIGT\CLAUDE.md` |
+| BI-OPTAG FRAVÆR CLAUDE.md | `<OneDrive>\AI SOSU\BI-OPTAG FRAVÆR\CLAUDE.md` |
+| ADM-AFTALER CLAUDE.md | `<OneDrive>\AI SOSU\ADM-AFTALER\CLAUDE.md` |
+| ADM-BLANKET CLAUDE.md | `<OneDrive>\AI SOSU\ADM-BLANKET\CLAUDE.md` |
 
-`CLAUDE.md` er kilden i hvert repo. Det tilsvarende `AGENTS.md`-spejl skal altid opdateres og verificeres med `Y:\AI OS\tools\sync-agents-md.ps1`.
+`CLAUDE.md` er kilden i hvert repo. Det tilsvarende `AGENTS.md`-spejl skal altid opdateres og verificeres med `<OneDrive>\AI OS\tools\sync-agents-md.ps1`.
 
 ### Sekundære filer
 - `.claude/rules/*.md` i hvert projekt (workflow-mønstre)
@@ -101,7 +101,7 @@ For hvert CLAUDE.md du opdaterer, rapportér:
 Du committer ALTID dine ændringer i hvert berørt repo. Instruktionsfil-opdateringer (`CLAUDE.md`, `AGENTS.md`, `INDEX.md`) må efter AI OS' hovedregel committes direkte til `main`; andre ændringer følger projektets branch-/PR-regel. Kør altid spejlkontrollen før commit:
 
 ```powershell
-& "Y:\AI OS\tools\sync-agents-md.ps1" -Check
+& "<OneDrive>\AI OS\tools\sync-agents-md.ps1" -Check
 git add CLAUDE.md AGENTS.md INDEX.md
 git commit -m "Opdatér CLAUDE.md/AGENTS.md: <hvad og hvorfor>"
 ```

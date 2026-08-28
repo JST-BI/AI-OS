@@ -33,8 +33,8 @@ approvals_reviewer = "auto_review"
 # Ingen netvaerksadgang uden godkendelse. Persondata maa ikke forlade maskinen.
 network_access = false
 
-# Y:\AI SOSU er den separate fysiske og kanoniske projektrod. Giv den eksplicit
+# <OneDrive>\AI SOSU er projektroden (Y: er kun delte kopier). Giv den eksplicit
 # skriveadgang, saa almindelige projektedits ikke udloeser sandbox-godkendelse.
 writable_roots = [
-  'Y:\AI SOSU',
+  'C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI SOSU',
 ]

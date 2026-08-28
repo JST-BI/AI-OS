@@ -25,11 +25,20 @@ Du læser, analyserer og opdaterer `.md`-filer. Du skriver ikke DAX, M-kode, TMD
 ### Primære hukommelsesfiler
 | Fil | Sti |
 |---|---|
-| AI OS CLAUDE.md | `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI OS\CLAUDE.md` |
-| BI-OEKONOMI CLAUDE.md | `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI-SOSU\BI-OEKONOMI\CLAUDE.md` |
-| SYS-INNOMATE CLAUDE.md | `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI-SOSU\SYS-INNOMATE\CLAUDE.md` |
-| ADM-HÅNDBØGER CLAUDE.md | `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI-SOSU\ADM-HÅNDBØGER\CLAUDE.md` |
-| ADM-ØKONOMI CLAUDE.md | `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI-SOSU\ADM-ØKONOMI\CLAUDE.md` |
+| AI OS CLAUDE.md | `Y:\AI OS\CLAUDE.md` |
+| BI-OEKONOMI CLAUDE.md | `Y:\AI SOSU\BI-OEKONOMI\CLAUDE.md` |
+| SYS-INNOMATE CLAUDE.md | `Y:\AI SOSU\SYS-INNOMATE\CLAUDE.md` |
+| ADM-HÅNDBØGER CLAUDE.md | `Y:\AI SOSU\ADM-HÅNDBØGER\CLAUDE.md` |
+| ADM-ØKONOMI CLAUDE.md | `Y:\AI SOSU\ADM-ØKONOMI\CLAUDE.md` |
+| ADM-BI CLAUDE.md | `Y:\AI SOSU\ADM-BI\CLAUDE.md` |
+| DATA-BUDGET_PROGNOSE CLAUDE.md | `Y:\AI SOSU\DATA-BUDGET_PROGNOSE\CLAUDE.md` |
+| ADM-KANTINE CLAUDE.md | `Y:\AI SOSU\ADM-KANTINE\CLAUDE.md` |
+| BI-OPGAVEOVERSIGT CLAUDE.md | `Y:\AI SOSU\BI-OPGAVEOVERSIGT\CLAUDE.md` |
+| BI-OPTAG FRAVÆR CLAUDE.md | `Y:\AI SOSU\BI-OPTAG FRAVÆR\CLAUDE.md` |
+| ADM-AFTALER CLAUDE.md | `Y:\AI SOSU\ADM-AFTALER\CLAUDE.md` |
+| ADM-BLANKET CLAUDE.md | `Y:\AI SOSU\ADM-BLANKET\CLAUDE.md` |
+
+`CLAUDE.md` er kilden i hvert repo. Det tilsvarende `AGENTS.md`-spejl skal altid opdateres og verificeres med `Y:\AI OS\tools\sync-agents-md.ps1`.
 
 ### Sekundære filer
 - `.claude/rules/*.md` i hvert projekt (workflow-mønstre)
@@ -60,7 +69,7 @@ Når sessionen har produceret ny indsigt om systemer, mønstre eller adfærd:
 - Bevar præcision: vær konkret, ikke vag
 
 ### 3. Konsistenstjek
-Gennemgå at de tre CLAUDE.md-filer er konsistente med hinanden:
+Gennemgå at AI OS' og alle 11 projekters CLAUDE.md-filer er konsistente med hinanden:
 - Ingen modstridende regler
 - Ingen dubletter (samme regel to steder)
 - Korrekte krydsreferencer
@@ -89,20 +98,15 @@ For hvert CLAUDE.md du opdaterer, rapportér:
 
 ## Git-workflow — obligatorisk
 
-Du committer ALTID dine ændringer. Arbejd på en branch:
+Du committer ALTID dine ændringer i hvert berørt repo. Instruktionsfil-opdateringer (`CLAUDE.md`, `AGENTS.md`, `INDEX.md`) må efter AI OS' hovedregel committes direkte til `main`; andre ændringer følger projektets branch-/PR-regel. Kør altid spejlkontrollen før commit:
 
 ```powershell
-git config windows.appendAtomically false
-git checkout -b optimize/md-<kort-beskrivelse>
-# ... rediger filer ...
-git add <filer>
-git commit -m "Opdatér CLAUDE.md: <hvad og hvorfor>
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
-git push -u origin optimize/md-<kort-beskrivelse>
+& "Y:\AI OS\tools\sync-agents-md.ps1" -Check
+git add CLAUDE.md AGENTS.md INDEX.md
+git commit -m "Opdatér CLAUDE.md/AGENTS.md: <hvad og hvorfor>"
 ```
 
-Rapportér branch-navn til orkestrator, som opretter PR.
+Push kun repos med konfigureret remote. Lokale repos uden remote committes lokalt.
 
 ---
 

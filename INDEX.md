@@ -3,8 +3,8 @@
 > **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 11 projekter.
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `CLAUDE.md`).
 > **Spejlprincip**: I alle repos er `CLAUDE.md` (Claude Code) og `AGENTS.md` (Codex) identiske spejle — redigér `CLAUDE.md`, spejl med `tools/sync-agents-md.ps1`. Håndhæves ved commit af `.githooks/check_md_mirror.py`.
-> **Obsidian**: Vault-roden er `AI OS/`; den lokale junction `AI OS/AI-SOSU/` viser de fysiske projektfiler direkte. Der findes ingen særskilte Obsidian-kopier af `.md`-filerne.
-> **Stier**: Relative til OneDrive-roden `…\OneDrive - Social og Sundhedsskolen Randers\`.
+> **Obsidian**: Vault-roden er `Y:\AI OS\`. De fysiske projektfiler ligger separat og kanonisk i `Y:\AI SOSU\`; der findes ingen junction eller særskilte Obsidian-kopier af projektfilerne.
+> **Stier**: AI OS ligger i `Y:\AI OS\`, og alle arbejdsprojekter ligger i den separate kanoniske projektrod `Y:\AI SOSU\`.
 > Rådata i projekternes `Input/`-mapper (xlsx/pdf m.m.) er gitignored og indekseres ikke enkeltvis — **undtagen `ADM-KANTINE`**, hvor de små, persondatafrie menu-PDF'er committes.
 
 ---
@@ -36,7 +36,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/vault/` | De frie Obsidian-noter (`inbox/`, `journal/`, `notes/{,people,decisions}/`, `meetings/`, `resources/`, `_templates/`, `_attachments/`). Adskilt fra de styrede filer — se CLAUDE.md → *Obsidian-vaultregler* |
 | `AI OS/vault/Index - Vault.md` | Vaultens MOC: mappeoversigt, routing og noteliste. Ikke det samme som dette indeks, der dækker **styrede** filer |
 | `AI OS/vault/_templates/*.md` | Note-skabeloner med obligatorisk frontmatter: `Daily`, `Note`, `Meeting`, `Decision` |
-| `AI OS/AI-SOSU/` | Lokal, gitignored directory junction til `../AI-SOSU/`, så Obsidian læser alle projekt-repos direkte uden kopier |
+| `Y:\AI SOSU\` | Separat fysisk og kanonisk projektrod på netværksdrevet; må ikke kopieres eller linkes ind under `Y:\AI OS\` |
 
 ### Agentdefinitioner — `AI OS/agents/` (bruges af begge værktøjer)
 
@@ -64,7 +64,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 
 ---
 
-## BI-OEKONOMI — `AI-SOSU/BI-OEKONOMI/` (repo: [JST-BI/BI-OEKONOMI](https://github.com/JST-BI/BI-OEKONOMI))
+## BI-OEKONOMI — `Y:\AI SOSU\BI-OEKONOMI\` (repo: [JST-BI/BI-OEKONOMI](https://github.com/JST-BI/BI-OEKONOMI))
 
 Power BI-rapport og semantisk model for HR/økonomi.
 
@@ -92,7 +92,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 
 ---
 
-## SYS-INNOMATE — `AI-SOSU/SYS-INNOMATE/` (repo: [JST-BI/SYS-INNOMATE](https://github.com/JST-BI/SYS-INNOMATE))
+## SYS-INNOMATE — `Y:\AI SOSU\SYS-INNOMATE\` (repo: [JST-BI/SYS-INNOMATE](https://github.com/JST-BI/SYS-INNOMATE))
 
 Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE.
 
@@ -106,7 +106,7 @@ Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE.
 
 ---
 
-## ADM-HÅNDBØGER — `AI-SOSU/ADM-HÅNDBØGER/` (repo: [JST-BI/ADM-HANDBOOKS](https://github.com/JST-BI/ADM-HANDBOOKS))
+## ADM-HÅNDBØGER — `Y:\AI SOSU\ADM-HÅNDBØGER\` (repo: [JST-BI/ADM-HANDBOOKS](https://github.com/JST-BI/ADM-HANDBOOKS))
 
 Personalehåndbog og Lederhåndbog — afspejler hinandens emner.
 
@@ -119,7 +119,7 @@ Personalehåndbog og Lederhåndbog — afspejler hinandens emner.
 
 ---
 
-## ADM-ØKONOMI — `AI-SOSU/ADM-ØKONOMI/` (repo: [JST-BI/ADM-OEKONOMI](https://github.com/JST-BI/ADM-OEKONOMI))
+## ADM-ØKONOMI — `Y:\AI SOSU\ADM-ØKONOMI\` (repo: [JST-BI/ADM-OEKONOMI](https://github.com/JST-BI/ADM-OEKONOMI))
 
 Økonomiske styringsdokumenter.
 
@@ -133,7 +133,7 @@ Personalehåndbog og Lederhåndbog — afspejler hinandens emner.
 
 ---
 
-## ADM-BI — `AI-SOSU/ADM-BI/` (repo: [JST-BI/ADM-BI](https://github.com/JST-BI/ADM-BI))
+## ADM-BI — `Y:\AI SOSU\ADM-BI\` (repo: [JST-BI/ADM-BI](https://github.com/JST-BI/ADM-BI))
 
 BI governance og styringsdokumenter.
 
@@ -144,7 +144,7 @@ BI governance og styringsdokumenter.
 
 ---
 
-## DATA-BUDGET_PROGNOSE — `AI-SOSU/DATA-BUDGET_PROGNOSE/` (repo: [JST-BI/DATA-BUDGET_PROGNOSE](https://github.com/JST-BI/DATA-BUDGET_PROGNOSE))
+## DATA-BUDGET_PROGNOSE — `Y:\AI SOSU\DATA-BUDGET_PROGNOSE\` (repo: [JST-BI/DATA-BUDGET_PROGNOSE](https://github.com/JST-BI/DATA-BUDGET_PROGNOSE))
 
 Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xlsx).
 
@@ -156,7 +156,7 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 
 ---
 
-## ADM-KANTINE — `AI-SOSU/ADM-KANTINE/` (repo: [JST-BI/ADM-KANTINE](https://github.com/JST-BI/ADM-KANTINE))
+## ADM-KANTINE — `Y:\AI SOSU\ADM-KANTINE\` (repo: [JST-BI/ADM-KANTINE](https://github.com/JST-BI/ADM-KANTINE))
 
 Kantinens menukort: tilrettede udgaver af leverandørens ugemenu (Jespers Torvekøkken).
 **Bemærk**: `Input/` committes her (små, persondatafrie PDF'er = dokumentation for hvert ugekort). `.gitattributes` sætter `*.pdf binary`.
@@ -173,7 +173,7 @@ Kantinens menukort: tilrettede udgaver af leverandørens ugemenu (Jespers Torvek
 
 ---
 
-## BI-OPGAVEOVERSIGT — `AI-SOSU/BI-OPGAVEOVERSIGT/` (repo: [JST-BI/BI-OPGAVEOVERSIGT](https://github.com/JST-BI/BI-OPGAVEOVERSIGT))
+## BI-OPGAVEOVERSIGT — `Y:\AI SOSU\BI-OPGAVEOVERSIGT\` (repo: [JST-BI/BI-OPGAVEOVERSIGT](https://github.com/JST-BI/BI-OPGAVEOVERSIGT))
 
 Power BI-rapport: medarbejderes opgaveoversigt mod arbejdstidsnorm. Kilde: Budgetskema.xlsx på SharePoint + Studie+-udtræk (Z8004, Z8082).
 
@@ -187,7 +187,7 @@ Power BI-rapport: medarbejderes opgaveoversigt mod arbejdstidsnorm. Kilde: Budge
 
 ---
 
-## BI-OPTAG FRAVÆR — `AI-SOSU/BI-OPTAG FRAVÆR/` (lokalt repo, intet GitHub-remote)
+## BI-OPTAG FRAVÆR — `Y:\AI SOSU\BI-OPTAG FRAVÆR\` (lokalt repo, intet GitHub-remote)
 
 Power BI-rapport: elevoptag og skoleforløbsfravær. Kilde: Studie+-udtræk `Z8312` (alle holdplaceringer) og `Z8224S` (skoleforløbsfravær). Bragt under AI-styring 2026-08-20.
 
@@ -200,7 +200,7 @@ Power BI-rapport: elevoptag og skoleforløbsfravær. Kilde: Studie+-udtræk `Z83
 
 ---
 
-## ADM-AFTALER — `AI-SOSU/ADM-AFTALER/` (lokalt repo, intet GitHub-remote)
+## ADM-AFTALER — `Y:\AI SOSU\ADM-AFTALER\` (lokalt repo, intet GitHub-remote)
 
 Samarbejds- og samhandelsaftaler med eksterne parter. Bragt under AI-styring 2026-08-20. `Input/` er gitignored som forsigtig standard: aftaler indeholder navne og underskrifter, og fortrolighedsniveauet er ikke afklaret.
 
@@ -211,7 +211,7 @@ Samarbejds- og samhandelsaftaler med eksterne parter. Bragt under AI-styring 202
 
 ---
 
-## ADM-BLANKET — `AI-SOSU/ADM-BLANKET/` (lokalt repo, intet GitHub-remote)
+## ADM-BLANKET — `Y:\AI SOSU\ADM-BLANKET\` (lokalt repo, intet GitHub-remote)
 
 Administrative blanketter og formularer (i dag kørselsbemyndigelser). Bragt under AI-styring 2026-08-20. `Input/` er gitignored: blanketterne er personhenførbare af natur.
 

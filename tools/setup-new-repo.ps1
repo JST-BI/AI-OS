@@ -19,7 +19,7 @@
 .PARAMETER RepoPath
   Path to the target repo root (must already be a git repo, i.e. contain .git).
 .EXAMPLE
-  .\setup-new-repo.ps1 -RepoPath "C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI-SOSU\BI-NYTPROJEKT"
+  .\setup-new-repo.ps1 -RepoPath "Y:\AI SOSU\BI-NYTPROJEKT"
 .NOTES
   After cloning the repo on another machine, the hook must be re-activated once:
       git config core.hooksPath .githooks

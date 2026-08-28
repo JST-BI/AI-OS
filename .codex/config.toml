@@ -33,9 +33,8 @@ approvals_reviewer = "auto_review"
 # Ingen netvaerksadgang uden godkendelse. Persondata maa ikke forlade maskinen.
 network_access = false
 
-# AI OS/AI-SOSU er en junction til den fysiske soestermappe. Giv den kanoniske
-# projektrod eksplicit skriveadgang, saa almindelige projektedits ikke udloeser
-# sandbox-godkendelse blot fordi Windows oploeser junctionen.
+# Y:\AI SOSU er den separate fysiske og kanoniske projektrod. Giv den eksplicit
+# skriveadgang, saa almindelige projektedits ikke udloeser sandbox-godkendelse.
 writable_roots = [
-  'C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI-SOSU',
+  'Y:\AI SOSU',
 ]

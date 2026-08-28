@@ -6,7 +6,7 @@
 >
 > **Filindeks**: `INDEX.md` (her i AI OS rod) er det samlede indeks over alle styrede filer på tværs af alle 11 projekter. Holdes opdateret ved enhver fil-tilføjelse/-fjernelse/-omdøbning.
 >
-> **Én Markdown-kilde — Obsidian + Claude Code + Codex**: De versionsstyrede `.md`-filer i `AI OS/` og `AI-SOSU/` er de kanoniske kilder. Claude Code læser `CLAUDE.md`, Codex læser det identiske `AGENTS.md`-spejl, og Obsidian læser de samme fysiske filer gennem vault-roden `AI OS/` samt junctionen `AI OS/AI-SOSU/`. Opret aldrig kopier eller eksporter i `.obsidian/`; de bliver forældede.
+> **Én Markdown-kilde — Obsidian + Claude Code + Codex**: De versionsstyrede `.md`-filer i `Y:\AI OS\` og den fysiske projektmappe `Y:\AI SOSU\` er de kanoniske kilder. Claude Code læser `CLAUDE.md`, og Codex læser det identiske `AGENTS.md`-spejl direkte fra hvert repo. Obsidian-vaulten har rod i `Y:\AI OS\`; projektfilerne forbliver i den separate kanoniske projektmappe og må aldrig kopieres eller eksporteres til `.obsidian/`.
 
 ## Session-startkontrol — kør ved FØRSTE prompt i hver session
 
@@ -19,18 +19,18 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
     udskriver præcis hvilke projekter der afviger.
 [ ] INDEX.md findes i AI OS rod
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, pbi-design, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
-[ ] AI OS rod indeholder KUN: agents/, tools/, vault/, .githooks/, .claude/, .agents/, .codex/, .obsidian/, .codex-tmp/, .vscode/, AI-SOSU/ (junction), CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen fysiske projektmapper, og INGEN loese .md/.canvas/.base-filer (de hoerer i vault/)
-[ ] AI OS/AI-SOSU er en directory junction til søstermappen ../AI-SOSU — aldrig en kopi eller fysisk projektmappe
+[ ] AI OS rod indeholder KUN: agents/, tools/, vault/, .githooks/, .claude/, .agents/, .codex/, .obsidian/, .codex-tmp/, .vscode/, CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen fysiske projektmapper, og INGEN loese .md/.canvas/.base-filer (de hoerer i vault/)
+[ ] Y:\AI SOSU er en fysisk mappe (ikke junction/symlink) og den eneste aktive kanoniske projektmappe; Y:\AI OS\AI-SOSU må ikke findes som kopi eller link
 [ ] SYS-INNOMATE rod indeholder KUN: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore (+ procesplan-generator: node_modules/, package.json, package-lock.json, generate-procesplan-v3.js)
 [ ] BI-OEKONOMI rod indeholder: Input/, Output/, Rapporter/, tools/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/ADM-KANTINE rod indeholder: Input/, Output/, tools/, .githooks/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
-[ ] AI-SOSU/BI-OPGAVEOVERSIGT rod indeholder: .githooks/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore + PBIP-artefakterne
+[ ] Y:\AI SOSU\ADM-HÅNDBØGER rod indeholder: Personalehåndbog/, Lederhåndbog/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] Y:\AI SOSU\ADM-ØKONOMI rod indeholder: Regnskabsinstruks/, Indkøbspolitik/, Strategi for finansiel risiko/, Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] Y:\AI SOSU\ADM-BI rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] Y:\AI SOSU\DATA-BUDGET_PROGNOSE rod indeholder: Input/, Output/, _Arkiv/, .githooks/, .claude/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] Y:\AI SOSU\ADM-KANTINE rod indeholder: Input/, Output/, tools/, .githooks/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore
+[ ] Y:\AI SOSU\BI-OPGAVEOVERSIGT rod indeholder: .githooks/, .codex/, CLAUDE.md, AGENTS.md, .gitattributes, .gitignore + PBIP-artefakterne
 [ ] De tre projekter tilføjet 2026-08-20 har CLAUDE.md + AGENTS.md + .codex/config.toml:
-    AI-SOSU/ADM-AFTALER/, AI-SOSU/ADM-BLANKET/, AI-SOSU/BI-OPTAG FRAVÆR/
+    Y:\AI SOSU\ADM-AFTALER\, Y:\AI SOSU\ADM-BLANKET\, Y:\AI SOSU\BI-OPTAG FRAVÆR\
 ```
 
 Hvis én eller flere tjek fejler: **stop, rapportér præcist hvad der mangler, og afvent instruktion.**
@@ -40,7 +40,7 @@ case-insensitivt, så en fejlkapitaliseret `.Codex/` ser rigtig ud lokalt og vir
 — men navnet gemmes med stort C i git, og på ethvert andet system (Linux, CI, en frisk klon)
 finder Codex ingenting. Fejlen var reel her indtil 2026-08-20. Opret aldrig `.Codex/` igen.
 
-**Selvreparation af Obsidian-junction (eneste undtagelse):** Hvis `AI OS/AI-SOSU` mangler, men den fysiske søstermappe `../AI-SOSU` findes, skal agenten selv genskabe junctionen med `New-Item -ItemType Junction -Path "AI-SOSU" -Target "..\AI-SOSU"` og køre startkontrollen igen. Hvis `AI-SOSU` allerede findes som andet end en junction, eller junctionen peger forkert, skal agenten stoppe uden at overskrive den.
+**Netværksdrev — ingen reparse-links (korrigeret 2026-08-28):** `Y:` er et SMB-netværksdrev, og filserveren afviser både directory junctions og directory symbolic links med `Adgang nægtet`. `Y:\AI SOSU\` er derfor den separate, fysiske og kanoniske projektmappe ved siden af `Y:\AI OS\` — ikke inde i Obsidian-vaulten. Forsøg ikke at oprette `Y:\AI OS\AI-SOSU\` som link eller kopi. Hvis `Y:\AI SOSU\` mangler, eller en parallel aktiv kopi opdages, skal agenten stoppe uden at overskrive noget.
 
 ---
 
@@ -62,7 +62,7 @@ Når du:
 frem for at bruge `--no-verify`: et brudt spejl betyder at Claude Code og Codex arbejder efter
 hver sin udgave af reglerne, og forskellen viser sig først når en agent handler forkert.
 
-Dette gælder også de projektspecifikke `CLAUDE.md`/`AGENTS.md`-par i alle projekter under `AI-SOSU/`. Instruktionsfil-opdateringer (CLAUDE.md, AGENTS.md, INDEX.md) må committes direkte til `main` — det er den etablerede undtagelse fra projekternes PR-regel.
+Dette gælder også de projektspecifikke `CLAUDE.md`/`AGENTS.md`-par i alle projekter under `Y:\AI SOSU\`. Instruktionsfil-opdateringer (CLAUDE.md, AGENTS.md, INDEX.md) må committes direkte til `main` — det er den etablerede undtagelse fra projekternes PR-regel.
 
 ---
 
@@ -170,21 +170,21 @@ diffen mod den kilde du tror du ruller tilbage til.
 
 AI OS er infrastrukturniveauet for alt AI-assisteret arbejde ved SOSU Randers. Her bor agentdefinitioner og AI-konfiguration (Claude Code: `.claude/settings.json`, Codex: `.codex/config.toml`). Det er **ikke** et arbejdsprojekt — det er værkstedet.
 
-Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
+Arbejdsprojekterne ligger fysisk i den separate kanoniske projektmappe `Y:\AI SOSU\`:
 
 | Projekt | Sti | Indhold |
 |---|---|---|
-| `BI-OEKONOMI` | `../AI-SOSU/BI-OEKONOMI/` | Power BI-rapport og semantisk model for HR/økonomi |
-| `SYS-INNOMATE` | `../AI-SOSU/SYS-INNOMATE/` | Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE |
-| `ADM-HÅNDBØGER` | `../AI-SOSU/ADM-HÅNDBØGER/` | Personalehåndbog og Lederhåndbog — afspejler hinandens emner |
-| `ADM-ØKONOMI` | `../AI-SOSU/ADM-ØKONOMI/` | Regnskabsinstruks, Indkøbspolitik og Strategi for finansiel risiko |
-| `DATA-BUDGET_PROGNOSE` | `../AI-SOSU/DATA-BUDGET_PROGNOSE/` | Finansiel analyse, budget og prognose — Navision finansposter + BRUGER-budget/prognose → .xlsx-output |
-| `ADM-BI` | `../AI-SOSU/ADM-BI/` | BI governance og styringsdokumenter — datastandarder, navnekonventioner, roller og BI-strategi |
-| `ADM-KANTINE` | `../AI-SOSU/ADM-KANTINE/` | Kantinens menukort og prisskilte — tilrettede udgaver af leverandørens ugemenu |
-| `BI-OPGAVEOVERSIGT` | `../AI-SOSU/BI-OPGAVEOVERSIGT/` | Power BI-rapport: medarbejderes opgaveoversigt mod arbejdstidsnorm (Budgetskema.xlsx på SharePoint) |
-| `BI-OPTAG FRAVÆR` | `../AI-SOSU/BI-OPTAG FRAVÆR/` | Power BI-rapport: elevoptag og skoleforløbsfravær (Studie+ Z8312 + Z8224S) |
-| `ADM-AFTALER` | `../AI-SOSU/ADM-AFTALER/` | Samarbejds- og samhandelsaftaler med eksterne parter |
-| `ADM-BLANKET` | `../AI-SOSU/ADM-BLANKET/` | Administrative blanketter og formularer (fx kørselsbemyndigelser) |
+| `BI-OEKONOMI` | `Y:\AI SOSU\BI-OEKONOMI\` | Power BI-rapport og semantisk model for HR/økonomi |
+| `SYS-INNOMATE` | `Y:\AI SOSU\SYS-INNOMATE\` | Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE |
+| `ADM-HÅNDBØGER` | `Y:\AI SOSU\ADM-HÅNDBØGER\` | Personalehåndbog og Lederhåndbog — afspejler hinandens emner |
+| `ADM-ØKONOMI` | `Y:\AI SOSU\ADM-ØKONOMI\` | Regnskabsinstruks, Indkøbspolitik og Strategi for finansiel risiko |
+| `DATA-BUDGET_PROGNOSE` | `Y:\AI SOSU\DATA-BUDGET_PROGNOSE\` | Finansiel analyse, budget og prognose — Navision finansposter + BRUGER-budget/prognose → .xlsx-output |
+| `ADM-BI` | `Y:\AI SOSU\ADM-BI\` | BI governance og styringsdokumenter — datastandarder, navnekonventioner, roller og BI-strategi |
+| `ADM-KANTINE` | `Y:\AI SOSU\ADM-KANTINE\` | Kantinens menukort og prisskilte — tilrettede udgaver af leverandørens ugemenu |
+| `BI-OPGAVEOVERSIGT` | `Y:\AI SOSU\BI-OPGAVEOVERSIGT\` | Power BI-rapport: medarbejderes opgaveoversigt mod arbejdstidsnorm (Budgetskema.xlsx på SharePoint) |
+| `BI-OPTAG FRAVÆR` | `Y:\AI SOSU\BI-OPTAG FRAVÆR\` | Power BI-rapport: elevoptag og skoleforløbsfravær (Studie+ Z8312 + Z8224S) |
+| `ADM-AFTALER` | `Y:\AI SOSU\ADM-AFTALER\` | Samarbejds- og samhandelsaftaler med eksterne parter |
+| `ADM-BLANKET` | `Y:\AI SOSU\ADM-BLANKET\` | Administrative blanketter og formularer (fx kørselsbemyndigelser) |
 
 **Note om `ADM-KANTINE`** (oprettet 2026-07-28): repo [JST-BI/ADM-KANTINE](https://github.com/JST-BI/ADM-KANTINE) (privat). Ingen dedikeret agent — arbejd direkte. I modsætning til de øvrige projekter **committes `Input/` her**: leverandørens PDF'er er små og persondatafri, og de dokumenterer hvad et givet ugekort er bygget på.
 
@@ -201,16 +201,16 @@ Arbejdsprojekterne ligger i `AI-SOSU/` (samme OneDrive-rod):
 | Oprette eller redigere en agent | AI OS (`agents/`) |
 | Ændre Claude Code-indstillinger | AI OS (`.claude/settings.json`) |
 | Ændre Codex-indstillinger | AI OS (`.codex/config.toml`) — projektskabelon: `tools/codex-config.template.toml` |
-| Bygge DAX, M-kode eller Power BI-rapporter | `AI-SOSU/BI-OEKONOMI/` |
-| Elevoptag eller skoleforløbsfravær i Power BI | `AI-SOSU/BI-OPTAG FRAVÆR/` |
-| Læse, sammenligne eller revidere en aftale | `AI-SOSU/ADM-AFTALER/` |
-| Blanketter og formularer | `AI-SOSU/ADM-BLANKET/` |
-| Skrive procesplaner eller mailskabeloner | `AI-SOSU/SYS-INNOMATE/` |
+| Bygge DAX, M-kode eller Power BI-rapporter | `Y:\AI SOSU\BI-OEKONOMI\` |
+| Elevoptag eller skoleforløbsfravær i Power BI | `Y:\AI SOSU\BI-OPTAG FRAVÆR\` |
+| Læse, sammenligne eller revidere en aftale | `Y:\AI SOSU\ADM-AFTALER\` |
+| Blanketter og formularer | `Y:\AI SOSU\ADM-BLANKET\` |
+| Skrive procesplaner eller mailskabeloner | `Y:\AI SOSU\SYS-INNOMATE\` |
 | Redigere Personalehåndbog eller Lederhåndbog | `ADM-HÅNDBØGER/` |
 | Redigere Regnskabsinstruks, Indkøbspolitik eller finansiel risiko | `ADM-ØKONOMI/` |
 | BI governance, datastandarder, navnekonventioner eller BI-strategi | `ADM-BI/` |
 | Kantinens menukort, ugemenu eller prisskilt | `ADM-KANTINE/` |
-| Finansiel analyse, budget, prognose (Navision-data) | `AI-SOSU/DATA-BUDGET_PROGNOSE/` |
+| Finansiel analyse, budget, prognose (Navision-data) | `Y:\AI SOSU\DATA-BUDGET_PROGNOSE\` |
 | Noget der spænder over flere projekter | Start her, koordinér |
 
 ---
@@ -291,11 +291,9 @@ AI OS' `.codex/config.toml` bruger `sandbox_mode = "workspace-write"`,
 arbejdshandlinger uden brugerprompt, mens undtagelser risikovurderes automatisk; netværk er fortsat
 lukket som standard, og AGENTS.md's strengere bekræftelseskrav gælder stadig.
 
-`AI OS/AI-SOSU` er en junction, men Windows opløser den til den fysiske søstermappe
-`../AI-SOSU`. Sandkassen følger den kanoniske sti, ikke junctionens synlige placering. Derfor skal
-den fysiske `AI-SOSU`-rod stå i `sandbox_workspace_write.writable_roots`; ellers udløser helt
-almindelige projektedits gentagne godkendelser. Konfigurationsændringer indlæses først i en ny
-Codex-session.
+`Y:\AI SOSU\` er den fysiske kanoniske projektrod. Den skal stå i
+`sandbox_workspace_write.writable_roots`; ellers udløser almindelige projektedits gentagne
+godkendelser. Konfigurationsændringer indlæses først i en ny Codex-session.
 
 ### Tre ting der skal gøres én gang pr. maskine
 
@@ -307,8 +305,8 @@ Codex-session.
 
    ```toml
    [projects]
-   "C:\\Users\\jst\\OneDrive - Social og Sundhedsskolen Randers\\AI OS".trust_level = "trusted"
-   "C:\\Users\\jst\\OneDrive - Social og Sundhedsskolen Randers\\AI-SOSU\\BI-OEKONOMI".trust_level = "trusted"
+   "Y:\\AI OS".trust_level = "trusted"
+   "Y:\\AI SOSU\\BI-OEKONOMI".trust_level = "trusted"
    # ... én linje pr. projekt
    ```
 
@@ -325,7 +323,7 @@ Codex-session.
 ### AGENTS.md findes ved at gå opad — ikke på tværs
 
 Codex leder efter `AGENTS.md` fra arbejdsmappen og opad mod projektroden (mappen med `.git`).
-Arbejder du i `AI-SOSU/BI-OEKONOMI/`, læses **kun** det projekts `AGENTS.md` — ikke AI OS'.
+Arbejder du i `Y:\AI SOSU\BI-OEKONOMI\`, læses **kun** det projekts `AGENTS.md` — ikke AI OS'.
 Derfor skal enhver regel, der gælder på tværs af projekter, stå i hvert projekts egen fil eller
 udtrykkeligt henvise til `../../AI OS/AGENTS.md`. Det samme gælder Claude Code og `CLAUDE.md`.
 
@@ -381,7 +379,7 @@ Uanset hvad tilladelsesindstillingerne tillader automatisk, skal agenten **altid
 | Handling | Eksempel |
 |---|---|
 | `git push --force` | Overskriver fjernhistorik |
-| Sletning af filer/mapper uden for projektmapperne | `rm` på stier uden for `AI-SOSU/` eller `AI OS/` |
+| Sletning af filer/mapper uden for projektmapperne | `rm` på stier uden for `Y:\AI SOSU\` eller `Y:\AI OS\` |
 | Masseoperationer der ikke kan fortrydes | Slette >5 filer på én gang |
 | Afsendelse til eksterne tjenester | E-mail, API-kald med persondata |
 | Ændring af Git-konfiguration globalt | `git config --global` |
@@ -392,11 +390,11 @@ Alt andet kører uden prompt.
 
 ## Regler for denne mappe
 
-- **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `AI-SOSU/`.
-- **Obsidian-vault**: Vault-roden er `AI OS/`. `.obsidian/` er kun vaultens konfigurationsmappe, og `AI OS/AI-SOSU/` er en directory junction til den fysiske søstermappe `../AI-SOSU/`. Dermed læser Obsidian, Claude Code og Codex altid de samme aktuelle `.md`-filer. Åbn aldrig `.obsidian/` som en separat vault, og kopier aldrig projektfiler ind i vaulten.
+- **Kun AI-infrastruktur hører hjemme her.** Projektindhold (budgetter, skabeloner, rapporter) hører i `Y:\AI SOSU\`.
+- **Obsidian-vault**: Vault-roden er `Y:\AI OS\`, og `.obsidian/` er kun vaultens konfigurationsmappe. Arbejdsprojekterne ligger separat og kanonisk i `Y:\AI SOSU\`; opret aldrig kopier eller links til dem under vaulten. Åbn aldrig `.obsidian/` som en separat vault.
 - **Obsidian-livekontrol**: Verificér en åbnet fil via den aktive tabs `state.state.file` under `main` i `.obsidian/workspace.json` (eller den synlige vinduestitel). Brug ikke `lastOpenFiles` som facit; listen kan halte, selv om filen er åbnet korrekt.
 - Nye agenter oprettes som `.md`-filer i `agents/` med korrekt frontmatter (`name`, `description`, `tools`, `model`).
-- `INDEX.md` er det samlede filindeks over alle styrede filer i alle 8 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
+- `INDEX.md` er det samlede filindeks over alle styrede filer i alle 12 repos — opdatér det når filer tilføjes, fjernes eller omdøbes.
 - Ændringer commites og pushes til GitHub: `https://github.com/JST-BI/AI-OS`
 
 ---
@@ -412,7 +410,7 @@ Vaulten er AI OS-roden, men den indeholder to slags filer med **hver sit regels�
 | **`vault/**`** — frie noter (daily, møder, personer, beslutninger, ressourcer) | **Dette afsnit.** Frontmatter, wikilinks, routing, index-vedligehold, AI-metadatablok. |
 | `CLAUDE.md`, `AGENTS.md`, `INDEX.md` | Spejlprincippet og selvvedligeholds-pligten øverst i filen. **Ingen note-frontmatter** — de læses af Claude Code og Codex som instruktion. |
 | `agents/*.md` | Claude Codes agent-frontmatter (`name`, `description`, `tools`, `model`). **Skriv aldrig `tags`/`created`/`status` i dem** — det brækker agent-indlæsningen. |
-| Alt under `AI-SOSU/` (via junctionen) | Det pågældende projekts egen `CLAUDE.md`. Vaulten *læser* dem; den styrer dem ikke. |
+| Alt under `Y:\AI SOSU\` | Det pågældende projekts egen `CLAUDE.md`; AI OS-vaulten styrer dem ikke. |
 
 **Projekt-noter hører i projektets eget repo**, ikke i `vault/`. Routing-tabellens `/projects`-linje er derfor ikke i brug her — `vault/projects/` findes bevidst ikke.
 
@@ -459,7 +457,7 @@ Filnavne i Title Case eller `YYYY-MM-DD - Titel`. Undgå `/ \ : * ? " < > |`.
 
 **Routing-principper** (i rækkefølge):
 1. Tjek eksisterende mapper og noter først — findes emnet allerede, så udvid frem for at oprette.
-2. Hører noten til et projekt → den hører i projektets eget repo under `AI-SOSU/`, ikke i `vault/`.
+2. Hører noten til et projekt → den hører i projektets eget repo under `Y:\AI SOSU\`, ikke i `vault/`.
 3. Ved tvivl → foreslå muligheder, eller læg noten midlertidigt i `vault/inbox/` og sig det.
 
 Obsidian er konfigureret til at følge dette: `.obsidian/app.json` lægger nye filer i `vault/inbox/`, `daily-notes.json` peger på `vault/journal/`, og `templates.json` på `vault/_templates/`. **Uden den opsætning skrev daily-notes-pluginet i roden** — det var kilden til de tomme `2026-08-18.md` og `Unavngivet*`-filer der lå der indtil 2026-08-22.
@@ -513,11 +511,11 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 
 | Præfiks | Projekttype | GitHub-repo | Lokal mappe |
 |---|---|---|---|
-| `BI-` | Power BI-rapporter og datamodeller | `JST-BI/BI-<EMNE>` | `AI-SOSU\BI-<EMNE>` |
-| `SYS-` | Systemkonfiguration og procesautomatisering (fx INNOMATE) | `JST-BI/SYS-<EMNE>` | `AI-SOSU\SYS-<EMNE>` |
-| `ADM-` | Administrative dokumenter (håndbøger, politikker) | `JST-BI/ADM-<EMNE>` | `AI-SOSU\ADM-<EMNE>` |
+| `BI-` | Power BI-rapporter og datamodeller | `JST-BI/BI-<EMNE>` | `Y:\AI SOSU\BI-<EMNE>` |
+| `SYS-` | Systemkonfiguration og procesautomatisering (fx INNOMATE) | `JST-BI/SYS-<EMNE>` | `Y:\AI SOSU\SYS-<EMNE>` |
+| `ADM-` | Administrative dokumenter (håndbøger, politikker) | `JST-BI/ADM-<EMNE>` | `Y:\AI SOSU\ADM-<EMNE>` |
 
-**Bemærk**: Alle projekter samles under `AI-SOSU\`. GitHub-repo-navne skal være ASCII (undgå æ, ø, å).
+**Bemærk**: Alle projekter samles under `Y:\AI SOSU\`. GitHub-repo-navne skal være ASCII (undgå æ, ø, å).
 
 **OBLIGATORISK ved nyt repo** (straks efter `git init`/`git clone`): kør
 `pwsh AI OS/tools/setup-new-repo.ps1 -RepoPath "<sti til nyt repo>"`. Det installerer den versionerede Excel-persondata pre-commit hook (`.githooks/`), sætter `eol=lf` i `.gitattributes` og aktiverer `core.hooksPath`. Commit derefter `.githooks/` + `.gitattributes`. Se datagovernance-afsnittet nedenfor.
@@ -545,6 +543,6 @@ Præfiks bestemmer projekttype. GitHub-repo og lokal mappe hedder det samme:
 ## Power BI-gotchas (PowerShell/TMDL/PBIR) — flyttet
 
 Afsnittene *PowerShell gotchas — TMDL-filer*, *TMDL-syntaks — gotchas* og *PBIR-rapporter — gotchas (visuals)*
-ligger fra 2026-08-25 i `AI-SOSU/BI-OEKONOMI/CLAUDE.md` (spejlet i `AGENTS.md`), fordi de kun gælder
+ligger fra 2026-08-25 i `Y:\AI SOSU\BI-OEKONOMI/CLAUDE.md` (spejlet i `AGENTS.md`), fordi de kun gælder
 Power BI-arbejde, som routing-tabellen sender dertil. **De gælder ALLE BI-projekter** (`BI-OEKONOMI`,
 `BI-OPTAG FRAVÆR`, `BI-OPGAVEOVERSIGT`) — læs dem dér før enhver TMDL-/PBIR-edit, uanset hvilket repo du står i.

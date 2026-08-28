@@ -1,13 +1,13 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Spejler CLAUDE.md til AGENTS.md i AI OS og alle projekter under AI-SOSU.
+  Spejler CLAUDE.md til AGENTS.md i Y:\AI OS og alle projekter under Y:\AI SOSU.
 .DESCRIPTION
   Claude Code laeser CLAUDE.md. Codex laeser AGENTS.md. De to filer er samme
   indhold under to navne, saa begge vaerktoejer ser praecis de samme regler.
 
   Scriptet finder selv alle mapper der har mindst en af de to filer (AI OS-roden
-  plus hver projektmappe under AI-SOSU) - listen er ikke hardkodet, saa nye
+  plus hver projektmappe under Y:\AI SOSU) - listen er ikke hardkodet, saa nye
   projekter kommer automatisk med.
 
   CLAUDE.md er kilden. AGENTS.md skrives som en byte-identisk kopi.
@@ -15,8 +15,9 @@
   Rapporter kun drift, skriv ingen filer. Exitkode 1 hvis noget afviger.
   Beregnet til CI og til session-startkontrollen.
 .PARAMETER Root
-  Roden der indeholder baade "AI OS" og "AI-SOSU". Udledes normalt af scriptets
-  egen placering.
+  AI OS-roden. Udledes normalt af scriptets egen placering.
+.PARAMETER ProjectsRoot
+  Den separate kanoniske projektrod. Udledes normalt som Y:\AI SOSU ved siden af AI OS.
 .EXAMPLE
   & "AI OS\tools\sync-agents-md.ps1" -Check
 .EXAMPLE
@@ -26,26 +27,29 @@
 #>
 param(
   [switch]$Check,
-  [string]$Root
+  [string]$Root,
+  [string]$ProjectsRoot
 )
 $ErrorActionPreference = 'Stop'
 
-# AI OS-roden = forael der til dette scripts tools\-mappe; faellesroden er dens forael der
+# AI OS-roden = foraelder til dette scripts tools\-mappe
 $aiOsRoot = Split-Path -Parent $PSScriptRoot
-if (-not $Root) { $Root = Split-Path -Parent $aiOsRoot }
-$projectsRoot = Join-Path $Root 'AI-SOSU'
+if (-not $Root) { $Root = $aiOsRoot }
+if (-not $ProjectsRoot) {
+  $ProjectsRoot = 'Y:\AI SOSU'
+}
+if (-not (Test-Path -LiteralPath $ProjectsRoot -PathType Container)) {
+  throw "Den kanoniske projektrod mangler: $ProjectsRoot"
+}
 
 # Find alle mapper der styres: AI OS-roden + enhver projektmappe med mindst en af filerne.
-# AI OS\AI-SOSU er en junction til den fysiske soestermappe - vi bruger den fysiske sti,
-# saa de samme filer ikke behandles to gange.
+# Y:\AI SOSU er den separate fysiske og kanoniske projektmappe paa netvaerksdrevet.
 $dirs = @($aiOsRoot)
-if (Test-Path $projectsRoot) {
-  $dirs += Get-ChildItem -LiteralPath $projectsRoot -Directory |
-    Where-Object {
-      (Test-Path (Join-Path $_.FullName 'CLAUDE.md')) -or
-      (Test-Path (Join-Path $_.FullName 'AGENTS.md'))
-    } | Select-Object -ExpandProperty FullName
-}
+$dirs += Get-ChildItem -LiteralPath $ProjectsRoot -Directory |
+  Where-Object {
+    (Test-Path (Join-Path $_.FullName 'CLAUDE.md')) -or
+    (Test-Path (Join-Path $_.FullName 'AGENTS.md'))
+  } | Select-Object -ExpandProperty FullName
 
 $drift = @()
 $synced = 0
@@ -54,7 +58,7 @@ $ok = 0
 foreach ($d in $dirs) {
   $claude = Join-Path $d 'CLAUDE.md'
   $agents = Join-Path $d 'AGENTS.md'
-  $name = $d.Substring($Root.Length).TrimStart('\', '/')
+  $name = if ($d -eq $aiOsRoot) { 'AI OS' } else { "AI SOSU\$(Split-Path -Leaf $d)" }
 
   if (-not (Test-Path $claude)) {
     $drift += "$name : CLAUDE.md mangler (kun AGENTS.md findes) - ret manuelt, kilden er uklar"

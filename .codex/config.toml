@@ -37,4 +37,5 @@ network_access = false
 # skriveadgang, saa almindelige projektedits ikke udloeser sandbox-godkendelse.
 writable_roots = [
   'C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI SOSU',
+  'Y:\AI SOSU',   # kollegernes delte kopi (samme repo-layout)
 ]

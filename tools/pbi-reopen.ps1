@@ -1,4 +1,11 @@
 # Genåbner HR_OEKONOMI.pbip i en kørende "Untitled" PBI Desktop via UIA-recents (File → Recent → Hyperlink → Invoke).
+# TO FÆLDER, begge kostede tid 2026-09-01:
+#  1) Recents rummer FLERE poster ved navn 'HR_OEKONOMI.pbip' — heriblandt den NEDLAGTE 'AI-SOSU'-sti
+#     fra før omdøbningen 29-08. FindFirst kunne ramme den, og Invoke no-op'ede så UDEN fejl (scriptet
+#     skrev 'invoked recents link', og vinduet blev ved med at hedde 'Untitled'). Derfor vælges nu den
+#     ØVERSTE post (mindst Y) = den senest åbnede.
+#  2) Recents-listen er først i UIA-træet nogle sekunder EFTER at backstage er åbnet. Efter en helt
+#     frisk start skal scriptet typisk køres TO gange: første kald åbner backstage, andet finder posten.
 # Forudsætning: PBIDesktopStore.exe er startet og viser "Untitled - Power BI Desktop". Se BI-OEKONOMI/CLAUDE.md "Kørende model og disk-cache".
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
@@ -17,7 +24,10 @@ function Find-ByName($el, $name, $type) {
 }
 $link = $null
 for ($i = 0; $i -lt 12 -and -not $link; $i++) {
-  $link = Find-ByName $root 'HR_OEKONOMI.pbip' ([System.Windows.Automation.ControlType]::Hyperlink)
+  # ALLE poster med navnet - ikke FindFirst: flere kan hedde det samme, og de døde stier no-op'er
+  $hc = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Hyperlink)
+  $alle = @($root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $hc) | Where-Object { $_.Current.Name -eq 'HR_OEKONOMI.pbip' })
+  if ($alle.Count -gt 0) { $link = $alle | Sort-Object { $_.Current.BoundingRectangle.Y } | Select-Object -First 1 }
   if (-not $link) {
     foreach ($n in @('File','Filer')) {
       $tab = Find-ByName $root $n ([System.Windows.Automation.ControlType]::TabItem)

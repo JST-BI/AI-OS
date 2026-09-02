@@ -1,13 +1,13 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
-  Spejler CLAUDE.md til AGENTS.md i Y:\AI OS og alle projekter under Y:\AI SOSU.
+  Spejler CLAUDE.md til AGENTS.md i AI OS og alle projekter under 'AI SOSU' ved siden af.
 .DESCRIPTION
   Claude Code laeser CLAUDE.md. Codex laeser AGENTS.md. De to filer er samme
   indhold under to navne, saa begge vaerktoejer ser praecis de samme regler.
 
   Scriptet finder selv alle mapper der har mindst en af de to filer (AI OS-roden
-  plus hver projektmappe under Y:\AI SOSU) - listen er ikke hardkodet, saa nye
+  plus hver projektmappe under projektroden) - listen er ikke hardkodet, saa nye
   projekter kommer automatisk med.
 
   CLAUDE.md er kilden. AGENTS.md skrives som en byte-identisk kopi.
@@ -17,7 +17,8 @@
 .PARAMETER Root
   AI OS-roden. Udledes normalt af scriptets egen placering.
 .PARAMETER ProjectsRoot
-  Den separate kanoniske projektrod. Udledes normalt som Y:\AI SOSU ved siden af AI OS.
+  Projektroden. Udledes som 'AI SOSU' ved siden af AI OS (arbejdskopien under OneDrive);
+  falder tilbage paa Y:\AI SOSU hvis den mappe ikke findes.
 .EXAMPLE
   & "AI OS\tools\sync-agents-md.ps1" -Check
 .EXAMPLE
@@ -36,14 +37,22 @@ $ErrorActionPreference = 'Stop'
 $aiOsRoot = Split-Path -Parent $PSScriptRoot
 if (-not $Root) { $Root = $aiOsRoot }
 if (-not $ProjectsRoot) {
-  $ProjectsRoot = 'Y:\AI SOSU'
+  # ARBEJDSKOPIEN ligger ved siden af AI OS (under OneDrive). Y:\AI SOSU er KOLLEGERNES delte
+  # kopi og maa ikke vaere standard. Stod som 'Y:\AI SOSU' fra 20-08, hvor projektroden kortvarigt
+  # blev erklaeret flyttet dertil; AI OS/CLAUDE.md rettede placeringen 29-08, men scriptet fulgte
+  # ikke med. Spejlkontrollen — som er obligatorisk ved sessionsstart — kontrollerede derfor et
+  # foraeldet Y:-snapshot i stedet for de filer der faktisk redigeres, og kunne melde "OK" mens
+  # arbejdskopien var i drift. Fundet 02-09-2026, da Y: faldt ud og scriptet kastede i stedet for
+  # at kontrollere noget. Y: beholdes som fallback for en maskine uden OneDrive-kopien.
+  $kandidat = Join-Path (Split-Path -Parent $aiOsRoot) 'AI SOSU'
+  $ProjectsRoot = if (Test-Path -LiteralPath $kandidat -PathType Container) { $kandidat } else { 'Y:\AI SOSU' }
 }
 if (-not (Test-Path -LiteralPath $ProjectsRoot -PathType Container)) {
   throw "Den kanoniske projektrod mangler: $ProjectsRoot"
 }
 
 # Find alle mapper der styres: AI OS-roden + enhver projektmappe med mindst en af filerne.
-# Y:\AI SOSU er den separate fysiske og kanoniske projektmappe paa netvaerksdrevet.
+# Projektroden er arbejdskopien ved siden af AI OS; Y:\AI SOSU er kollegernes delte kopi.
 $dirs = @($aiOsRoot)
 $dirs += Get-ChildItem -LiteralPath $ProjectsRoot -Directory |
   Where-Object {

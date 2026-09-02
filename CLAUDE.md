@@ -18,7 +18,11 @@ Før du besvarer noget som helst, verificér følgende. Rapportér kun hvis noge
 [ ] Spejlkontrol på tværs af alle projekter — kør scriptet, gæt ikke:
         & "AI OS\tools\sync-agents-md.ps1" -Check
     Exitkode 0 = alle CLAUDE.md/AGENTS.md-par er identiske. Exitkode 1 = drift; scriptet
-    udskriver præcis hvilke projekter der afviger.
+    udskriver præcis hvilke projekter der afviger. Scriptet udleder selv projektroden som
+    `AI SOSU` ved siden af AI OS — altså ARBEJDSKOPIEN. Indtil 2026-09-02 stod `Y:\AI SOSU`
+    hårdkodet som standard (levn fra 20-08), så startkontrollen kontrollerede kollegernes
+    forældede Y:-snapshot i stedet for de filer der faktisk redigeres — og kunne melde "OK"
+    mens arbejdskopien var i drift. Kræver kontrollen pludselig netværk, er den fejlrettet.
 [ ] INDEX.md findes i AI OS rod
 [ ] agents/ indeholder: pbi-dax, pbi-powerquery, pbi-tmdl, pbi-performance, pbi-naming, pbi-kritik, pbi-design, inno-hr, inno-system, inno-logistics, inno-mailtemplate, md-optimizer, fin-analysis, fin-patterns, fin-statistics, fin-accounting, fin-data, fin-database, adm-bi
 [ ] AI OS rod indeholder KUN: agents/, tools/, vault/, .githooks/, .claude/, .agents/, .codex/, .obsidian/, .codex-tmp/, .vscode/, CLAUDE.md, AGENTS.md, INDEX.md, .gitattributes, .gitignore — ingen fysiske projektmapper, og INGEN loese .md/.canvas/.base-filer (de hoerer i vault/)

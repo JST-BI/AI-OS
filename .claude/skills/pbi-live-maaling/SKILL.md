@@ -9,19 +9,29 @@ Formål: måle DAX-aggregater direkte mod den model brugeren har åben i PBI Des
 
 ## Arbejdsgang
 
-1. **Find porten** (skifter ved hver PBI-genstart — antag ALDRIG en gammel port):
+1. **Find porten** (skifter ved hver PBI-genstart — antag ALDRIG en gammel port).
+   `Get-NetTCPConnection` tager IKKE en proces via pipeline i Windows PowerShell 5.1
+   (`Get-Process msmdsrv | Get-NetTCPConnection` fejler med *"The input object cannot be
+   bound to any parameters"* — rettet 2026-09-03). Brug `-OwningProcess`:
    ```powershell
-   Get-Process msmdsrv | Get-NetTCPConnection -State Listen | Select-Object LocalPort
+   $pid_ms = (Get-Process msmdsrv).Id
+   $port = (Get-NetTCPConnection -State Listen -OwningProcess $pid_ms | Select-Object -First 1).LocalPort
    ```
    Ingen msmdsrv-proces ⇒ PBI Desktop er lukket — bed brugeren åbne .pbip, eller brug selvkørt PBI-cyklus (opskrift i `BI-OEKONOMI/tools/pbi-desktop-cyklus.md`; scripts `AI OS/tools/pbi-reopen.ps1` + `pbi-screenshot.ps1`).
 
-2. **Find katalog-GUID** (kræves som Initial Catalog):
+2. **Find katalog-GUID** (kræves som Initial Catalog). **`pwsh` findes ikke på denne maskine**
+   (kun Windows PowerShell 5.1) — kald scriptet med `&`, ikke med `pwsh`:
    ```powershell
-   pwsh "AI OS/tools/dax-query.ps1" -Port <port> -Query "SELECT [CATALOG_NAME] FROM `$SYSTEM.DBSCHEMA_CATALOGS"
+   & "AI OS\tools\dax-query.ps1" -Port $port -Query "SELECT [CATALOG_NAME] FROM `$SYSTEM.DBSCHEMA_CATALOGS"
    ```
+   GUID'en fra svaret skal med som `-Database <guid>` i ALLE efterfølgende kald — uden den
+   afvises forbindelsen med *"Forbindelsesstrengen er ikke gyldig"*.
 
 3. **Kør DAX** via `AI OS/tools/dax-query.ps1`:
-   - Queries med æ/ø/å i mål-/tabelnavne: skriv til UTF-8-fil (uden BOM) og brug `-QueryFile` — inline `-Query` taber encoding.
+   ```powershell
+   & "AI OS\tools\dax-query.ps1" -Port $port -Database "<guid>" -QueryFile "$env:TEMP\q.dax"
+   ```
+   - Queries med æ/ø/å i mål-/tabelnavne: skriv til UTF-8-fil (uden BOM) og brug `-QueryFile` — inline `-Query` taber encoding. Skriv filen med `[System.IO.File]::WriteAllText($sti, $q, (New-Object System.Text.UTF8Encoding $false))`; `Set-Content`/`Out-File` giver BOM eller ANSI.
    - Kun `EVALUATE`-aggregater (ROW/SUMMARIZECOLUMNS/TOPN på nøgler) — se persondata-reglen nedenfor.
    - Query-scoped `DEFINE MEASURE`/`DEFINE FUNCTION` de-risker: test en måler-/UDF-ændring live FØR TMDL-edit.
 
@@ -33,6 +43,7 @@ Formål: måle DAX-aggregater direkte mod den model brugeren har åben i PBI Des
 
 ## Gotchas
 
+- **En BLANK måler giver ingen række** i `SUMMARIZECOLUMNS` — rækken udelades helt af svaret. Fraværet ER signalet: tæl altid de rækker du FORVENTEDE, ellers ligner et værn der fyrer et tomt resultat. Vil du se blanke celler eksplicit, så tilføj en ikke-blank kolonne (fx `COUNTROWS`) der holder rækken i live.
 - ADOMD-dll: `C:\Program Files\DAX Studio\bin\Microsoft.AnalysisServices.AdomdClient.dll`. `Add-Type` kaster harmløs `ReflectionTypeLoadException` — allerede try/catch-pakket i dax-query.ps1. Findes dll'en ikke: søg bredt efter både `Microsoft.AnalysisServices.AdomdClient.dll` og `Microsoft.PowerBI.AdomdClient.dll`.
 - **Stale model**: disk-TMDL-ændringer er IKKE i den kørende model før brugeren har genåbnet .pbip (luk HELT, gem ikke først) + refreshet. Måler du efter en disk-edit, måler du den GAMLE model.
 - **Cache-drop**: CL-bump, nye functions i functions.tmdl OG rene måler-tilføjelser dropper datacachen ved genindlæsning → fuld refresh påkrævet før facit-måling.

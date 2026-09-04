@@ -172,10 +172,11 @@ Kantinens menukort: tilrettede udgaver af leverandørens ugemenu (Jespers Torvek
 | Fil | Beskrivelse |
 |---|---|
 | `CLAUDE.md` / `AGENTS.md` | Projektregler: kilder, filnavngivning, ugentlig arbejdsgang (spejle) |
-| `tools/byg-ugekort.py` | Generator: bygger `Output/Kantine Ugekort <uge>.pdf` (kun FAVORIT + stående Bowl-tilbud). Auto-skalerer dagsblokkene så de aldrig løber ned over allergen-footeren — kræver `reportlab` |
+| `tools/hent-portionsanretning.py` | Henter kilde-PDF'en fra torvekoekken.dk når den ikke allerede ligger i `Input/` — regex på knappens `onClick`-attribut i den rå HTML, ingen browser nødvendig; vælger altid den danske "Uge `<N>`"-knap, ikke den engelske |
+| `tools/byg-ugekort.py` | Generator: bygger `Output/Kantine Ugekort <uge>.pdf` (kun FAVORIT + stående Bowl+Sandwich-tilbud). Auto-skalerer dagsblokkene så de aldrig løber ned over allergen-footeren — kræver `reportlab` |
 | `tools/test-layout.py` | Layout-værn: tjekker ugens indhold + et værre tilfælde, med negativ kontrol der kræver at et fast layout faktisk overlapper |
 | `Input/<uge>_Aarhus_Portion.pdf` | Leverandørens portionsanretning, 5 sider (FAVORIT, Vegetar, Vegansk, Halal, Gluten/laktosefri) |
-| `Input/Kantine - Prisskilt.pdf` | Kantinens prisskilt (bagværk, frokost, drikkevarer) — kilde til Bowl-prisen |
+| `Input/Kantine - Prisskilt.pdf` | Kantinens prisskilt (bagværk, frokost, drikkevarer) — kilde til Bowl- og Sandwich-prisen |
 | `Output/Kantine Ugekort <uge>.pdf` | Ugens menukort til opslag — kun FAVORIT-retten pr. dag |
 | `Output/Kantine - Prisskilt.pdf` | Prisskilt klar til opslag |
 

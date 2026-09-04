@@ -8,15 +8,31 @@
      stashes foerst (rapporteres), saa intet overskrives i blinde. Kloner uden remote springes over.
   Y:-kopierne er kollegernes arbejdsgrundlag: DATAKONTROLCENTER paa Y: og Z8050 m.fl. paa Y: roeres IKKE.
   Koeres af agenten paa kodeordet "Udgiv" (se AI OS\CLAUDE.md) eller manuelt.
+
+  FORAELDEDE FILER: robocopy /XO sletter aldrig noget - det er bevidst. Men en FLYTNING i kilden
+  ser ud som en ren tilfoejelse, saa den flyttede fil bliver liggende BEGGE steder paa Y:.
+  Det skete 2026-09-05, da 11 agenter flyttede til agents-inaktive\: Y:\AI OS\agents\ viste
+  19 filer, mens CLAUDE.md samme sted sagde 8 aktive. Scriptet rapporterer nu altid saadanne
+  filer; det sletter dem kun med -RyddForaeldede.
+.PARAMETER RyddForaeldede
+  Slet de filer under Y:\AI OS der ikke laengere findes i kilden. Uden flaget rapporteres de kun.
+  Roerer aldrig noget uden for Y:\AI OS, og aldrig repo-kopierne under Y:\AI SOSU.
 .EXAMPLE
   & "<OneDrive>\AI OS\tools\udgiv-til-y.ps1"
   & "<OneDrive>\AI OS\tools\udgiv-til-y.ps1" -KunAIOS
+  & "<OneDrive>\AI OS\tools\udgiv-til-y.ps1" -RyddForaeldede
+.EXAMPLE
+  # Naar Y: som drevbogstav ikke svarer (mappingen hoerer til en anden logon-session),
+  # men UNC-stien gor - set 2026-09-05:
+  $u = '\\sosurdata.net.local\Groups$\Ansatte'
+  & "<OneDrive>\AI OS\tools\udgiv-til-y.ps1" -YAIOS "$u\AI OS" -YAISOSU "$u\AI SOSU"
 #>
 param(
   [string]$OneDrive = "C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers",
   [string]$YAIOS = "Y:\AI OS",
   [string]$YAISOSU = "Y:\AI SOSU",
   [switch]$KunAIOS,
+  [switch]$RyddForaeldede,
   [string]$Log = (Join-Path $env:LOCALAPPDATA "Temp\udgiv-til-y.log")
 )
 $ErrorActionPreference = 'Continue'
@@ -31,6 +47,29 @@ $code = $LASTEXITCODE
 L ("AI OS -> Y: robocopy exit $code " + $(if ($code -lt 8) { "(OK)" } else { "(FEJL)" }))
 # .obsidian kopieres uden workspace.json (personlig tilstand)
 & robocopy (Join-Path $src ".obsidian") (Join-Path $YAIOS ".obsidian") /E /XO /R:2 /W:5 /XF workspace.json workspace-mobile.json /NFL /NDL /NJH /NJS /NP | Out-Null
+
+# 1b) Foraeldede filer paa Y: - dem kilden ikke laengere har. En flytning i kilden ser for
+#     robocopy ud som en tilfoejelse, saa uden dette bliver den gamle placering liggende.
+#     Samme udelukkelser som robocopy ovenfor, ellers ville .git/.claude se "foraeldede" ud.
+$udeladt = @('.git', '.claude', '.codex-tmp', '.obsidian', 'node_modules', '.agents')
+$foraeldede = @(Get-ChildItem -LiteralPath $YAIOS -Recurse -File -Force -ErrorAction SilentlyContinue | Where-Object {
+    $rel = $_.FullName.Substring($YAIOS.Length).TrimStart('\')
+    $top = $rel.Split('\')[0]
+    ($udeladt -notcontains $top) -and -not (Test-Path -LiteralPath (Join-Path $src $rel))
+  })
+if ($foraeldede.Count -eq 0) {
+  L "Foraeldede filer paa Y:\AI OS: ingen"
+}
+elseif ($RyddForaeldede) {
+  foreach ($f in $foraeldede) { L ("  sletter: " + $f.FullName.Substring($YAIOS.Length).TrimStart('\')) }
+  $foraeldede | Remove-Item -Force -ErrorAction SilentlyContinue
+  L "Foraeldede filer paa Y:\AI OS: $($foraeldede.Count) slettet (-RyddForaeldede)"
+}
+else {
+  foreach ($f in $foraeldede | Select-Object -First 20) { L ("  foraeldet: " + $f.FullName.Substring($YAIOS.Length).TrimStart('\')) }
+  if ($foraeldede.Count -gt 20) { L ("  ... og " + ($foraeldede.Count - 20) + " mere") }
+  L "Foraeldede filer paa Y:\AI OS: $($foraeldede.Count) - koer med -RyddForaeldede for at fjerne dem"
+}
 
 if ($KunAIOS) { L "UDGIV slut (kun AI OS)"; exit 0 }
 

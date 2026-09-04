@@ -1,51 +1,47 @@
 ---
 name: pbi-live-maaling
-description: Live DAX-måling mod kørende Power BI Desktop (msmdsrv) — port-opdagelse, ADOMD, aggregat-only persondata-regel. Brug ved måling-før-merge, diagnose-dekomponering og facit-verifikation i BI-OEKONOMI.
+description: Live DAX-måling mod kørende Power BI Desktop — måling-før-merge, diagnose-dekomponering og facit-verifikation i BI-projekterne. Kun aggregater i output.
 ---
 
-# Live-måling mod kørende PBI-model (msmdsrv)
+# Live-måling mod kørende PBI-model
 
-Formål: måle DAX-aggregater direkte mod den model brugeren har åben i PBI Desktop — UDEN at gemme, UDEN at ændre noget. Bruges til måling-før-merge (pbi-kritik-gate), diagnose-dekomponering (fx kohorte × Indberetningsår) og facit-verifikation.
+Mål DAX-aggregater direkte mod den model JST har åben i PBI Desktop — uden at gemme, uden at
+ændre noget.
 
-## Arbejdsgang
+```powershell
+$q = @'
+EVALUATE SUMMARIZECOLUMNS ( 'L-Kalender'[År], "AAE", [Årselever] )
+'@
+[System.IO.File]::WriteAllText("$env:TEMP\q.dax", $q, (New-Object System.Text.UTF8Encoding $false))
+& "C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI OS\tools\dax-query.ps1" -QueryFile "$env:TEMP\q.dax"
+```
 
-1. **Find porten** (skifter ved hver PBI-genstart — antag ALDRIG en gammel port).
-   `Get-NetTCPConnection` tager IKKE en proces via pipeline i Windows PowerShell 5.1
-   (`Get-Process msmdsrv | Get-NetTCPConnection` fejler med *"The input object cannot be
-   bound to any parameters"* — rettet 2026-09-03). Brug `-OwningProcess`:
-   ```powershell
-   $pid_ms = (Get-Process msmdsrv).Id
-   $port = (Get-NetTCPConnection -State Listen -OwningProcess $pid_ms | Select-Object -First 1).LocalPort
-   ```
-   Ingen msmdsrv-proces ⇒ PBI Desktop er lukket — bed brugeren åbne .pbip, eller brug selvkørt PBI-cyklus (opskrift i `BI-OEKONOMI/tools/pbi-desktop-cyklus.md`; scripts `AI OS/tools/pbi-reopen.ps1` + `pbi-screenshot.ps1`).
-
-2. **Find katalog-GUID** (kræves som Initial Catalog). **`pwsh` findes ikke på denne maskine**
-   (kun Windows PowerShell 5.1) — kald scriptet med `&`, ikke med `pwsh`:
-   ```powershell
-   & "AI OS\tools\dax-query.ps1" -Port $port -Query "SELECT [CATALOG_NAME] FROM `$SYSTEM.DBSCHEMA_CATALOGS"
-   ```
-   GUID'en fra svaret skal med som `-Database <guid>` i ALLE efterfølgende kald — uden den
-   afvises forbindelsen med *"Forbindelsesstrengen er ikke gyldig"*.
-
-3. **Kør DAX** via `AI OS/tools/dax-query.ps1`:
-   ```powershell
-   & "AI OS\tools\dax-query.ps1" -Port $port -Database "<guid>" -QueryFile "$env:TEMP\q.dax"
-   ```
-   - Queries med æ/ø/å i mål-/tabelnavne: skriv til UTF-8-fil (uden BOM) og brug `-QueryFile` — inline `-Query` taber encoding. Skriv filen med `[System.IO.File]::WriteAllText($sti, $q, (New-Object System.Text.UTF8Encoding $false))`; `Set-Content`/`Out-File` giver BOM eller ANSI.
-   - Kun `EVALUATE`-aggregater (ROW/SUMMARIZECOLUMNS/TOPN på nøgler) — se persondata-reglen nedenfor.
-   - Query-scoped `DEFINE MEASURE`/`DEFINE FUNCTION` de-risker: test en måler-/UDF-ændring live FØR TMDL-edit.
+Port og katalog finder scriptet selv; brug `-QueryFile` frem for `-Query` når query'en indeholder
+æ/ø/å. Resten af brugsvejledningen står i scriptets egen `Get-Help` — den opdateres sammen med
+scriptet og kan derfor ikke drive fra det.
 
 ## Hårde regler
 
-- **PERSONDATA: kun aggregater i output.** Aldrig rå personrækker, CPR-, navne- eller mailværdier — tool-output sendes til Anthropics servere. Antal, summer, distinkte tællinger, deltaer og ikke-personhenførbare nøgler (konto-/forløbskoder) er OK. Se memory `persondata-kun-aggregater.md`.
-- **Sub-agenter kan IKKE se brugerens msmdsrv-proces.** Orkestratoren kører måle-queries selv og giver gate-/analyse-agenter de færdige tal. Spawn aldrig en agent til selve målingen.
-- **Mål dekomponeret, ikke på totaler**, når to fejl kan nette hinanden (fx 291-vs-131: motor-total ≈ Z8050-total, men sammensætningen er forkert).
+- **Kun aggregater i output.** Antal, summer, distinkte tællinger, deltaer og ikke-personhenførbare
+  nøgler (konto-, forløbskoder). Aldrig rå personrækker, CPR, navne eller mail — tool-output sendes
+  til Anthropics servere.
+- **Sub-agenter kan ikke se JSTs msmdsrv-proces.** Orkestratoren måler selv og giver gate-agenten
+  de færdige tal. Spawn aldrig en agent til selve målingen.
+- **Mål dekomponeret, ikke på totaler**, når to fejl kan nette hinanden (291-vs-131: motor-totalen
+  ramte Z8050-totalen, men sammensætningen var forkert).
 
-## Gotchas
+## Gotchas — det scriptet ikke kan fortælle dig
 
-- **En BLANK måler giver ingen række** i `SUMMARIZECOLUMNS` — rækken udelades helt af svaret. Fraværet ER signalet: tæl altid de rækker du FORVENTEDE, ellers ligner et værn der fyrer et tomt resultat. Vil du se blanke celler eksplicit, så tilføj en ikke-blank kolonne (fx `COUNTROWS`) der holder rækken i live.
-- ADOMD-dll: `C:\Program Files\DAX Studio\bin\Microsoft.AnalysisServices.AdomdClient.dll`. `Add-Type` kaster harmløs `ReflectionTypeLoadException` — allerede try/catch-pakket i dax-query.ps1. Findes dll'en ikke: søg bredt efter både `Microsoft.AnalysisServices.AdomdClient.dll` og `Microsoft.PowerBI.AdomdClient.dll`.
-- **Stale model**: disk-TMDL-ændringer er IKKE i den kørende model før brugeren har genåbnet .pbip (luk HELT, gem ikke først) + refreshet. Måler du efter en disk-edit, måler du den GAMLE model.
-- **Cache-drop**: CL-bump, nye functions i functions.tmdl OG rene måler-tilføjelser dropper datacachen ved genindlæsning → fuld refresh påkrævet før facit-måling.
-- En CALCULATE over flere måneder SAMLET kan give forkerte tal for ikke-lineære målere (MAX/MIN pr. måned) — iterér pr. måned via `SUMX(VALUES('L-Kalender'[Månedsstart]), …)`.
-- Måler-reference i boolsk filterarg er en fælde — brug VAR + eksplicit filterudtryk.
+- **Stale model**: disk-ændringer i TMDL er ikke i den kørende model, før .pbip er lukket helt
+  (uden at gemme), genåbnet og refreshet. Måler du efter en disk-edit, måler du den gamle model.
+- **Cache-drop**: CL-bump, nye entries i `functions.tmdl` og rene måler-tilføjelser dropper
+  datacachen ved genindlæsning → fuld refresh før facit-måling.
+- **En BLANK måler giver ingen række** i `SUMMARIZECOLUMNS`; fraværet er signalet. Tæl de rækker du
+  forventede, ellers ligner et værn der fyrer et tomt resultat.
+- En `CALCULATE` over flere måneder samlet giver forkerte tal for ikke-lineære målere (MAX/MIN pr.
+  måned) — iterér med `SUMX(VALUES('L-Kalender'[Månedsstart]), …)`.
+- Måler-reference i et boolsk filterargument er en fælde — brug VAR + eksplicit filterudtryk.
+- Query-scoped `DEFINE MEASURE` / `DEFINE FUNCTION` de-risker: test ændringen live før TMDL-edit.
+
+Er PBI ikke åben: `BI-OEKONOMI/tools/pbi-desktop-cyklus.md` (scripts `AI OS/tools/pbi-reopen.ps1`
+og `pbi-screenshot.ps1`).

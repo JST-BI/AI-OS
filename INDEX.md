@@ -20,6 +20,8 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/CLAUDE.md` / `AGENTS.md` | Overordnede agentregler: startkontrol, routing, sikkerhedsregler, datagovernance, TMDL/PBIR-gotchas (spejle) |
 | `AI OS/INDEX.md` | Dette indeks |
 | `AI OS/tools/setup-new-repo.ps1` | Opsætning af nyt repo: begge pre-commit hooks, `.gitattributes`, `.codex/config.toml`, `core.hooksPath` |
+| `AI OS/tools/session-start-kontrol.ps1` | Deterministisk session-startkontrol (SessionStart-hook): spejl, rodrenhed, INDEX.md, projektfiler. Tavs ved succes |
+| `AI OS/tools/codex-opsaetning.md` | Codex på en ny maskine: trust, `project_doc_max_bytes`, hooks, `.codex/rules/`. Flyttet ud af CLAUDE.md 2026-09-05 |
 | `AI OS/tools/sync-agents-md.ps1` | Spejler CLAUDE.md → AGENTS.md i alle projekter; `-Check` rapporterer drift (exit 1) |
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
 | `AI OS/.claude/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" |
@@ -38,33 +40,39 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/.codex/config.toml` | Codex-konfiguration (TOML). Hæver `project_doc_max_bytes`, sætter sandkasse og AGENTS.md-fallback. Erstattede 2026-08-20 en virkningsløs `.Codex/settings.json` i Claude Codes JSON-format |
 | `AI OS/.obsidian/` | Stabil Obsidian-konfiguration for vaulten med `AI OS/` som rod; maskinspecifik `workspace*.json` og cache er gitignored. `app.json`/`daily-notes.json`/`templates.json` dirigerer nye noter til `vault/` — uden dem skrev daily-notes-pluginet i roden |
 | `AI OS/vault/` | De frie Obsidian-noter (`inbox/`, `journal/`, `notes/{,people,decisions}/`, `meetings/`, `resources/`, `_templates/`, `_attachments/`). Adskilt fra de styrede filer — se CLAUDE.md → *Obsidian-vaultregler* |
+| `AI OS/vault/CLAUDE.md` / `AGENTS.md` | Obsidian-notereglerne (frontmatter, routing, index-vedligehold, AI_ACTION_METADATA). Flyttet ud af AI OS-roden 2026-09-05 — de gælder kun filer under `vault/` (spejle) |
 | `AI OS/vault/Index - Vault.md` | Vaultens MOC: mappeoversigt, routing og noteliste. Ikke det samme som dette indeks, der dækker **styrede** filer |
 | `AI OS/vault/_templates/*.md` | Note-skabeloner med obligatorisk frontmatter: `Daily`, `Note`, `Meeting`, `Decision` |
 | `<OneDrive>\AI SOSU\` | Separat fysisk og kanonisk projektrod på netværksdrevet; må ikke kopieres eller linkes ind under `<OneDrive>\AI OS\` |
 
 ### Agentdefinitioner — `AI OS/agents/` (bruges af begge værktøjer)
 
+Claude Code spawner dem som subagenter via `~/.claude/agents`; Codex læser samme filer som
+rolleinstruks. Hver agents `description` injiceres i systemprompten i hver session — derfor ligger
+agenter for projekter i dvale i `agents-inaktive/`.
+
 | Fil | Rolle |
 |---|---|
-| `agents/pbi-dax.md` | DAX measures, KPIs, tidsintelligens, filterkontext |
-| `agents/pbi-powerquery.md` | M-kode, query folding, relationer, stjerneskema |
-| `agents/pbi-tmdl.md` | TMDL-syntaks, beregningsgrupper, model-metadata |
-| `agents/pbi-performance.md` | VertiPaq, storage modes, refresh-optimering |
-| `agents/pbi-naming.md` | Navngivningskonventioner, display folders, audits |
-| `agents/pbi-kritik.md` | Kritisk GO/NO-GO-gate før merge (grain, dobbelttælling, fortegn) |
-| `agents/pbi-design.md` | Obligatorisk visual-design-standard (cards, matrix, stak-farver, verifikation) |
-| `agents/inno-hr.md` | Medarbejderlivscyklus, ansættelses-/fratrædelsesprocesser |
-| `agents/inno-system.md` | INNOMATE-systemopsætning, handlinger, onboarding-konfiguration |
-| `agents/inno-logistics.md` | Procesplaner, tjeklister, rollebeskrivelser |
-| `agents/inno-mailtemplate.md` | Mailskabeloner i INNOMATE, merge-felter, CPR-regler |
-| `agents/fin-analysis.md` | Finansiel analyse — afvigelser, budget vs. realiseret, cashflow |
-| `agents/fin-patterns.md` | Mønstergenkendelse — anomalier, sæsonudsving, outliers |
-| `agents/fin-statistics.md` | Statistik — prognoser, regressioner, konfidensintervaller |
-| `agents/fin-accounting.md` | Regnskab — kontoplan, dimensioner, bogføringsregler |
-| `agents/fin-data.md` | Dataanalyse — datakvalitet, krydskilder, aggregering |
-| `agents/fin-database.md` | Databasestruktur — skemadesign, nøgler, relationer |
-| `agents/md-optimizer.md` | Vedligehold af `.md`-hukommelsesfiler på tværs af repos |
-| `agents/adm-bi.md` | BI governance og styringsdokumenter |
+| `agents/pbi-kritik.md` | **Obligatorisk GO/NO-GO-gate** før merge af model-/dataændring (grain, dobbelttælling, fortegn, måling-før-merge) |
+| `agents/pbi-design.md` | **Obligatorisk** visual-design-standard (cards, matrix, stak-farver, visuel verifikation) |
+| `agents/pbi-dax.md` | DAX: målere, tidsintelligens, filterkontekst, review. Verificerer navne mod TMDL-kilden |
+| `agents/pbi-powerquery.md` | M-kode, grain og fan-out, relationer, query folding |
+| `agents/pbi-tmdl.md` | TMDL-filerne: objekter, beregningsgrupper, relationships, load-diagnose. Kører `validate-tmdl.ps1` |
+| `agents/pbi-performance.md` | Diagnose af langsom refresh/render/query mod målt baseline. Rapporterer, implementerer ikke |
+| `agents/pbi-naming.md` | Navnebeslutninger og -audits mod modellens egen, målte konvention |
+| `agents/md-optimizer.md` | Vedligehold af instruktions- og hukommelsesfiler på tværs af repos |
+
+### Inaktive agenter — `AI OS/agents-inaktive/`
+
+Flyttet ud af rosteret 2026-09-05: ingen dokumenteret brug, og hver beskrivelse kostede kontekst i
+hver session. Ikke slettet. Genaktivering + advarsel om at efterprøve fakta først: `agents-inaktive/README.md`.
+
+| Fil | Projekt |
+|---|---|
+| `agents-inaktive/README.md` | Hvorfor de ligger her, og hvordan en tages i brug igen |
+| `agents-inaktive/fin-analysis.md` · `fin-patterns.md` · `fin-statistics.md` · `fin-accounting.md` · `fin-data.md` · `fin-database.md` | `DATA-BUDGET_PROGNOSE` |
+| `agents-inaktive/inno-hr.md` · `inno-system.md` · `inno-logistics.md` · `inno-mailtemplate.md` | `SYS-INNOMATE` |
+| `agents-inaktive/adm-bi.md` | `ADM-BI` |
 
 ---
 
@@ -77,6 +85,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `CLAUDE.md` / `AGENTS.md` | Projektregler: modelarkitektur, DAX/M-konventioner, workflow, gotchas (spejle) |
 | `.claude/rules/pbi-workflows.md` | Agent-workflow-mønstre for PBI-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20: dén mappe er til Starlark-`.rules`, ikke Markdown) |
 | `Rapporter/HR_OEKONOMI/` | Selve rapporten som `.pbip`: `HR_OEKONOMI.SemanticModel/` (TMDL) + `HR_OEKONOMI.Report/` (PBIR) |
+| `Input/standards/tmdl-syntaks.md` | TMDL-syntaks og fejlmønstre. Flyttet ud af CLAUDE.md 2026-09-05 — læs FØR enhver TMDL-redigering |
 | `Input/standards/power-query-step-naming.md` | Referencestandard for M-step-navngivning (VerbObject-Konkret) |
 | `Input/standards/pbir-visual-json.md` | PBIR visual-JSON: farvearkitektur (selector.metadata vs. data), queryGroup-placering, auto-date-time, sourceColumn ved rename, PBIR-struktur og formatering (flyttet fra CLAUDE.md 2026-08-25) |
 | `Input/standards/tmdl-integration.md` | Erfaringer ved import af tabeller fra en fremmed TMDL-model: expressions vs. model-tabeller, sanitering, transitive M-afhængigheder (flyttet fra CLAUDE.md 2026-08-25) |

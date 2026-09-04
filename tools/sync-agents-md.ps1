@@ -51,14 +51,21 @@ if (-not (Test-Path -LiteralPath $ProjectsRoot -PathType Container)) {
   throw "Den kanoniske projektrod mangler: $ProjectsRoot"
 }
 
-# Find alle mapper der styres: AI OS-roden + enhver projektmappe med mindst en af filerne.
+# Find alle mapper der styres: AI OS-roden + undermapper i AI OS med mindst en af filerne
+# (fx vault\, der har sine egne noteregler) + enhver projektmappe med mindst en af filerne.
 # Projektroden er arbejdskopien ved siden af AI OS; Y:\AI SOSU er kollegernes delte kopi.
+$harPar = {
+  param($sti)
+  (Test-Path (Join-Path $sti 'CLAUDE.md')) -or (Test-Path (Join-Path $sti 'AGENTS.md'))
+}
 $dirs = @($aiOsRoot)
+# Undermapper i AI OS - springer konfigurations- og VCS-mapper over
+$dirs += Get-ChildItem -LiteralPath $aiOsRoot -Directory |
+  Where-Object { $_.Name -notmatch '^\.' -and (& $harPar $_.FullName) } |
+  Select-Object -ExpandProperty FullName
 $dirs += Get-ChildItem -LiteralPath $ProjectsRoot -Directory |
-  Where-Object {
-    (Test-Path (Join-Path $_.FullName 'CLAUDE.md')) -or
-    (Test-Path (Join-Path $_.FullName 'AGENTS.md'))
-  } | Select-Object -ExpandProperty FullName
+  Where-Object { & $harPar $_.FullName } |
+  Select-Object -ExpandProperty FullName
 
 $drift = @()
 $synced = 0
@@ -67,7 +74,9 @@ $ok = 0
 foreach ($d in $dirs) {
   $claude = Join-Path $d 'CLAUDE.md'
   $agents = Join-Path $d 'AGENTS.md'
-  $name = if ($d -eq $aiOsRoot) { 'AI OS' } else { "AI SOSU\$(Split-Path -Leaf $d)" }
+  $name = if ($d -eq $aiOsRoot) { 'AI OS' }
+          elseif ($d.StartsWith($aiOsRoot, [System.StringComparison]::OrdinalIgnoreCase)) { "AI OS\$(Split-Path -Leaf $d)" }
+          else { "AI SOSU\$(Split-Path -Leaf $d)" }
 
   if (-not (Test-Path $claude)) {
     $drift += "$name : CLAUDE.md mangler (kun AGENTS.md findes) - ret manuelt, kilden er uklar"

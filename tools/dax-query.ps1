@@ -74,6 +74,12 @@ if (-not (Test-Path -LiteralPath $dll)) {
 try { Add-Type -Path $dll -ErrorAction Stop } catch { }  # harmloes ReflectionTypeLoadException
 
 function Invoke-Adomd {
+  # VIGTIGT: `return ,$dt` - kommaet er ikke en tastefejl. PowerShell UDRULLER en samling paa
+  # vej ud af en funktion, og en DataTable enumererer sine raekker. Uden kommaet faar kalderen
+  # DataRow-objekter i stedet for tabellen, saa $resultat.Rows.Count bliver $null - og en
+  # kontrol som `-eq 0` laeser det som "ingen raekker". Fejlen ramte katalog-opdagelsen
+  # 2026-09-05: modellen var indlaest og svarede fint paa raa ADOMD, mens scriptet meldte
+  # "Ingen katalog fundet". Samme klasse som "en logfunktion maa aldrig skrive til pipelinen".
   param([string]$ConnStr, [string]$Dax)
   $conn = New-Object Microsoft.AnalysisServices.AdomdClient.AdomdConnection($ConnStr)
   $conn.Open()
@@ -83,7 +89,7 @@ function Invoke-Adomd {
     $da = New-Object Microsoft.AnalysisServices.AdomdClient.AdomdDataAdapter($cmd)
     $dt = New-Object System.Data.DataTable
     [void]$da.Fill($dt)
-    return $dt
+    return ,$dt
   } finally { $conn.Close() }
 }
 
@@ -93,13 +99,30 @@ if (-not $PSBoundParameters.ContainsKey('Port')) {
   if ($ms.Count -eq 0) {
     throw "Ingen msmdsrv-proces - Power BI Desktop er ikke aaben med en model. Aabn .pbip'en (se BI-OEKONOMI/tools/pbi-desktop-cyklus.md) og proev igen."
   }
-  if ($ms.Count -gt 1) {
-    Write-Warning "Flere msmdsrv-instanser ($($ms.Count)) koerer. Vaelger den foerste - angiv -Port for at ramme en bestemt."
-  }
   # Get-Process | Get-NetTCPConnection binder IKKE i Windows PowerShell 5.1 - brug -OwningProcess.
-  $Port = (Get-NetTCPConnection -State Listen -OwningProcess $ms[0].Id | Select-Object -First 1).LocalPort
-  if (-not $Port) { throw "msmdsrv (pid $($ms[0].Id)) lytter ikke paa nogen port endnu - modellen er formentlig stadig ved at indlaese." }
-  Write-Verbose "Port fundet: $Port"
+  # Vaelg IKKE bare den foerste instans: PBI Desktop efterlader tomme msmdsrv-instanser uden
+  # katalog (set 2026-09-05 - to instanser, kun den ene havde modellen). Vaelg den der faktisk
+  # har et katalog, saa det ikke afhaenger af processernes raekkefoelge.
+  $kandidater = @()
+  foreach ($m in $ms) {
+    foreach ($pt in (Get-NetTCPConnection -State Listen -OwningProcess $m.Id -ErrorAction SilentlyContinue |
+                     Select-Object -ExpandProperty LocalPort -Unique)) {
+      $kandidater += $pt
+    }
+  }
+  if ($kandidater.Count -eq 0) {
+    throw "msmdsrv koerer, men lytter ikke paa nogen port endnu - modellen er formentlig stadig ved at indlaese."
+  }
+  foreach ($pt in $kandidater) {
+    try {
+      $k = Invoke-Adomd -ConnStr "Data Source=localhost:$pt" -Dax "SELECT [CATALOG_NAME] FROM `$SYSTEM.DBSCHEMA_CATALOGS"
+      if ($k.Rows.Count -gt 0) { $Port = $pt; if (-not $Database) { $Database = $k.Rows[0][0] }; break }
+    } catch { }
+  }
+  if (-not $Port) {
+    throw "Ingen af de $($kandidater.Count) msmdsrv-porte ($($kandidater -join ', ')) har et katalog. Er modellen faerdig med at indlaese?"
+  }
+  Write-Verbose "Port fundet: $Port (katalog: $Database)"
 }
 
 # --- Katalog: find det, hvis det ikke er givet ---------------------------

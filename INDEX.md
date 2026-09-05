@@ -175,8 +175,9 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 
 ## ADM-KANTINE — `<OneDrive>\AI SOSU\ADM-KANTINE\` (repo: [JST-BI/ADM-KANTINE](https://github.com/JST-BI/ADM-KANTINE))
 
-Kantinens menukort: tilrettede udgaver af leverandørens ugemenu (Jespers Torvekøkken).
-**Bemærk**: `Input/` committes her (små, persondatafrie PDF'er = dokumentation for hvert ugekort). `.gitattributes` sætter `*.pdf binary`.
+Kantinens menukort (tilrettede udgaver af leverandørens ugemenu) og de ugentlige bestillingssedler til Jespers Torvekøkken og Bilkas bageri.
+**Bemærk**: `Input/`s PDF'er committes her (små, persondatafrie = dokumentation for hvert ugekort). `.gitattributes` sætter `*.pdf binary`.
+Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — de indeholder navne, mobilnumre og e-mailadresser.
 
 | Fil | Beskrivelse |
 |---|---|
@@ -187,6 +188,7 @@ Kantinens menukort: tilrettede udgaver af leverandørens ugemenu (Jespers Torvek
 | `Input/<uge>_Aarhus_Portion.pdf` | Leverandørens portionsanretning, 5 sider (FAVORIT, Vegetar, Vegansk, Halal, Gluten/laktosefri) |
 | `Input/Kantine - Prisskilt.pdf` | Kantinens prisskilt (bagværk, frokost, drikkevarer) — kilde til Bowl- og Sandwich-prisen |
 | `Output/Kantine Ugekort <uge>.pdf` | Ugens menukort til opslag — kun FAVORIT-retten pr. dag |
+| `tools/lav-muah-seddel.py` | Generator: udfylder MUAH-udfyldningssedler til Bilkas bagerudsalg ud fra en JSON-liste og en tidligere seddel som skabelon — kræver `python-docx` |
 | `Output/Kantine - Prisskilt.pdf` | Prisskilt klar til opslag |
 
 ---

@@ -55,8 +55,17 @@ filserveren afviser junctions/symlinks. Findes der arbejde der KUN er på Y: (ny
 ucommitterede ændringer): stop og rapportér frem for at overskrive.
 
 Kollegerne har ingen adgang til JSTs OneDrive. Intet de kører må forudsætte en OneDrive-sti —
-M-koden bruger lokalt spejl med fallback til Y:, og `DATAKONTROLCENTER` + udtrækkene på Y: er
-deres datagrundlag og røres aldrig af agenten.
+M-koden bruger lokalt spejl med fallback til Y:.
+
+På Y: er der to slags filer, og de har hver sin regel:
+
+- **Datagrundlaget** — udtrækkene (Z8050, Navision m.fl.) og kollegernes egne arbejdsfiler.
+  Dem overskriver agenten aldrig; de er kilden, og de produceres et andet sted.
+- **Styringsfilerne** — `DATAKONTROLCENTER` og DIM-/oversigtsfilerne, som modellen slår op i
+  (`fxDatakildeSti` læser stier dér). Dem **vedligeholder agenten**: det er selve arbejdet at
+  registrere en ny datakilde eller rette en dimension, og modellen kan ikke fungere uden.
+  Sig hvad du ændrer, og tag en kopi af filen før en ikke-triviel rettelse — kollegerne
+  arbejder i den samtidig.
 
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.

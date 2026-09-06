@@ -163,6 +163,19 @@ betyder, hvad agenten skal efterprøve mod kilden, og et eksplicit persondata-fo
 stop og læg valget frem for JST med de udestående fund. Send alt kendt til gaten på én gang frem
 for ét fix ad gangen, og kør de to gates parallelt.
 
+## Mail — agenten sender ALDRIG
+
+**Agenten må aldrig sende en mail.** Ikke via Gmail-/Outlook-værktøjer, ikke via script, ikke
+som kladde der kun mangler et klik — heller ikke når mailteksten er agentens eget arbejde, og
+heller ikke når JST har godkendt indholdet. Agenten skriver teksten til en fil og afleverer den;
+**afsendelsen er JSTs og kun JSTs.**
+
+Grunden er ikke fortrolighed alene: en mail til en leverandør eller en kollega er skolens ord
+udadtil, og den kan ikke kaldes tilbage. JST er afsender, og JST trykker send.
+
+Dette er en undtagelse fra selvudførelsespligten i "Arbejdsform" — den eneste manuelle handling
+agenten må lade JST udføre uden at spørge først.
+
 ## Sikkerhed — stop og spørg først
 
 | Handling | Hvorfor |
@@ -170,7 +183,7 @@ for ét fix ad gangen, og kør de to gates parallelt.
 | `git push --force` | Overskriver fjernhistorik |
 | Sletning uden for `<OneDrive>\AI SOSU\` og `<OneDrive>\AI OS\` | Uden for projektets ansvarsområde |
 | Sletning af mere end 5 filer på én gang | Kan ikke fortrydes |
-| Afsendelse til eksterne tjenester (mail, API med persondata) | Data forlader maskinen |
+| Afsendelse til eksterne tjenester (API med persondata) | Data forlader maskinen — mail er helt forbudt, se ovenfor |
 | `git config --global` | Rammer alle repos |
 
 Alt andet kører uden prompt.

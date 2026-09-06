@@ -106,6 +106,12 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/R1-spike-Spor2-DvP-findings.md` | Spike-findings for Spor 2 R1 (Drift vs. Projekt) |
 | `tools/taxameter-dobbelttaelling-analyse.md` | Analyse af taxameter-dobbelttælling og netting-fix |
 | `tools/motor-koncept-diagram.html` | JST-godkendt koncept-diagram: motor-terminologi, dataflow, afløbs-matrix pr. kohorte × regnskabsår, 291-vs-131, roadmap |
+| `tools/pptx/sosu_pptx.py` | Fælles PowerPoint-skabelon i skolens visuelle identitet. Palet, skrift og de to logobilleder er **udtrukket** af skolens eget årshjul (`Input/Årshjul - forløbsstart ... .pdf`), ikke opfundet. Rummer to tavse PowerPoint-fælder: `<a:ln>` skal stå før `<a:effectLst>`, og rækkefølgen inde i `<a:ln>` er bindende — ellers kasseres formateringen uden fejl |
+| `tools/pptx/byg-aarshjul.py` | Årshjul over forløbsstart med stiplede buede pile for fødekæderne. Følger skolens 4:3-forlæg; ét bevidst afvig: hjulet er en ring, så pilene kan ligge i navet |
+| `tools/pptx/byg-foedekaeder.py` | Præsentation om fødekæder og optag: 2026-optagene, de 17 aktive kæder, den direkte indgang pr. hold, elevtyperne, EUX' femårige løb |
+| `tools/pptx/byg-dataflow.py` | Præsentation om budgettets dataflow: de fem trin fra kildesystem til rapport, de 68 registrerede datakilder, budgetmotorens 17 rækker |
+| `tools/pptx/eksporter-til-png.ps1` | Eksporterer .pptx til PNG for visuel kontrol. **Kopierer altid til et tidsstemplet navn først** — PowerPoint COM cacher på filsti og serverer ellers en gammel udgave uden at fejle |
+| `Output/praesentationer/*.pptx` | De tre genererede præsentationer. Genbygges med `python byg-*.py`; redigér generatoren, ikke .pptx-filen |
 
 ---
 

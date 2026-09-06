@@ -23,6 +23,22 @@ Forudsætninger: alt der skal ud, er merget til `main` og pushet til GitHub FØR
 
 **En FLYTNING i kilden efterlader filen begge steder på Y:.** robocopy sletter aldrig noget — bevidst og rigtigt — men en flytning ligner en ren tilføjelse. Da 11 agenter flyttede til `agents-inaktive/` 2026-09-05, viste `Y:\AI OS\agents\` 19 filer, mens `CLAUDE.md` samme sted sagde 8 aktive. Derfor rapporteres forældede filer nu altid. **Sletning på Y: er uden for projektrødderne — spørg JST før du kører `-RyddForaeldede`.**
 
+**`task 'geometric-repack' failed` er IKKE en fejl i udgivelsen.** Ved et stort pull kører git
+sin baggrundsvedligeholdelse, og repack fejler rutinemæssigt på en netværksshare (fil-låsning og
+rename-semantik er anderledes end lokalt). Loggen viser den ved siden af det rigtige resultat:
+`BI-OEKONOMI : 420d1c1d -> b1c5dc59 (error: task 'geometric-repack' failed)` — repoet **flyttede
+sig**, så pull'en lykkedes. Efterprøv frem for at gætte:
+
+```powershell
+git -C 'Y:\AI SOSU\<repo>' log --oneline -1        # skal vise den ventede commit
+git -C 'Y:\AI SOSU\<repo>' status -sb              # skal stå på main, synkron
+git -C 'Y:\AI SOSU\<repo>' fsck --connectivity-only
+```
+
+`dangling commit`/`dangling blob` i fsck er **ikke** korruption — det er uafhentede objekter der
+venter på oprydning, og de ligger der netop fordi repack ikke kørte. Kun `missing`, `broken` eller
+`corrupt` er alvorligt.
+
 **Drevbogstavet `Y:` kan svare `False`, selv om delingen er oppe.** Mappingen er pr. logon-session, og agentens PowerShell kører ikke nødvendigvis i den samme. `net use` viser da mappingen som "Ikke tilgæng". Tjek UNC-stien før du melder VPN-fejl — virker den, så kør scriptet mod den:
 
 ```powershell

@@ -166,15 +166,21 @@ for ét fix ad gangen, og kør de to gates parallelt.
 ## Mail — agenten sender ALDRIG
 
 **Agenten må aldrig sende en mail.** Ikke via Gmail-/Outlook-værktøjer, ikke via script, ikke
-som kladde der kun mangler et klik — heller ikke når mailteksten er agentens eget arbejde, og
-heller ikke når JST har godkendt indholdet. Agenten skriver teksten til en fil og afleverer den;
-**afsendelsen er JSTs og kun JSTs.**
+via SMTP — heller ikke når mailteksten er agentens eget arbejde, og heller ikke når JST har
+godkendt indholdet. **Afsendelsen er JSTs og kun JSTs.**
 
 Grunden er ikke fortrolighed alene: en mail til en leverandør eller en kollega er skolens ord
 udadtil, og den kan ikke kaldes tilbage. JST er afsender, og JST trykker send.
 
-Dette er en undtagelse fra selvudførelsespligten i "Arbejdsform" — den eneste manuelle handling
-agenten må lade JST udføre uden at spørge først.
+**Kladder er derimod tilladt og ofte det rigtige** — en kladde er netop dét JST trykker send på.
+Agenten skriver mailteksten til en fil og lægger den som kladde i den rigtige postkasse, når
+JST beder om det. Grænsen går ved `.Send()`, aldrig ved `.Save()`.
+
+I ADM-KANTINE: `tools/mail-md-til-json.py` + `tools/opret-kladder.ps1` lægger ugens
+bestillingsmails som kladder i Kantine-postkassen med JSTs egen signatur.
+
+Selve afsendelsen er den eneste undtagelse fra selvudførelsespligten i "Arbejdsform" — den ene
+manuelle handling agenten må lade JST udføre uden at spørge først.
 
 ## Sikkerhed — stop og spørg først
 

@@ -93,6 +93,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/spor2-byggeplan.md` | Byggeplan for Spor 2 (Formål-dekomponering af resultatopgørelsen) |
 | `tools/bestyrelsestabeller-arbejdsnote.md` | Bestyrelsens to tabeller (økonomi + årselever): skabelonens kolonne-/rækkestruktur, lønandels- og likviditetsdefinition, hybrid-datagrundlaget (JSTs valg 01-09-2026) og alt det målte mod skabelonen |
 | `tools/pbi-desktop-cyklus.md` | Selvkørt PBI Desktop-cyklus: luk/åbn via UIA, TMSL-refresh, gem via keystroke, screenshots, disk-cache-fælder (flyttet fra CLAUDE.md 2026-08-25) |
+| `tools/pbi-side-foto.ps1` | Fotograferer en rapportside i **begge** tilstande — ufiltreret og med et slicer-valg — og rydder filteret bagefter. Skaffer sig fokus med `AttachThreadInput` **og efterprøver at det lykkedes**: uden fokus fejler `SetForegroundWindow` tavst fra en agent-session, så Escape og klik lander i et andet vindue. Et filter afslørede 2026-09-06 tre fejl der ikke fandtes ufiltreret |
 | `tools/z8050-elevside-laeringer.md` | Z8050-elevsiden: unikke elever, frafaldsdefinition, Bullet Chart 2.4.2.0-grænser, variansanalysens gate-læringer (PR #61–#64; flyttet fra CLAUDE.md 2026-08-25) |
 | `tools/z8050-deneb-bullets-2026-08-27.patch` | Gemt patch fra parallel session (Deneb-bullets på Z8050-siden, 27-08) — kasseret i produktion (BC er linjen, PR #73); arkiv til reference |
 | `tools/deneb-kalender/SÅDAN-GØR-DU.md` | Deneb-kalenderens byggekæde (byg-spec → render-test → embed) + geometri-/testharnisk-læringer |

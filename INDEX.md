@@ -2,7 +2,7 @@
 
 > `<OneDrive>` = `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers` (arbejdskopier); `Y:\AI OS` / `Y:\AI SOSU` er delte kopier til kollegerne.
 
-> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 11 projekter.
+> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 12 projekter.
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `CLAUDE.md`).
 > **Spejlprincip**: I alle repos er `CLAUDE.md` (Claude Code) og `AGENTS.md` (Codex) identiske spejle — redigér `CLAUDE.md`, spejl med `tools/sync-agents-md.ps1`. Håndhæves ved commit af `.githooks/check_md_mirror.py`.
 > **Obsidian**: Vault-roden er `<OneDrive>\AI OS\`. De fysiske projektfiler ligger separat og kanonisk i `<OneDrive>\AI SOSU\`; der findes ingen junction eller særskilte Obsidian-kopier af projektfilerne.
@@ -249,7 +249,25 @@ Administrative blanketter og formularer (i dag kørselsbemyndigelser). Bragt und
 
 ---
 
-## Fælles på tværs af alle 12 repos
+## ADM-RETTIGHEDSSTYRING — `<OneDrive>\AI SOSU\ADM-RETTIGHEDSSTYRING\` (lokalt repo, intet GitHub-remote)
+
+Rettighedsstyring på Y:-drevet (`\\sosurdata.net.local\Groups$\Ansatte`): ACL- og
+gruppemedlemsudtræk → adgangsoversigter ("hvem har adgang til hvilken mappe", og omvendt
+"hvilke mapper har denne person adgang til"). Bragt under AI-styring 2026-09-07.
+`Input/` og `Output/` er begge gitignored i deres helhed — persondataholdige, se `CLAUDE.md`
+→ *Persondata*. Deling af `Output/`-leverancer: kun JST (besluttet 2026-09-07).
+
+| Fil | Beskrivelse |
+|---|---|
+| `CLAUDE.md` / `AGENTS.md` | Projektregler: datamodel (ACL-join, indlejrede grupper), persondataregler, workflow (spejle) |
+| `Input/Fællesdrev/udtræk sikkerhedsgrupper.xlsx` | ACL-udtræk: mappe → sikkerhedsgruppe → rettighed (gitignored) |
+| `Input/Fællesdrev/Udtræk medlemmer.xlsx` | Gruppemedlemskab: gruppe → medlem (navn, e-mail m.m.) — persondata (gitignored) |
+| `tools/byg-rettighedsoversigt.py` | Genbygger Output-oversigten fra de to udtræk; udleder snapshot-dato fra ACL-arkets titel |
+| `Output/Rettighedsoversigt Y-drev (data 2026-03-31).xlsx` | Genereret adgangsoversigt: pr.-mappe, pr.-gruppe, detaljeret medlemsliste, pr.-person-oversigt og pr.-person-detalje — persondata (gitignored) |
+
+---
+
+## Fælles på tværs af alle 13 repos
 
 | Fil | Beskrivelse |
 |---|---|
@@ -262,6 +280,6 @@ Administrative blanketter og formularer (i dag kørselsbemyndigelser). Bragt und
 | `.gitignore` | Bl.a. Excel-/rådata-ignorering hvor relevant |
 | `_Arkiv/` | Udgåede versioner (projekt-repos) |
 
-**12 repos** = AI OS + 11 projekter. Tre af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
+**13 repos** = AI OS + 12 projekter. Fire af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
 
 **Bemærk (kun Claude Code)**: Claude Codes persistente hukommelse ligger lokalt under `~/.claude/projects/<AI OS-projekt>/memory/` med eget indeks `MEMORY.md` — den er personlig, ikke versionsstyret og ikke en del af repo-strukturen.

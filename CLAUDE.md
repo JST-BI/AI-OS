@@ -34,6 +34,7 @@ Alle arbejdsprojekter ligger i `<OneDrive>\AI SOSU\<PROJEKT>`, ét git-repo pr. 
 | `ADM-KANTINE` | Kantinens ugemenu og prisskilte (`Input/` committes her — PDF'erne er kilden) |
 | `ADM-AFTALER` | Samarbejds- og samhandelsaftaler |
 | `ADM-BLANKET` | Blanketter og formularer |
+| `ADM-RETTIGHEDSSTYRING` | Rettighedsstyring på Y:-drevet: ACL- og gruppemedlemsudtræk → adgangsoversigter |
 
 Hvert projekt har sin egen `CLAUDE.md` med projektets regler — den er facit for arbejde der.
 Er opgaven ikke dækket af en række herover, så spørg hvilket projekt den hører til frem for at
@@ -43,9 +44,11 @@ gætte.
 `.git`). Bliver en af dem til et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken
 her.
 
-`ADM-AFTALER`, `ADM-BLANKET` og `BI-OPTAG FRAVÆR` har lokale repos **uden remote** — fortrolighed
-er ikke afklaret. Læg dem ikke på GitHub uden JSTs ord. De to første har `Input/` i `.gitignore`,
-fordi materialet er personhenførbart.
+`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR` og `ADM-RETTIGHEDSSTYRING` har lokale repos
+**uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden JSTs ord.
+`ADM-AFTALER`, `ADM-BLANKET` og `ADM-RETTIGHEDSSTYRING` har `Input/` i `.gitignore`, fordi
+materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING` gitignorer også `Output/` af samme
+grund (adgangsoversigterne lister navngivne medarbejdere).
 
 ## Placering — én arbejdskopi, delte kopier på Y:
 

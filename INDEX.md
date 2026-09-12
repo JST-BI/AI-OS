@@ -198,6 +198,10 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | `Input/Kantine - Prisskilt.pdf` | Kantinens prisskilt (bagværk, frokost, drikkevarer) — kilde til Bowl- og Sandwich-prisen |
 | `Output/Kantine Ugekort <uge>.pdf` | Ugens menukort til opslag — kun FAVORIT-retten pr. dag |
 | `tools/lav-muah-seddel.py` | Generator: udfylder MUAH-udfyldningssedler til Bilkas bagerudsalg ud fra en JSON-liste og en tidligere seddel som skabelon — kræver `python-docx` |
+| `tools/lav-bestillingsseddel.py` | Generator: bestillingssedler med én side pr. afhentnings-/leveringsdag ud fra en JSON-liste — vedhæftes bestillingsmailen. Kræver `python-docx` |
+| `tools/lav-afstemning-xlsx.py` | Bygger ugens afstemningsregneark (8 ark: dag for dag, ugetotaler, kilder, beslutninger, fakturering, pedellens tilbehør) — JSTs kontrolgrundlag. Kræver `openpyxl` |
+| `tools/mail-md-til-json.py` | Oversætter bestillingsmailene fra `.md` til `mails.json` (UTF-8, skrives direkte — aldrig med `>`) til kladdescriptet |
+| `tools/opret-kladder.ps1` | Lægger mailene som kladder i JSTs egen Outlook-postkasse OG gemmer dem som `.msg` i `Klar til afsendelse/`. Kalder aldrig `.Send()` |
 | `Output/Kantine - Prisskilt.pdf` | Prisskilt klar til opslag |
 
 ---

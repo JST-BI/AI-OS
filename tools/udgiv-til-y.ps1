@@ -5,7 +5,11 @@
   1) Y:\AI OS  <- filkopi af <OneDrive>\AI OS (robocopy /E /XO: kun nyere filer, intet slettes).
      Udelader .git, .claude\worktrees, .codex-tmp, .obsidian\workspace.json, node_modules og alt personligt.
   2) Y:\AI SOSU\<repo> <- git pull --ff-only origin main i hver klon med remote. Lokale aendringer paa Y:
-     stashes foerst (rapporteres), saa intet overskrives i blinde. Kloner uden remote springes over.
+     stashes foerst (rapporteres), saa intet overskrives i blinde. Kloner uden remote fast-forwardes
+     fra OneDrive-klonen, og et repo der mangler paa Y: klones derud.
+  2b) Filer git ikke foelger (gitignoreret Input/Output m.m.) kopieres OneDrive -> Y:, naar de mangler
+     eller er nyere. Ogsaa persondata - JSTs beslutning 2026-09-15.
+  3) Rapporterer filer der KUN findes paa Y: - de skal hentes ind i OneDrive.
   Y:-kopierne er kollegernes arbejdsgrundlag: DATAKONTROLCENTER paa Y: og Z8050 m.fl. paa Y: roeres IKKE.
   Koeres af agenten paa kodeordet "Udgiv" (se AI OS\CLAUDE.md) eller manuelt.
 
@@ -73,18 +77,70 @@ else {
 
 if ($KunAIOS) { L "UDGIV slut (kun AI OS)"; exit 0 }
 
-# 2) Y:\AI SOSU\<repo> <- GitHub (ff-only)
+# 2a) Repos der findes i OneDrive men slet ikke paa Y: klones derud fra OneDrive-klonen.
+#     Origin fjernes igen, saa klonen ligner de andre lokale kloner (Udgiv henter dem fra OneDrive).
+Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-Path (Join-Path $_.FullName ".git\HEAD") } | ForEach-Object {
+  $y = Join-Path $YAISOSU $_.Name
+  if (Test-Path $y) { return }
+  & git clone -q $_.FullName $y 2>&1 | Out-Null
+  & git -C $y remote remove origin 2>$null
+  & git -C $y config core.hooksPath .githooks
+  L ("$($_.Name) : manglede paa Y: - klonet fra OneDrive (" + (& git -C $y rev-parse --short HEAD) + ")")
+}
+
+# 2) Y:\AI SOSU\<repo> <- GitHub (ff-only); kloner uden remote <- OneDrive-klonen (ff-only)
 Get-ChildItem -Directory $YAISOSU | ForEach-Object {
   $d = $_.FullName; $n = $_.Name
-  if (-not (Test-Path (Join-Path $d ".git"))) { L "$n : ingen .git - springes over"; return }
+  if (-not (Test-Path (Join-Path $d ".git\HEAD"))) { L "$n : ingen gyldig .git - springes over"; return }
   $remote = (& git -C $d remote get-url origin 2>$null)
-  if (-not $remote) { L "$n : ingen remote (lokal klon) - springes over"; return }
+  if (-not $remote) {
+    # Uden remote er OneDrive-klonen kilden. Kun fast-forward, og kun naar Y: er ren.
+    $od = Join-Path $OneDrive "AI SOSU\$n"
+    $gren = (& git -C $od branch --show-current 2>$null)
+    if (-not $gren) { L "$n : ingen remote og ingen OneDrive-klon - springes over"; return }
+    $before = (& git -C $d rev-parse --short HEAD)
+    $dirty = @(& git -C $d status --short --untracked-files=no).Count
+    & git -C $d fetch -q $od $gren 2>$null
+    & git -C $d merge-base --is-ancestor HEAD FETCH_HEAD
+    if ($LASTEXITCODE -ne 0 -or $dirty -gt 0) { L "$n : lokal klon kan IKKE fast-forwardes (dirty=$dirty) - roeres ikke"; return }
+    & git -C $d merge -q --ff-only FETCH_HEAD 2>&1 | Out-Null
+    L ("$n : $before -> " + (& git -C $d rev-parse --short HEAD) + " (fra OneDrive, ingen remote)")
+    return
+  }
   $dirty = @(& git -C $d status --short | Where-Object { $_ -notmatch '^\?\?' }).Count
   if ($dirty -gt 0) { & git -C $d stash push -q -m ("Y-kopi: lokale aendringer foer Udgiv " + (Get-Date -Format yyyy-MM-dd)) | Out-Null; L "$n : $dirty aendrede filer stashet (git stash list i $d)" }
   $before = (& git -C $d rev-parse --short HEAD)
   $out = (& git -C $d pull -q --ff-only origin main 2>&1 | Select-Object -Last 1)
   $after = (& git -C $d rev-parse --short HEAD)
   L ("$n : $before -> $after " + $(if ($out) { "($out)" } else { "" }))
+}
+
+# 2b) Filer git ikke foelger (gitignoreret Input/Output, pbi-cache m.m.) findes kun i OneDrive-klonen
+#     og naar aldrig Y: via pull. De kopieres derud, naar de mangler eller er nyere i OneDrive
+#     (JST 15-09-2026: Y: og OneDrive skal vaere identiske, ogsaa for persondata). En fil som
+#     Y:-klonens git FOELGER, roeres aldrig - BI-OEKONOMI staar paa en feature-gren i OneDrive,
+#     mens Y: skal staa paa main.
+Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-Path (Join-Path $_.FullName ".git\HEAD") } | ForEach-Object {
+  $od = $_.FullName; $y = Join-Path $YAISOSU $_.Name
+  if (-not (Test-Path $y)) { return }
+  $yTracked = @{}
+  if (Test-Path (Join-Path $y ".git\HEAD")) { & git -C $y -c core.quotepath=off ls-files 2>$null | ForEach-Object { $yTracked[$_] = 1 } }
+  $kopieret = 0
+  & git -C $od -c core.quotepath=off ls-files --others 2>$null |
+    Where-Object { $_ -notmatch '(^|/)(__pycache__|node_modules|\.claude/worktrees)/' -and $_ -notmatch '(^|/)(~\$[^/]*|desktop\.ini|Thumbs\.db)$' -and -not $yTracked[$_] } |
+    ForEach-Object {
+      $src = Join-Path $od $_; $dst = Join-Path $y $_
+      if (-not (Test-Path -LiteralPath $src -PathType Leaf)) { return }
+      $s = Get-Item -LiteralPath $src -Force
+      if (Test-Path -LiteralPath $dst) {
+        $t = Get-Item -LiteralPath $dst -Force
+        if ($t.Length -eq $s.Length -and $t.LastWriteTimeUtc -ge $s.LastWriteTimeUtc.AddSeconds(-2)) { return }
+      }
+      New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dst) | Out-Null
+      Copy-Item -LiteralPath $src -Destination $dst -Force
+      $kopieret++
+    }
+  if ($kopieret) { L "$($_.Name) : $kopieret filer uden for git kopieret til Y:" }
 }
 
 # 3) Filer der KUN findes paa Y: - lagt dér af JST eller en kollega, eller skrevet af en agent

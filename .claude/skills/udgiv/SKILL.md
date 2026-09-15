@@ -1,6 +1,6 @@
 ---
 name: udgiv
-description: "Udgiv" — ajourfør kollegernes delte kopier på Y: (Y:\AI OS som filkopi af OneDrive-AI OS, Y:\AI SOSU\<repo> via git pull --ff-only fra GitHub). Kør ved JSTs kodeord "Udgiv" eller efter merges, der skal ud til kollegerne.
+description: "Udgiv" — gør Y: identisk med OneDrive (Y:\AI OS som filkopi, Y:\AI SOSU\<repo> via git ff-only + filerne uden for git, og melding om filer der kun findes på Y:). Kør ved JSTs kodeord "Udgiv" eller efter merges, der skal ud til kollegerne.
 ---
 
 # Udgiv — kollegernes Y:-kopier ajourføres
@@ -14,8 +14,10 @@ Kør scriptet og rapportér loggen:
 Hvad det gør:
 1. `Y:\AI OS` ← filkopi af `<OneDrive>\AI OS` (robocopy `/E /XO`: kun nyere filer, intet slettes; `.git`, `.claude`, `.codex-tmp`, `.obsidian\workspace.json`, `node_modules` udelades).
 2. Rapporterer **forældede filer** på `Y:\AI OS` — dem kilden ikke længere har. Sletter dem kun med `-RyddForaeldede`.
-3. `Y:\AI SOSU\<repo>` ← `git pull --ff-only origin main` i hver klon med remote. Lokale ændringer på Y: stashes først og rapporteres — overskriv aldrig noget i blinde. Kloner uden remote (ADM-AFTALER, ADM-BLANKET, BI-OPTAG FRAVÆR) springes over.
-4. `DATAKONTROLCENTER` og udtrækkene på Y: røres IKKE — de er kollegernes datagrundlag.
+3. `Y:\AI SOSU\<repo>` ← `git pull --ff-only origin main` i hver klon med remote. Lokale ændringer på Y: stashes først og rapporteres — overskriv aldrig noget i blinde. Kloner uden remote (ADM-AFTALER, ADM-BLANKET, ADM-RETTIGHEDSSTYRING, BI-OPTAG FRAVÆR) fast-forwardes fra OneDrive-klonen; et repo der mangler på Y:, klones derud.
+4. **Filer git ikke følger** (gitignoreret `Input/`/`Output/`, persondata inkluderet) kopieres OneDrive → Y:, når de mangler eller er nyere. JST besluttede 2026-09-15, at Y: og OneDrive skal være identiske — også dér. Filer Y:-klonens git følger, røres aldrig.
+5. Melder **"Filer der kun findes paa Y:"**. Skal være 0 — ellers hentes de ind i OneDrive (hash-tjek, aldrig overskrivning).
+6. `DATAKONTROLCENTER` og udtrækkene på Y: røres IKKE — de er kollegernes datagrundlag.
 
 Forudsætninger: alt der skal ud, er merget til `main` og pushet til GitHub FØRST (Udgiv henter fra GitHub, ikke fra OneDrive-klonerne). VPN skal være tilsluttet.
 

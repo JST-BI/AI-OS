@@ -203,8 +203,8 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | `tools/mail-md-til-json.py` | Oversætter bestillingsmailene fra `.md` til `mails.json` (UTF-8, skrives direkte — aldrig med `>`) til kladdescriptet |
 | `tools/opret-kladder.ps1` | Lægger mailene som kladder i JSTs egen Outlook-postkasse OG gemmer dem som `.msg` i `Klar til afsendelse/`. Kalder aldrig `.Send()` |
 | `Output/Kantine - Prisskilt.pdf` | Prisskilt klar til opslag |
-| `tools/byg-infoskaerme.py` | Generator: bygger ugens tre infoskærms-PowerPoints (floej_c, reception, showroom) — skærmens egen etageplan + menuslidet med ugekortet renderet fra PDF'en. Kræver `python-pptx`, `pypdfium2` |
-| `Input/<skaerm>_uge33.pptx` | Basisfil pr. infoskærm — slide 1 er etageplanen med skærmens "Du står her"-prik |
+| `tools/byg-infoskaerme.py` | Generator: bygger ugens tre infoskærms-PowerPoints (floej_c, reception, showroom) — ét menuslide med ugekortet renderet fra PDF'en. Kræver `python-pptx`, `pypdfium2` |
+| `Input/<skaerm>_uge33.pptx` | Historik: uge 33-skærmene med etageplan + tekstmenu (planerne er nu fysiske A-skilte) |
 | `Input/floej_c_uge38.pptx` | JSTs skabelon for menuslidet (topbanner + ugekort som billede) |
 | `Input/Kantine Ugekort 38.pdf` | JSTs kopi af ugekortet, lagt sammen med skabelonen |
 | `Output/<skaerm>_uge<uge>.pptx` | Ugens PowerPoint til de tre infoskærme |

@@ -86,4 +86,22 @@ Get-ChildItem -Directory $YAISOSU | ForEach-Object {
   $after = (& git -C $d rev-parse --short HEAD)
   L ("$n : $before -> $after " + $(if ($out) { "($out)" } else { "" }))
 }
+
+# 3) Filer der KUN findes paa Y: - lagt dér af JST eller en kollega, eller skrevet af en agent
+#    der arbejdede direkte paa Y:. Udgiv foerer kun OneDrive -> Y:, saa uden denne rapport
+#    forbliver de usynlige for arbejdskopien (set 2026-09-15: infoskaermenes PowerPoints, en
+#    pbip og Codex' arbejdsmappe laa kun paa Y:). Kun "New File" taeller: "Newer" er
+#    checkout-tidsstempler fra git pull og siger intet om indholdet.
+$par = @(@{ Y = $YAIOS; O = (Join-Path $OneDrive "AI OS") })
+Get-ChildItem -Directory $YAISOSU | ForEach-Object { $par += @{ Y = $_.FullName; O = (Join-Path $OneDrive "AI SOSU\$($_.Name)") } }
+$kunY = 0
+foreach ($p in $par) {
+  if (-not (Test-Path $p.O)) { L ("KUN PAA Y: hele mappen " + $p.Y); $kunY++; continue }
+  $nye = @(& robocopy $p.Y $p.O /E /L /XD .git __pycache__ node_modules /XF desktop.ini workspace.json /NJH /NJS /NDL /NP /FP /R:0 /W:0 |
+    Where-Object { $_ -match 'New File' } | ForEach-Object { ($_ -split "`t")[-1].Trim() })
+  foreach ($f in $nye | Select-Object -First 10) { L "  kun paa Y: $f" }
+  if ($nye.Count -gt 10) { L ("  ... og " + ($nye.Count - 10) + " mere under " + $p.Y) }
+  $kunY += $nye.Count
+}
+L ("Filer der kun findes paa Y: $kunY" + $(if ($kunY) { " - kopiér dem til OneDrive (se AI OS\CLAUDE.md, Placering)" } else { "" }))
 L "UDGIV slut"

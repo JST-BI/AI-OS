@@ -70,6 +70,10 @@ På Y: er der to slags filer, og de har hver sin regel:
   Sig hvad du ændrer, og tag en kopi af filen før en ikke-triviel rettelse — kollegerne
   arbejder i den samtidig.
 
+**Filer JST lægger på Y: hentes straks ind i OneDrive** (hash-tjek, aldrig overskrivning), og Udgivs
+rapport "Filer der kun findes paa Y:" skal være 0 før en opgave meldes færdig. Udgiv fører kun
+OneDrive → Y:, så en PowerPoint lagt i `Y:\…\Input` var ellers usynlig for arbejdskopien (2026-09-15).
+
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.
 

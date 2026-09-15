@@ -77,6 +77,24 @@ else {
 
 if ($KunAIOS) { L "UDGIV slut (kun AI OS)"; exit 0 }
 
+# En fil der ligger UNTRACKED paa Y: og nu kommer ind via git, faar merge til at afvise hele
+# opdateringen ("untracked working tree files would be overwritten"). Det sker hver gang en fil
+# foerst er lagt paa Y: og siden committet i OneDrive - tre gange 2026-09-15. Er filen BYTE-ENS
+# med den indkommende blob, er den allerede leveret: fjern den, saa git kan laegge den samme fil.
+# Afviger den, roeres den ikke, og merge fejler synligt i loggen.
+function Ryd-IdentiskeUntracked($d, $n) {
+  $ind = @{}
+  & git -C $d -c core.quotepath=off diff --name-only --diff-filter=A HEAD FETCH_HEAD 2>$null | ForEach-Object { $ind[$_] = 1 }
+  if ($ind.Count -eq 0) { return }
+  $ryddet = 0; $afviger = 0
+  & git -C $d -c core.quotepath=off ls-files --others 2>$null | Where-Object { $ind[$_] } | ForEach-Object {
+    $blob = (& git -C $d rev-parse "FETCH_HEAD:$_" 2>$null)
+    if ($blob -and $blob -eq (& git -C $d hash-object -- $_)) { Remove-Item -LiteralPath (Join-Path $d $_) -Force; $ryddet++ } else { $afviger++ }
+  }
+  if ($ryddet) { L "$n : $ryddet untracked filer var byte-ens med det indkommende og er afloest af git" }
+  if ($afviger) { L "$n : ADVARSEL $afviger untracked filer AFVIGER fra det indkommende - merge vil fejle" }
+}
+
 # 2a) Repos der findes i OneDrive men slet ikke paa Y: klones derud fra OneDrive-klonen.
 #     Origin fjernes igen, saa klonen ligner de andre lokale kloner (Udgiv henter dem fra OneDrive).
 Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-Path (Join-Path $_.FullName ".git\HEAD") } | ForEach-Object {
@@ -103,6 +121,7 @@ Get-ChildItem -Directory $YAISOSU | ForEach-Object {
     & git -C $d fetch -q $od $gren 2>$null
     & git -C $d merge-base --is-ancestor HEAD FETCH_HEAD
     if ($LASTEXITCODE -ne 0 -or $dirty -gt 0) { L "$n : lokal klon kan IKKE fast-forwardes (dirty=$dirty) - roeres ikke"; return }
+    Ryd-IdentiskeUntracked $d $n
     & git -C $d merge -q --ff-only FETCH_HEAD 2>&1 | Out-Null
     L ("$n : $before -> " + (& git -C $d rev-parse --short HEAD) + " (fra OneDrive, ingen remote)")
     return
@@ -110,7 +129,9 @@ Get-ChildItem -Directory $YAISOSU | ForEach-Object {
   $dirty = @(& git -C $d status --short | Where-Object { $_ -notmatch '^\?\?' }).Count
   if ($dirty -gt 0) { & git -C $d stash push -q -m ("Y-kopi: lokale aendringer foer Udgiv " + (Get-Date -Format yyyy-MM-dd)) | Out-Null; L "$n : $dirty aendrede filer stashet (git stash list i $d)" }
   $before = (& git -C $d rev-parse --short HEAD)
-  $out = (& git -C $d pull -q --ff-only origin main 2>&1 | Select-Object -Last 1)
+  & git -C $d fetch -q origin main 2>$null
+  Ryd-IdentiskeUntracked $d $n
+  $out = (& git -C $d merge -q --ff-only FETCH_HEAD 2>&1 | Select-Object -Last 1)
   $after = (& git -C $d rev-parse --short HEAD)
   L ("$n : $before -> $after " + $(if ($out) { "($out)" } else { "" }))
 }

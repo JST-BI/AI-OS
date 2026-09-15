@@ -161,3 +161,5 @@ foreach ($p in $par) {
 }
 L ("Filer der kun findes paa Y: $kunY" + $(if ($kunY) { " - kopiér dem til OneDrive (se AI OS\CLAUDE.md, Placering)" } else { "" }))
 L "UDGIV slut"
+# robocopy returnerer 1 for "filer kopieret", og den kode slap ellers ud som scriptets exit-kode.
+exit $(if ($kunY) { 2 } else { 0 })

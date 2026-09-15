@@ -173,8 +173,14 @@ $par = @(@{ Y = $YAIOS; O = (Join-Path $OneDrive "AI OS") })
 Get-ChildItem -Directory $YAISOSU | ForEach-Object { $par += @{ Y = $_.FullName; O = (Join-Path $OneDrive "AI SOSU\$($_.Name)") } }
 $kunY = 0
 foreach ($p in $par) {
-  if (-not (Test-Path $p.O)) { L ("KUN PAA Y: hele mappen " + $p.Y); $kunY++; continue }
-  $nye = @(& robocopy $p.Y $p.O /E /L /XD .git __pycache__ node_modules /XF desktop.ini workspace.json /NJH /NJS /NDL /NP /FP /R:0 /W:0 |
+  if (-not (Test-Path $p.O)) {
+    # En tom mappe (fx "Ny mappe" oprettet i Stifinder) er ikke arbejde, der kan gaa tabt.
+    $filer = @(Get-ChildItem -LiteralPath $p.Y -Recurse -File -Force -ErrorAction SilentlyContinue | Where-Object { $_.Name -notmatch '^(~\$.*|Thumbs\.db|desktop\.ini)$' }).Count
+    if ($filer) { L ("KUN PAA Y: hele mappen " + $p.Y + " ($filer filer)"); $kunY += $filer }
+    continue
+  }
+  # ~$* er Excel/Words laasefil (nogen har filen aaben paa Y:), Thumbs.db er Stifinders cache.
+  $nye = @(& robocopy $p.Y $p.O /E /L /XD .git __pycache__ node_modules /XF desktop.ini workspace.json Thumbs.db '~$*' /NJH /NJS /NDL /NP /FP /R:0 /W:0 |
     Where-Object { $_ -match 'New File' } | ForEach-Object { ($_ -split "`t")[-1].Trim() })
   foreach ($f in $nye | Select-Object -First 10) { L "  kun paa Y: $f" }
   if ($nye.Count -gt 10) { L ("  ... og " + ($nye.Count - 10) + " mere under " + $p.Y) }

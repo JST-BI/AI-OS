@@ -200,7 +200,9 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | `Output/Kantine Ugekort <uge>.pdf` | Ugens menukort til opslag — kun FAVORIT-retten pr. dag |
 | `tools/lav-muah-seddel.py` | Generator: udfylder MUAH-udfyldningssedler til Bilkas bagerudsalg ud fra en JSON-liste og en tidligere seddel som skabelon — kræver `python-docx` |
 | `tools/lav-bestillingsseddel.py` | Generator: bestillingssedler med én side pr. afhentnings-/leveringsdag ud fra en JSON-liste — vedhæftes bestillingsmailen. Kræver `python-docx` |
-| `tools/lav-afstemning-xlsx.py` | Bygger ugens afstemningsregneark (8 ark: dag for dag, ugetotaler, kilder, beslutninger, fakturering, pedellens tilbehør) — JSTs kontrolgrundlag. Kræver `openpyxl` |
+| `tools/lav-afstemning-xlsx.py` | Bygger ugens afstemningsregneark (8 ark: dag for dag, ugetotaler, kilder, beslutninger, fakturering, pedellens tilbehør) — JSTs kontrolgrundlag. Kaldes med ugenummeret. Kræver `openpyxl` |
+| `tools/afstemningsdata/__init__.py` | Fælles konstanter til regnearket + opslag af kildemails på SHA-256-præfiks, så persondatabærende filnavne ikke står i et versioneret script |
+| `tools/afstemningsdata/uge<nr>.py` | Ét datamodul pr. uge: bestillinger, kilder, beslutninger, åbne punkter, fakturering og tilbehør — så en tidligere uge kan genskabes uændret |
 | `tools/mail-md-til-json.py` | Oversætter bestillingsmailene fra `.md` til `mails.json` (UTF-8, skrives direkte — aldrig med `>`) til kladdescriptet |
 | `tools/opret-kladder.ps1` | Lægger mailene som kladder i JSTs egen Outlook-postkasse OG gemmer dem som `.msg` i `Klar til afsendelse/`. Kalder aldrig `.Send()` |
 | `Output/Kantine - Prisskilt.pdf` | Prisskilt klar til opslag |

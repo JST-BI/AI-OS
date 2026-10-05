@@ -198,7 +198,7 @@ manuelle handling agenten må lade JST udføre uden at spørge først.
 | `git push --force` | Overskriver fjernhistorik |
 | Sletning uden for `<OneDrive>\AI SOSU\` og `<OneDrive>\AI OS\` | Uden for projektets ansvarsområde |
 | Sletning af mere end 5 filer på én gang | Kan ikke fortrydes |
-| Afsendelse til eksterne tjenester (API med persondata) | Data forlader maskinen — mail er helt forbudt, se ovenfor |
+| Afsendelse til eksterne tjenester (API med persondata) | Data forlader maskinen — mail er helt forbudt, se ovenfor. Afgrænset undtagelse: den lokale Outlook-kladdestrøm i ADM-KANTINE, når JST beder om kladder; agenten sender aldrig |
 | `git config --global` | Rammer alle repos |
 
 Alt andet kører uden prompt.
@@ -210,13 +210,18 @@ den versionerede pre-commit-hook (`.githooks/check_excel_pii.py`) i alle repos; 
 pr. klon med `git config core.hooksPath .githooks`. Ved untrack af allerede committet Excel:
 `git rm --cached --ignore-unmatch '*.xlsx' '*.xls' '*.xlsm' '*.xlsb'`.
 
-**Persondata må aldrig returneres til samtalen — kun aggregater.** Værktøjerne kører lokalt, men
-tool-output sendes til Anthropics servere. Ved enhver kilde med persondata (Z8050/`cpr_nr`, SD-løn,
-INNOMATE-eksporter, elevlister): skriv et lokalt script der kun udskriver antal, summer, distinkte
-tællinger, deltaer og ikke-personhenførbare nøgler. Læs aldrig en persondata-fil direkte ind i
-konteksten. **Det gælder også sub-agenter du spawner** — en gate-agent med PowerShell-adgang kan
-selv læse kilden og lække en værdi (skete 2026-06-16). Forbyd rå persondata-læsning eksplicit i
-agentens prompt, og giv den hellere de færdigberegnede tal.
+**Persondata må aldrig gengives i samtalen — kun aggregater.** Værktøjerne kører lokalt, men
+tool-output sendes til Anthropics servere. For kilder med persondata (Z8050/`cpr_nr`, SD-løn,
+INNOMATE-eksporter, elevlister m.fl.) gælder fortsat: skriv et lokalt script der kun udskriver
+antal, summer, distinkte tællinger, deltaer og ikke-personhenførbare nøgler; læs aldrig kilden ind
+i konteksten. Det gælder også sub-agenter.
+
+**Afgrænset undtagelse — ADM-KANTINE-bestillingsmails.** Når JST beder om at behandle en uge, må
+agenten læse mails og vedhæftninger i `ADM-KANTINE/Input/UBEHANDLEDE bestillinger/`, også når de
+indeholder personoplysninger, i det omfang det kræves for at udarbejde bestillinger og kladder.
+Oplysningerne må ikke gengives i samtalen, lægges i versionerede filer eller sendes via eksterne
+API'er. Kladder må gemmes i JSTs Outlook-postkasse efter projektets lokale arbejdsgang; afsendelse
+er fortsat forbudt.
 
 ## Obsidian-vault
 

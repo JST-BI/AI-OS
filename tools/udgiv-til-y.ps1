@@ -42,6 +42,12 @@ param(
 $ErrorActionPreference = 'Continue'
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
 L "UDGIV start"
+# Y:-klonerne ejes af filserveren, saa git afviser dem som "dubious ownership".
+# Uden undtagelsen melder scriptet hvert repo som "kan ikke fast-forwardes" og
+# springer dem over, ogsaa naar klonen er ren. Kun denne proces — ikke --global.
+$env:GIT_CONFIG_COUNT = "1"
+$env:GIT_CONFIG_KEY_0 = "safe.directory"
+$env:GIT_CONFIG_VALUE_0 = "*"
 if (-not (Test-Path $YAIOS)) { L "FEJL: $YAIOS findes ikke (VPN/Y: ikke tilsluttet?)"; exit 1 }
 
 # 1) AI OS -> Y:\AI OS (filkopi)
@@ -169,6 +175,7 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
 #    forbliver de usynlige for arbejdskopien (set 2026-09-15: infoskaermenes PowerPoints, en
 #    pbip og Codex' arbejdsmappe laa kun paa Y:). Kun "New File" taeller: "Newer" er
 #    checkout-tidsstempler fra git pull og siger intet om indholdet.
+if (-not (Test-Path $YAISOSU)) { L "FEJL: $YAISOSU forsvandt undervejs (Y:-mapping faldet) - koer igen mod UNC"; exit 1 }
 $par = @(@{ Y = $YAIOS; O = (Join-Path $OneDrive "AI OS") })
 Get-ChildItem -Directory $YAISOSU | ForEach-Object { $par += @{ Y = $_.FullName; O = (Join-Path $OneDrive "AI SOSU\$($_.Name)") } }
 $kunY = 0

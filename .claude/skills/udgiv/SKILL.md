@@ -41,6 +41,10 @@ git -C 'Y:\AI SOSU\<repo>' fsck --connectivity-only
 venter på oprydning, og de ligger der netop fordi repack ikke kørte. Kun `missing`, `broken` eller
 `corrupt` er alvorligt.
 
+**Git afviser Y:-klonerne som `dubious ownership`.** Filserveren ejer dem, og uden undtagelse
+melder scriptet hvert repo som "kan ikke fast-forwardes" og springer pull over. Scriptet sætter
+selv `safe.directory=*` for sin egen proces. Skriv det ikke med `git config --global`.
+
 **Drevbogstavet `Y:` kan svare `False`, selv om delingen er oppe.** Mappingen er pr. logon-session, og agentens PowerShell kører ikke nødvendigvis i den samme. `net use` viser da mappingen som "Ikke tilgæng". Tjek UNC-stien før du melder VPN-fejl — virker den, så kør scriptet mod den:
 
 ```powershell

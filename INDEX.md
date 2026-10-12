@@ -204,6 +204,8 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | `tools/lav-bestillingsseddel.py` | Generator: bestillingssedler med én side pr. afhentnings-/leveringsdag ud fra en JSON-liste — vedhæftes bestillingsmailen. Kræver `python-docx` |
 | `tools/lav-afstemning-xlsx.py` | Bygger ugens afstemningsregneark (8 ark: dag for dag, ugetotaler, kilder, beslutninger, fakturering, pedellens tilbehør) — JSTs kontrolgrundlag. Kaldes med ugenummeret. Kræver `openpyxl` |
 | `tools/lav-kantineoversigt.py` | Dagsoversigt til kantinemedarbejderen: ét ark pr. dag med kiosksalget og hvert arrangement i sin helhed (Jespers, Bilka, kantinen selv/pedellen, kontakt, fakturering) fra ugemodulets `ARRANGEMENTER` |
+| `tools/fredagskoersel.ps1` | Fredagskørslen: starter Outlook, kører `claude -p` med `fredagsprompt.md`, logger til `Output/Bestillinger/_log/`; `-Registrer` opretter opgaven i Opgavestyring (fredag kl. 10.00) |
+| `tools/fredagsprompt.md` | Opgaveteksten til den uovervågede fredagskørsel: næste uges kladder, grænser (aldrig send, kun aggregater), afsluttende statuslinjer |
 | `tools/afstemningsdata/__init__.py` | Fælles konstanter til regnearket + opslag af kildemails på SHA-256-præfiks, så persondatabærende filnavne ikke står i et versioneret script |
 | `tools/afstemningsdata/uge<nr>.py` | Ét datamodul pr. uge: bestillinger, kilder, beslutninger, åbne punkter, fakturering og tilbehør — så en tidligere uge kan genskabes uændret |
 | `tools/mail-md-til-json.py` | Oversætter bestillingsmailene fra `.md` til `mails.json` (UTF-8, skrives direkte — aldrig med `>`) til kladdescriptet |

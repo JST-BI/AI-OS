@@ -24,7 +24,7 @@ substitute for having them.
 ```
 Grep:  "^\tcolumn " / "^\tmeasure " in definition/tables/*.tmdl
 Grep:  "partition" in definition/tables/*.tmdl   → what each table actually loads
-Read:  BI-OEKONOMI/CLAUDE.md  → the measured findings already established
+Read:  BI-OEKONOMI/AGENTS.md  → the measured findings already established
 ```
 
 The BI-OEKONOMI model is roughly 126 tables and 500 measures — never characterise it from a
@@ -32,7 +32,7 @@ sample; count what you are talking about.
 
 ## The two failure modes that have actually cost time here
 
-Both are documented with measurements in `BI-OEKONOMI/CLAUDE.md` — read those sections before
+Both are documented with measurements in `BI-OEKONOMI/AGENTS.md` — read those sections before
 you diagnose a refresh or a slow visual, so you do not rediscover them:
 
 - **`FILTER(ALL(Table), ...)` in a per-datapoint measure.** Materialises every row × every

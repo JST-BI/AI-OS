@@ -1,16 +1,22 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 <#
 .SYNOPSIS
-  Spejler CLAUDE.md til AGENTS.md i AI OS og alle projekter under 'AI SOSU' ved siden af.
+  Sikrer at AGENTS.md er den eneste instruktionsfil, og at CLAUDE.md kun er en pegefil til den.
 .DESCRIPTION
-  Claude Code laeser CLAUDE.md. Codex laeser AGENTS.md. De to filer er samme
-  indhold under to navne, saa begge vaerktoejer ser praecis de samme regler.
+  AGENTS.md er den kanoniske, modeluafhaengige instruktionsfil i AI OS, i vault\ og i hvert
+  projekt under 'AI SOSU'. Codex laeser AGENTS.md direkte. Claude Code laeser CLAUDE.md, som
+  derfor kun indeholder importlinjen
 
-  Scriptet finder selv alle mapper der har mindst en af de to filer (AI OS-roden
-  plus hver projektmappe under projektroden) - listen er ikke hardkodet, saa nye
-  projekter kommer automatisk med.
+      @AGENTS.md
 
-  CLAUDE.md er kilden. AGENTS.md skrives som en byte-identisk kopi.
+  saa begge vaerktoejer ser praecis den samme fil. Der findes ingen spejling laengere - foer
+  2026-10-12 var CLAUDE.md kilden og AGENTS.md en byte-identisk kopi, og enhver rettelse skulle
+  kopieres over. Nu redigeres AGENTS.md alene.
+
+  Scriptet finder selv alle mapper der har mindst en af de to filer (AI OS-roden, undermapper i
+  AI OS som vault\, og hver projektmappe) - listen er ikke hardkodet, saa nye projekter kommer
+  automatisk med. Uden -Check skrives pegefilen hvor den mangler eller afviger; en CLAUDE.md der
+  rummer fuld tekst uden AGENTS.md ved siden af roeres IKKE (kilden er uklar - ret manuelt).
 .PARAMETER Check
   Rapporter kun drift, skriv ingen filer. Exitkode 1 hvis noget afviger.
   Beregnet til CI og til session-startkontrollen.
@@ -33,17 +39,17 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
+# Pegefilens praecise indhold. Claude Code laeser "@sti" paa egen linje som import af filen,
+# relativt til CLAUDE.md's egen mappe. Ingen BOM, LF, en afsluttende linjeskift.
+$PEGEFIL = "@AGENTS.md`n"
+
 # AI OS-roden = foraelder til dette scripts tools\-mappe
 $aiOsRoot = Split-Path -Parent $PSScriptRoot
 if (-not $Root) { $Root = $aiOsRoot }
 if (-not $ProjectsRoot) {
   # ARBEJDSKOPIEN ligger ved siden af AI OS (under OneDrive). Y:\AI SOSU er KOLLEGERNES delte
-  # kopi og maa ikke vaere standard. Stod som 'Y:\AI SOSU' fra 20-08, hvor projektroden kortvarigt
-  # blev erklaeret flyttet dertil; AI OS/CLAUDE.md rettede placeringen 29-08, men scriptet fulgte
-  # ikke med. Spejlkontrollen — som er obligatorisk ved sessionsstart — kontrollerede derfor et
-  # foraeldet Y:-snapshot i stedet for de filer der faktisk redigeres, og kunne melde "OK" mens
-  # arbejdskopien var i drift. Fundet 02-09-2026, da Y: faldt ud og scriptet kastede i stedet for
-  # at kontrollere noget. Y: beholdes som fallback for en maskine uden OneDrive-kopien.
+  # kopi og maa ikke vaere standard (fundet 02-09-2026, da kontrollen kontrollerede et foraeldet
+  # Y:-snapshot i stedet for de filer der faktisk redigeres). Y: beholdes som fallback.
   $kandidat = Join-Path (Split-Path -Parent $aiOsRoot) 'AI SOSU'
   $ProjectsRoot = if (Test-Path -LiteralPath $kandidat -PathType Container) { $kandidat } else { 'Y:\AI SOSU' }
 }
@@ -51,15 +57,11 @@ if (-not (Test-Path -LiteralPath $ProjectsRoot -PathType Container)) {
   throw "Den kanoniske projektrod mangler: $ProjectsRoot"
 }
 
-# Find alle mapper der styres: AI OS-roden + undermapper i AI OS med mindst en af filerne
-# (fx vault\, der har sine egne noteregler) + enhver projektmappe med mindst en af filerne.
-# Projektroden er arbejdskopien ved siden af AI OS; Y:\AI SOSU er kollegernes delte kopi.
 $harPar = {
   param($sti)
   (Test-Path (Join-Path $sti 'CLAUDE.md')) -or (Test-Path (Join-Path $sti 'AGENTS.md'))
 }
 $dirs = @($aiOsRoot)
-# Undermapper i AI OS - springer konfigurations- og VCS-mapper over
 $dirs += Get-ChildItem -LiteralPath $aiOsRoot -Directory |
   Where-Object { $_.Name -notmatch '^\.' -and (& $harPar $_.FullName) } |
   Select-Object -ExpandProperty FullName
@@ -67,9 +69,18 @@ $dirs += Get-ChildItem -LiteralPath $ProjectsRoot -Directory |
   Where-Object { & $harPar $_.FullName } |
   Select-Object -ExpandProperty FullName
 
+function Er-Pegefil([string]$sti) {
+  if (-not (Test-Path -LiteralPath $sti)) { return $false }
+  $bytes = [System.IO.File]::ReadAllBytes($sti)
+  $tekst = [System.Text.Encoding]::UTF8.GetString($bytes).TrimStart([char]0xFEFF)
+  # Tolerant over for CRLF og manglende afsluttende linjeskift - men intet andet indhold.
+  return ($tekst -replace "`r`n", "`n").Trim() -eq '@AGENTS.md'
+}
+
 $drift = @()
-$synced = 0
+$skrevet = 0
 $ok = 0
+$utf8 = New-Object System.Text.UTF8Encoding($false)
 
 foreach ($d in $dirs) {
   $claude = Join-Path $d 'CLAUDE.md'
@@ -78,48 +89,41 @@ foreach ($d in $dirs) {
           elseif ($d.StartsWith($aiOsRoot, [System.StringComparison]::OrdinalIgnoreCase)) { "AI OS\$(Split-Path -Leaf $d)" }
           else { "AI SOSU\$(Split-Path -Leaf $d)" }
 
-  if (-not (Test-Path $claude)) {
-    $drift += "$name : CLAUDE.md mangler (kun AGENTS.md findes) - ret manuelt, kilden er uklar"
+  if (-not (Test-Path -LiteralPath $agents)) {
+    $drift += "$name : AGENTS.md mangler (kun CLAUDE.md findes) - ret manuelt: flyt teksten til AGENTS.md og goer CLAUDE.md til pegefil"
     continue
   }
-
-  $same = $false
-  if (Test-Path $agents) {
-    $h1 = (Get-FileHash -LiteralPath $claude -Algorithm SHA256).Hash
-    $h2 = (Get-FileHash -LiteralPath $agents -Algorithm SHA256).Hash
-    $same = ($h1 -eq $h2)
-  }
-
-  if ($same) {
+  if (Er-Pegefil $claude) {
     $ok++
-    if (-not $Check) { Write-Host "  OK    $name" }
+    if (-not $Check) { Write-Host "  OK       $name" }
+    continue
   }
-  elseif ($Check) {
-    $why = if (Test-Path $agents) { 'AGENTS.md afviger fra CLAUDE.md' } else { 'AGENTS.md mangler' }
+  if ($Check) {
+    $why = if (Test-Path -LiteralPath $claude) { 'CLAUDE.md er ikke pegefilen @AGENTS.md' } else { 'CLAUDE.md (pegefil) mangler' }
     $drift += "$name : $why"
+    continue
   }
-  else {
-    Copy-Item -LiteralPath $claude -Destination $agents -Force
-    $synced++
-    Write-Host "  SPEJLET  $name"
-  }
+  [System.IO.File]::WriteAllText($claude, $PEGEFIL, $utf8)
+  $skrevet++
+  Write-Host "  PEGEFIL  $name"
 }
 
 if ($Check) {
   if ($drift.Count -gt 0) {
     Write-Host ''
-    Write-Host 'SPEJL BRUDT - Claude Code og Codex ser forskellige regler:' -ForegroundColor Red
+    Write-Host 'INSTRUKTIONSFIL-DRIFT - CLAUDE.md skal kun vaere pegefilen @AGENTS.md:' -ForegroundColor Red
     $drift | ForEach-Object { Write-Host "   - $_" -ForegroundColor Red }
     Write-Host ''
-    Write-Host 'Ret med:  & "AI OS\tools\sync-agents-md.ps1"'
+    Write-Host 'Ret med:  & "AI OS\tools\sync-agents-md.ps1"   (skriver pegefilerne; roerer aldrig AGENTS.md)'
     exit 1
   }
-  Write-Host "OK: CLAUDE.md/AGENTS.md er identiske spejle i alle $ok mapper."
+  Write-Host "OK: AGENTS.md er instruktionsfilen og CLAUDE.md er pegefil i alle $ok mapper."
   exit 0
 }
 
 Write-Host ''
-Write-Host "Faerdig: $synced spejlet, $ok var allerede identiske ($($dirs.Count) mapper)."
-if ($synced -gt 0) {
-  Write-Host 'Husk at committe de opdaterede AGENTS.md-filer i de beroerte repos.'
+Write-Host "Faerdig: $skrevet pegefil(er) skrevet, $ok var allerede i orden ($($dirs.Count) mapper)."
+if ($drift.Count -gt 0) { $drift | ForEach-Object { Write-Host "  MANUELT: $_" -ForegroundColor Yellow } }
+if ($skrevet -gt 0) {
+  Write-Host 'Husk at committe de skrevne CLAUDE.md-pegefiler i de beroerte repos.'
 }

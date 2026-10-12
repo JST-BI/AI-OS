@@ -12,15 +12,15 @@
 # "Codex-opsaetning paa en ny maskine" i AI OS/AGENTS.md.
 
 # --- AGENTS.md-indlaesning ------------------------------------------------
-# AGENTS.md er det byte-identiske spejl af CLAUDE.md og vokser hver gang en ny
+# AGENTS.md er den eneste instruktionsfil (CLAUDE.md er kun en pegefil) og vokser hver gang en ny
 # laering skrives ind. Standardloftet er 65536 bytes. BI-OEKONOMI/AGENTS.md laa
 # allerede paa 91960 bytes, da loftet blev haevet - Codex afkortede den UDEN
 # varsel og mistede de nederste ~26 KB regler. Hold loftet hoejt nok her.
 project_doc_max_bytes = 262144
 
-# Falder tilbage til Claude Codes fil hvis AGENTS.md mangler. Samme indhold, saa
-# et brudt spejl giver reducerede regler frem for ingen regler.
-project_doc_fallback_filenames = ["CLAUDE.md"]
+# Ingen fallback til CLAUDE.md: den er en pegefil med "@AGENTS.md" og rummer ingen
+# regler. Mangler AGENTS.md, skal den genskabes - ikke erstattes af en tom fil.
+project_doc_fallback_filenames = []
 
 # --- Sandkasse og godkendelser -------------------------------------------
 # Laes og skriv frit i arbejdsmappen, spoerg foer noget raekker udenfor.

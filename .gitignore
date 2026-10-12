@@ -15,7 +15,7 @@ Thumbs.db
 
 
 # Codex' arbejdsmappe: screenshots, backups og mellemresultater fra sessioner.
-# Maskin-lokal — hoerer ikke i historikken (CLAUDE.md tillader mappen i roden).
+# Maskin-lokal — hoerer ikke i historikken (AGENTS.md tillader mappen i roden).
 /.codex-tmp/
 
 # VS Code-arbejdsmappe: mcp.json peger paa lokale MCP-serverstier

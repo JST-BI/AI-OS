@@ -10,7 +10,7 @@ hver sin mappe:
 
 | | Claude Code | Codex |
 |---|---|---|
-| Instruktionsfil | `CLAUDE.md` | `AGENTS.md` (byte-identisk spejl) |
+| Instruktionsfil | `CLAUDE.md` — kun pegefilen `@AGENTS.md` | `AGENTS.md` (den eneste instruktionsfil) |
 | Projektkonfiguration | `.claude/settings.json` | `.codex/config.toml` — **små bogstaver, TOML** |
 | Personlig konfiguration | `~/.claude/` | `~/.codex/config.toml` |
 | Agenter | `agents/` via `~/.claude/agents`, spawnes som subagenter | samme filer læses som rolleinstruks; ingen subagenter |
@@ -45,18 +45,17 @@ mistede de nederste ~26 KB regler uden at sige det. Loftet hæves til 262144 i h
 
 **3. Aktivér de versionerede hooks:** `git config core.hooksPath .githooks` — én gang pr. klon.
 Git kører ikke versionerede hooks automatisk. Uden dette virker hverken Excel-persondata-
-spærringen eller spejlkontrollen.
+spærringen eller pegefil-kontrollen.
 
 ## AGENTS.md findes ved at gå opad — ikke på tværs
 
 Codex leder efter `AGENTS.md` fra arbejdsmappen og opad mod projektroden (mappen med `.git`).
 Arbejder du i `AI SOSU\BI-OEKONOMI\`, læses **kun** det projekts `AGENTS.md` — ikke AI OS'. Enhver
 regel der skal gælde på tværs, skal derfor stå i hvert projekts egen fil eller udtrykkeligt henvise
-til `../../AI OS/AGENTS.md`. Det samme gælder Claude Code og `CLAUDE.md`.
+til `../../AI OS/AGENTS.md`. Claude Code når samme fil gennem pegefilen `CLAUDE.md` (`@AGENTS.md`).
 
-`project_doc_fallback_filenames = ["CLAUDE.md"]` i hver `.codex/config.toml` gør at Codex falder
-tilbage på Claude Codes fil, hvis `AGENTS.md` mangler. Det er et sikkerhedsnet mod et brudt spejl
-— ikke en erstatning for det.
+`project_doc_fallback_filenames = []` i hver `.codex/config.toml`: der er ingen fil at falde tilbage
+på, for `CLAUDE.md` er kun en pegefil. Mangler `AGENTS.md`, skal den genskabes fra git.
 
 ## `.codex/rules/` er ikke stedet for workflow-prosa
 

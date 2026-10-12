@@ -1,7 +1,7 @@
 #!/bin/sh
 # Versioneret pre-commit hook (aktiveres med: git config core.hooksPath .githooks)
 # 1) Blokerer commit af Excel-filer med persondata (navn/CPR/mail).
-# 2) Blokerer commit hvor CLAUDE.md og AGENTS.md ikke er identiske spejle.
+# 2) Blokerer commit hvor CLAUDE.md er andet end pegefilen @AGENTS.md (AGENTS.md er instruktionsfilen).
 dir="$(dirname "$0")"
 if command -v python >/dev/null 2>&1; then PY=python
 elif command -v py >/dev/null 2>&1; then PY=py

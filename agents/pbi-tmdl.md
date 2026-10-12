@@ -56,7 +56,7 @@ In BI-OEKONOMI: `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/`, c
 - Object names containing spaces, hyphens or Danish letters are single-quoted.
 - `RETURN` in a calculation item requires a preceding `VAR`.
 
-The full syntax gotcha list lives in `BI-OEKONOMI/CLAUDE.md` — read it before a non-trivial edit.
+The full syntax gotcha list lives in `BI-OEKONOMI/AGENTS.md` — read it before a non-trivial edit.
 
 ## Validate before you hand back — not optional
 

@@ -11,12 +11,12 @@
      eller er nyere. Ogsaa persondata - JSTs beslutning 2026-09-15.
   3) Rapporterer filer der KUN findes paa Y: - de skal hentes ind i OneDrive.
   Y:-kopierne er kollegernes arbejdsgrundlag: DATAKONTROLCENTER paa Y: og Z8050 m.fl. paa Y: roeres IKKE.
-  Koeres af agenten paa kodeordet "Udgiv" (se AI OS\CLAUDE.md) eller manuelt.
+  Koeres af agenten paa kodeordet "Udgiv" (se AI OS\\AGENTS.md) eller manuelt.
 
   FORAELDEDE FILER: robocopy /XO sletter aldrig noget - det er bevidst. Men en FLYTNING i kilden
   ser ud som en ren tilfoejelse, saa den flyttede fil bliver liggende BEGGE steder paa Y:.
   Det skete 2026-09-05, da 11 agenter flyttede til agents-inaktive\: Y:\AI OS\agents\ viste
-  19 filer, mens CLAUDE.md samme sted sagde 8 aktive. Scriptet rapporterer nu altid saadanne
+  19 filer, mens AGENTS.md samme sted sagde 8 aktive. Scriptet rapporterer nu altid saadanne
   filer; det sletter dem kun med -RyddForaeldede.
 .PARAMETER RyddForaeldede
   Slet de filer under Y:\AI OS der ikke laengere findes i kilden. Uden flaget rapporteres de kun.
@@ -193,7 +193,7 @@ foreach ($p in $par) {
   if ($nye.Count -gt 10) { L ("  ... og " + ($nye.Count - 10) + " mere under " + $p.Y) }
   $kunY += $nye.Count
 }
-L ("Filer der kun findes paa Y: $kunY" + $(if ($kunY) { " - kopiér dem til OneDrive (se AI OS\CLAUDE.md, Placering)" } else { "" }))
+L ("Filer der kun findes paa Y: $kunY" + $(if ($kunY) { " - kopiér dem til OneDrive (se AI OS\\AGENTS.md, Placering)" } else { "" }))
 L "UDGIV slut"
 # robocopy returnerer 1 for "filer kopieret", og den kode slap ellers ud som scriptets exit-kode.
 exit $(if ($kunY) { 2 } else { 0 })

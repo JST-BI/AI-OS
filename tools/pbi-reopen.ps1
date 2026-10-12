@@ -6,7 +6,7 @@
 #     ØVERSTE post (mindst Y) = den senest åbnede.
 #  2) Recents-listen er først i UIA-træet nogle sekunder EFTER at backstage er åbnet. Efter en helt
 #     frisk start skal scriptet typisk køres TO gange: første kald åbner backstage, andet finder posten.
-# Forudsætning: PBIDesktopStore.exe er startet og viser "Untitled - Power BI Desktop". Se BI-OEKONOMI/CLAUDE.md "Kørende model og disk-cache".
+# Forudsætning: PBIDesktopStore.exe er startet og viser "Untitled - Power BI Desktop". Se BI-OEKONOMI/AGENTS.md "Kørende model og disk-cache".
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
 $ErrorActionPreference = 'Continue'

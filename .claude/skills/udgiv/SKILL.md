@@ -23,7 +23,7 @@ Forudsætninger: alt der skal ud, er merget til `main` og pushet til GitHub FØR
 
 ## To ting der er gået galt før
 
-**En FLYTNING i kilden efterlader filen begge steder på Y:.** robocopy sletter aldrig noget — bevidst og rigtigt — men en flytning ligner en ren tilføjelse. Da 11 agenter flyttede til `agents-inaktive/` 2026-09-05, viste `Y:\AI OS\agents\` 19 filer, mens `CLAUDE.md` samme sted sagde 8 aktive. Derfor rapporteres forældede filer nu altid. **Sletning på Y: er uden for projektrødderne — spørg JST før du kører `-RyddForaeldede`.**
+**En FLYTNING i kilden efterlader filen begge steder på Y:.** robocopy sletter aldrig noget — bevidst og rigtigt — men en flytning ligner en ren tilføjelse. Da 11 agenter flyttede til `agents-inaktive/` 2026-09-05, viste `Y:\AI OS\agents\` 19 filer, mens `AGENTS.md` samme sted sagde 8 aktive. Derfor rapporteres forældede filer nu altid. **Sletning på Y: er uden for projektrødderne — spørg JST før du kører `-RyddForaeldede`.**
 
 **`task 'geometric-repack' failed` er IKKE en fejl i udgivelsen.** Ved et stort pull kører git
 sin baggrundsvedligeholdelse, og repack fejler rutinemæssigt på en netværksshare (fil-låsning og

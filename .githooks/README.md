@@ -8,22 +8,18 @@ Blokerer commits af Excel-filer (`.xlsx/.xlsm/...`) der indeholder persondata: C
 (`DDMMYY-XXXX`), e-mailadresser eller kolonner med
 `navn/fornavn/efternavn/cpr/personnummer/mail`. Rene Excel-filer tillades.
 
-## 2. CLAUDE.md/AGENTS.md-spejlet — `check_md_mirror.py`
+## 2. AGENTS.md er instruktionsfilen, CLAUDE.md en pegefil — `check_md_mirror.py`
 
-Blokerer commits hvor `CLAUDE.md` og `AGENTS.md` i samme mappe ikke er byte-identiske,
-eller hvor kun den ene halvdel af parret er med i commit'en.
+Blokerer commits hvor `CLAUDE.md` i en mappe er andet end linjen `@AGENTS.md`, eller hvor kun
+den ene af de to filer findes.
 
-Claude Code læser `CLAUDE.md`, Codex læser `AGENTS.md`. De er samme indhold under to navne,
-så begge værktøjer ser præcis de samme regler. Driver de fra hinanden, følger de to værktøjer
-hver sin udgave af reglerne — og det opdages først, når en agent handler forkert.
+`AGENTS.md` er den eneste instruktionsfil og er uafhængig af AI-model. Codex læser den direkte;
+Claude Code læser `CLAUDE.md`, som derfor kun indeholder importlinjen `@AGENTS.md`. Så ser begge
+værktøjer præcis samme regler, og ingen regel kan drive mellem dem. Skrives der regler i
+`CLAUDE.md` igen, ser Codex dem aldrig.
 
-Ret et brudt spejl frem for at omgå spærringen:
-
-```
-Copy-Item CLAUDE.md AGENTS.md ; git add CLAUDE.md AGENTS.md
-```
-
-Eller på tværs af alle projekter på én gang:
+Ret det frem for at omgå spærringen: flyt teksten til `AGENTS.md`, og skriv pegefilerne på
+tværs af alle mapper på én gang:
 
 ```
 & "AI OS\tools\sync-agents-md.ps1"

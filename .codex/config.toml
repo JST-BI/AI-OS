@@ -11,15 +11,15 @@
 # afsnittet "Codex-opsaetning paa en ny maskine" i AGENTS.md.
 
 # --- AGENTS.md-indlaesning ------------------------------------------------
-# AGENTS.md er det byte-identiske spejl af CLAUDE.md og vokser hver gang en ny
+# AGENTS.md er den eneste instruktionsfil (CLAUDE.md er kun en pegefil) og vokser hver gang en ny
 # laering skrives ind. Standardloftet er 65536 bytes, og filen ligger allerede
 # omkring 43 KB - naar den passerer graensen, afkortes den UDEN varsel, og Codex
 # mister de nederste afsnit (PowerShell-, TMDL- og PBIR-faelderne staar der).
 project_doc_max_bytes = 262144
 
-# Falder tilbage til Claude Codes fil hvis AGENTS.md mangler. Samme indhold, saa
-# et brudt spejl giver reducerede regler frem for ingen regler.
-project_doc_fallback_filenames = ["CLAUDE.md"]
+# Ingen fallback til CLAUDE.md: den er en pegefil med "@AGENTS.md" og rummer ingen
+# regler. Mangler AGENTS.md, skal den genskabes - ikke erstattes af en tom fil.
+project_doc_fallback_filenames = []
 
 # --- Sandkasse og godkendelser -------------------------------------------
 # Svarer til hensigten i .claude/settings.json: laes og skriv frit i arbejdsmappen,

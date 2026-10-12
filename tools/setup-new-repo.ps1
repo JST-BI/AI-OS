@@ -13,9 +13,9 @@
     1. Commits of Excel files (.xlsx/.xlsm/...) that contain personal data: CPR
        (DDMMYY-XXXX), e-mail addresses, or columns named
        navn/fornavn/efternavn/cpr/personnummer/mail. Clean Excel files are allowed.
-    2. Commits where CLAUDE.md and AGENTS.md are not byte-identical mirrors -
-       Claude Code reads the first, Codex reads the second, and drift means the
-       two tools follow different rules.
+    2. Commits where CLAUDE.md is anything but the pointer line "@AGENTS.md" -
+       AGENTS.md is the single, model-independent instruction file; Claude Code
+       imports it through the pointer, Codex reads it directly.
 .PARAMETER RepoPath
   Path to the target repo root (must already be a git repo, i.e. contain .git).
 .EXAMPLE
@@ -60,7 +60,7 @@ if ($txt -notmatch '\.githooks/pre-commit') {
   Write-Host "  .gitattributes: eol=lf rules added"
 }
 elseif ($txt -notmatch 'check_md_mirror\.py') {
-  # Repo set up before the mirror hook existed - add just the missing line
+  # Repo set up before the instruction-file hook existed - add just the missing line
   $txt = $txt.TrimEnd("`r", "`n") + "`n.githooks/check_md_mirror.py text eol=lf`n"
   [System.IO.File]::WriteAllText($ga, $txt, $utf8)
   Write-Host "  .gitattributes: eol=lf rule added for check_md_mirror.py"
@@ -86,5 +86,5 @@ else {
 
 # 4) Activate the versioned hooks for this clone
 & git -C $RepoPath config core.hooksPath .githooks
-Write-Host "OK: hooks installed (Excel-PII + CLAUDE/AGENTS mirror) + core.hooksPath set for: $RepoPath"
+Write-Host "OK: hooks installed (Excel-PII + AGENTS.md/pointer check) + core.hooksPath set for: $RepoPath"
 Write-Host "    Remember to commit .githooks/, .gitattributes and .codex/."

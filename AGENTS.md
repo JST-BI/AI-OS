@@ -36,7 +36,7 @@ Alle arbejdsprojekter ligger i `<OneDrive>\AI SOSU\<PROJEKT>`, ét git-repo pr. 
 | `ADM-BLANKET` | Blanketter og formularer |
 | `ADM-RETTIGHEDSSTYRING` | Rettighedsstyring på Y:-drevet: ACL- og gruppemedlemsudtræk → adgangsoversigter |
 
-Hvert projekt har sin egen `CLAUDE.md` med projektets regler — den er facit for arbejde der.
+Hvert projekt har sin egen `AGENTS.md` med projektets regler — den er facit for arbejde der.
 Er opgaven ikke dækket af en række herover, så spørg hvilket projekt den hører til frem for at
 gætte.
 
@@ -83,24 +83,27 @@ Kør robocopy- og git-scripts fra PowerShell, ikke fra Bash: stier konverteres f
 `Y:` er en pr.-logon-mapping der kan falde ud midt i en session; `Test-Path` på UNC-stien vækker
 den.
 
-## Instruktionsfiler — spejl og vedligehold
+## Instruktionsfiler — én fil, uafhængig af AI-model
 
-`CLAUDE.md` (Claude Code) og `AGENTS.md` (Codex) skal være **byte-identiske** i hver mappe hvor de
-findes. Redigér altid `CLAUDE.md` og spejl med `& "AI OS\tools\sync-agents-md.ps1"`.
-Pre-commit-hooken `.githooks/check_md_mirror.py` blokerer drift — ret spejlet frem for at bruge
-`--no-verify`; et brudt spejl betyder at de to værktøjer arbejder efter hver sin udgave af reglerne.
+`AGENTS.md` er den eneste instruktionsfil i hver mappe hvor den findes. `CLAUDE.md` samme sted er
+kun en pegefil med linjen `@AGENTS.md`, som Claude Code indlæser som import; Codex læser
+`AGENTS.md` direkte. Redigér altid `AGENTS.md` — aldrig pegefilen. `& "AI OS\tools\sync-agents-md.ps1"`
+skriver pegefilerne og melder drift (`-Check`); pre-commit-hooken `.githooks/check_md_mirror.py`
+blokerer en `CLAUDE.md` der er andet end pegefilen. Reglerne må aldrig afhænge af hvilken model
+der kører (JST 2026-10-12) — før den dato var `CLAUDE.md` kilden og `AGENTS.md` en byte-kopi.
 
 Codex finder `AGENTS.md` ved at gå opad mod nærmeste `.git` — aldrig på tværs. En regel der skal
 gælde i et projekt, skal stå i det projekts egen fil.
 
 Når du retter en fejl eller lærer noget der ændrer fremtidige beslutninger: skriv det ind i den
-relevante `CLAUDE.md`, spejl, opdatér `INDEX.md` hvis filer er kommet til eller forsvundet, og
-commit. Instruktionsfiler må committes direkte til `main`.
+relevante `AGENTS.md`, opdatér `INDEX.md` hvis filer er kommet til eller forsvundet, og commit.
+Instruktionsfiler må committes direkte til `main`. Viden der kun ligger i ét værktøjs private
+hukommelse, findes ikke for det andet — repoets `AGENTS.md` er den hukommelse der tæller.
 
 **Skriv reglen, ikke historien.** Én linje med hvad man skal gøre, og én med den konkrete fejl den
-forhindrer. Undersøgelsesforløb og PR-narrativ hører i hukommelsen eller i en arbejdsnote — ikke i
-en fil der indlæses ved hver eneste session. Vokser et afsnit ud over ~20 linjer, hører detaljen i
-en separat fil som `CLAUDE.md` henviser til.
+forhindrer. Undersøgelsesforløb og PR-narrativ hører i en arbejdsnote i repoet — ikke i en fil der
+indlæses ved hver eneste session. Vokser et afsnit ud over ~20 linjer, hører detaljen i en separat
+fil som `AGENTS.md` henviser til.
 
 Opsætning af Codex på en ny maskine: `tools/codex-opsaetning.md`.
 
@@ -226,7 +229,7 @@ er fortsat forbudt.
 ## Obsidian-vault
 
 Vaultens rod er AI OS; `.obsidian/` er kun konfiguration og åbnes aldrig som selvstændig vault.
-Noteregler for `vault/` står i `vault/CLAUDE.md` og gælder kun filer der — ikke instruktionsfilerne
+Noteregler for `vault/` står i `vault/AGENTS.md` og gælder kun filer der — ikke instruktionsfilerne
 og ikke `agents/*.md`. Projektnoter hører i projektets eget repo, ikke i `vault/`.
 
 ## Nye projekter

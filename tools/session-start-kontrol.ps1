@@ -4,7 +4,7 @@
   Deterministisk session-startkontrol for AI OS. Tavs naar alt er i orden.
 
 .DESCRIPTION
-  Erstatter den prosa-tjekliste der stod i CLAUDE.md, og som modellen skulle "verificere" ved
+  Erstatter den prosa-tjekliste der stod i AGENTS.md, og som modellen skulle "verificere" ved
   hver foerste prompt. En tjekliste af den slags koster kontekst i hver session og er kun saa
   paalidelig som modellens lyst til at koere den. Maskinen goer det samme paa under et sekund
   og kan ikke springe et punkt over.
@@ -20,7 +20,7 @@
   hardkoder derfor ingen projektnavne mere: det opregner de mapper der faktisk findes.
 
 .PARAMETER Fuld
-  Kontrollér ogsaa hvert projekt-repos faste filer. Uden flaget koeres kun spejl- og
+  Kontrollér ogsaa hvert projekt-repos faste filer. Uden flaget koeres kun pegefil- og
   rodkontrollen - det hurtige, der faktisk driver.
 #>
 param([switch]$Fuld)
@@ -30,7 +30,7 @@ $AIOS = Split-Path -Parent $PSScriptRoot
 $SOSU = Join-Path (Split-Path -Parent $AIOS) 'AI SOSU'
 $fejl = New-Object System.Collections.Generic.List[string]
 
-# 1) CLAUDE.md == AGENTS.md i alle mapper der har mindst en af dem
+# 1) AGENTS.md er instruktionsfilen og CLAUDE.md pegefilen @AGENTS.md i alle mapper med mindst en af dem
 $sync = Join-Path $AIOS 'tools\sync-agents-md.ps1'
 # *>&1 - ikke 2>&1: sync-scriptet skriver med Write-Host, og den gaar til informations-
 # stroemmen. Fanges den ikke, skriver hooken sync-scriptets "OK"-linje ved HVER sessionsstart,
@@ -38,7 +38,7 @@ $sync = Join-Path $AIOS 'tools\sync-agents-md.ps1'
 $ud = & $sync -Check *>&1
 if ($LASTEXITCODE -ne 0) {
   $linjer = @($ud | Where-Object { "$_" -match '\S' } | ForEach-Object { "$_".Trim() })
-  $fejl.Add("Spejl-drift mellem CLAUDE.md og AGENTS.md: $($linjer -join ' | ')")
+  $fejl.Add("Instruktionsfil-drift (CLAUDE.md skal kun vaere pegefilen @AGENTS.md): $($linjer -join ' | ')")
 }
 
 # 2) AI OS-roden indeholder kun infrastruktur - ingen loese noter, ingen projektmapper

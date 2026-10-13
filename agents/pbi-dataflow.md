@@ -48,6 +48,11 @@ a map built from a sample is wrong.
   difference (bug / intended / cosmetic) before anyone consolidates.
 - **Dead weight.** Columns computed but not loaded (`column` lines vs. M output), joins whose
   result is removed, INFO tables carrying content.
+  A column is only dead when NOTHING reads it — and the readers are not just PBIR and DAX:
+  `sortByColumn` on another column, hierarchy levels, relationship ends and RLS roles read it
+  too. A column removed on "0 in PBIR, DAX, roles" was the sort column of another column, and
+  PBI opened the model as an empty document (2026-10-13). `AI OS/tools/tmdl-krydsreferencer.py`
+  checks sortByColumn, hierarchies and relationships.
 - **Guard and import layer.** Every registered source goes through `fxDatakildeFiler` and ends in
   `fxDatakildeRaekker`/`…Afhaengig`; DIM/INFO tables pass `altidFuld`; mixed DAX measures carry
   `KILDEVAERN`. A redesign must leave `tools/tjek-datakilde-afhaengigheder.py` at OK.

@@ -55,6 +55,10 @@ finding.
 
 ## Known traps
 
+- **Removing a column also removes it as a sort/hierarchy/relationship target.** Before you drop a
+  column from M and TMDL, grep `sortByColumn`, `column:` (hierarchy levels) and `relationships.tmdl`
+  for it, and run `AI OS/tools/tmdl-krydsreferencer.py`. A dropped `_index` column that another
+  column sorted by made PBI open the model as an empty "Untitled" document (2026-10-13).
 - `Table.Group` drops every column that is neither key nor aggregate — a "harmless" regroup can
   silently lose a column a downstream table needs.
 - Changing the M text of a partition — even a comment — invalidates that table's cache; a

@@ -210,7 +210,9 @@ Alt andet kører uden prompt.
 
 **Excel med navn, CPR eller e-mail må aldrig på GitHub.** Rene Excel-filer er tilladt. Håndhæves af
 den versionerede pre-commit-hook (`.githooks/check_excel_pii.py`) i alle repos; aktivér den én gang
-pr. klon med `git config core.hooksPath .githooks`. Ved untrack af allerede committet Excel:
+pr. klon med `git config core.hooksPath .githooks`. Hooken matcher ordet "navn" som helt ord i
+AL tekst i arket — også en forklaringstekst som "Navn i B2 …" (13-10-2026). Skriv "betegnelse"/"teksten
+i B2" i genererede ark, og scan selv med hookens regex før commit. Ved untrack af allerede committet Excel:
 `git rm --cached --ignore-unmatch '*.xlsx' '*.xls' '*.xlsm' '*.xlsb'`.
 
 **Persondata må aldrig gengives i samtalen — kun aggregater.** Værktøjerne kører lokalt, men

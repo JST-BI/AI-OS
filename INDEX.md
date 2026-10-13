@@ -60,6 +60,8 @@ agenter for projekter i dvale i `agents-inaktive/`.
 | `agents/pbi-powerquery.md` | M-kode, grain og fan-out, relationer, query folding |
 | `agents/pbi-tmdl.md` | TMDL-filerne: objekter, beregningsgrupper, relationships, load-diagnose. Kører `validate-tmdl.ps1` |
 | `agents/pbi-performance.md` | Diagnose af langsom refresh/render/query mod målt baseline. Rapporterer, implementerer ikke |
+| `agents/pbi-m-optimering.md` | M-optimering uden outputændring: én delt kæde frem for kopi-pasta'ede kæder, Buffer på flerfoldige referencer, fjern dødt arbejde; figur-eksakt verifikation pr. query (13-10-2026) |
+| `agents/pbi-dataflow.md` | Tværgående dataflow/ETL-arkitekt: afhængighedskort, dobbelt-parsning, afledte dimensioner vs. fakta, mål-arkitektur og migreringsrækkefølge med før/efter-kontrol pr. skridt (13-10-2026) |
 | `agents/pbi-naming.md` | Navnebeslutninger og -audits mod modellens egen, målte konvention |
 | `agents/md-optimizer.md` | Vedligehold af instruktions- og hukommelsesfiler på tværs af repos |
 

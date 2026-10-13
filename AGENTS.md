@@ -155,10 +155,12 @@ udfas måleren bevidst (`BLANK()` + `isHidden`) frem for at gætte.
 | `pbi-powerquery` | M-kode, grain, relationer, query folding |
 | `pbi-tmdl` | TMDL-filerne: objekter, beregningsgrupper, relationships, load-fejl |
 | `pbi-performance` | Diagnose af langsom refresh, render eller query. Rapporterer, implementerer ikke |
+| `pbi-m-optimering` | Gør eksisterende M hurtigere/enklere med row-for-row identisk output: delt kæde frem for kopier, Buffer, dødt arbejde. Figur-eksakt før/efter pr. query |
+| `pbi-dataflow` | Tværgående ETL-arkitekt: kort over kilde → expression → tabel → forbrugere, dobbelt-parsning, afledte dimensioner, mål-arkitektur og migreringsrækkefølge. Anbefaler, implementerer ikke |
 | `pbi-naming` | Navnebeslutninger og -audits mod modellens egen konvention |
 | `md-optimizer` | Eftersyn af instruktions- og hukommelsesfiler |
 
-De syv PBI-agenter arbejder i alle tre BI-projekter. Kæderne mellem dem står i
+De ni PBI-agenter arbejder i alle tre BI-projekter. Kæderne mellem dem står i
 `BI-OEKONOMI/.claude/rules/pbi-workflows.md` — **ingen af værktøjerne indlæser den automatisk**,
 så læs den eksplicit når en opgave involverer flere agenter.
 

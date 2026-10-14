@@ -69,6 +69,46 @@ def main(definition):
     for t in sorted(paa_disk - set(refs)):
         fund.append("tables/%s.tmdl er IKKE refereret i model.tmdl - tabellen indlaeses ikke" % t)
 
+    # --- 2b) kolonnereferencer: sortByColumn, hierarki-niveauer og relationer ---
+    # TILFOEJET 2026-10-13: en kolonne blev fjernet som "ulaest" (0 i PBIR, DAX, roller),
+    # men en anden kolonne havde `sortByColumn` paa den. validate-tmdl.ps1 var GROEN, og PBI
+    # aabnede et TOMT "Untitled"-dokument. En sorteringskolonne, et hierarkiniveau og en
+    # relationsende er alle LAESERE af en kolonne - tjek dem foer en kolonne kaldes doed.
+    kolonner = {}
+    tabel_tekst = {}
+    if os.path.isdir(tabeldir):
+        for f in sorted(os.listdir(tabeldir)):
+            if not f.endswith(".tmdl"):
+                continue
+            s = laes(os.path.join(tabeldir, f))
+            tm = re.search(r"^table (?:'([^']+)'|(\S+))", s, re.M)
+            if not tm:
+                continue
+            t = tm.group(1) or tm.group(2)
+            tabel_tekst[t] = (f, s)
+            kolonner[t] = {(m.group(1) or m.group(2)) for m in
+                           re.finditer(r"^\tcolumn (?:'([^']+)'|([^\s=]+))", s, re.M)}
+    for t, (f, s) in tabel_tekst.items():
+        for m in re.finditer(r"^\t\t(sortByColumn|groupByColumn):\s*(?:'([^']+)'|(\S+))\s*$", s, re.M):
+            c = m.group(2) or m.group(3)
+            if c not in kolonner[t]:
+                fund.append("%s: %s peger paa kolonnen '%s', som ikke findes i tabellen (%s)"
+                            % (t, m.group(1), c, f))
+        for m in re.finditer(r"^\t\t\tcolumn:\s*(?:'([^']+)'|(\S+))\s*$", s, re.M):
+            c = m.group(1) or m.group(2)
+            if c not in kolonner[t]:
+                fund.append("%s: hierarkiniveau peger paa kolonnen '%s', som ikke findes (%s)" % (t, c, f))
+    rel_sti = os.path.join(definition, "relationships.tmdl")
+    if os.path.exists(rel_sti):
+        for m in re.finditer(r"^\s*(fromColumn|toColumn):\s*(?:'([^']+)'|([^.\s]+))\.(?:'([^']+)'|(\S+))\s*$",
+                             laes(rel_sti), re.M):
+            t = m.group(2) or m.group(3)
+            c = m.group(4) or m.group(5)
+            if t not in kolonner:
+                fund.append("relationships.tmdl: %s peger paa tabellen '%s', som ikke findes" % (m.group(1), t))
+            elif c not in kolonner[t]:
+                fund.append("relationships.tmdl: %s peger paa '%s'.'%s', som ikke findes" % (m.group(1), t, c))
+
     # --- 3) dublerede lineageTags: ADVARSEL, ikke roedt ------------------------
     # HR_OEKONOMI har allerede én dublet paa main, og PBI aabner fint med den. Den
     # bloker derfor ikke - men den skal ses, for en dublet kan flytte formatering og
@@ -92,7 +132,8 @@ def main(definition):
         for f in fund:
             print("  - " + f)
         return 1
-    print("GROEN: queryGroups erklaeret, og ref table <-> filer stemmer.")
+    print("GROEN: queryGroups erklaeret, ref table <-> filer stemmer, og sortByColumn/hierarkier/relationer "
+          "peger paa kolonner der findes.")
     return 0
 
 

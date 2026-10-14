@@ -28,7 +28,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
 | `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv |
 | `AI OS/tools/validate-tmdl.ps1` | Offline TMDL-validering med PBI's egen TOM-deserializer — pre-flight-gate før PBI-åbning |
-| `AI OS/tools/tmdl-krydsreferencer.py` | Tjekker queryGroup-erklæringer, `ref table` ↔ filer og dublerede lineageTags — den klasse `validate-tmdl.ps1` strukturelt ikke kan se |
+| `AI OS/tools/tmdl-krydsreferencer.py` | Tjekker queryGroup-erklæringer, `ref table` ↔ filer, at `sortByColumn`/hierarkiniveauer/relationsender peger på kolonner der findes (13-10-2026), og dublerede lineageTags — den klasse `validate-tmdl.ps1` strukturelt ikke kan se |
 | `AI OS/tools/tmsl-refresh.ps1` | Tabel-scoped TMSL-refresh mod kørende PBI Desktop-instans (undgår fuld model-refresh) |
 | `AI OS/tools/pbi-reopen.ps1` | Genåbner HR_OEKONOMI.pbip i en kørende "Untitled" PBI Desktop via UIA-recents (kold genstart-cyklus) |
 | `AI OS/tools/pbi-screenshot.ps1` | Vælger rapportfane via UIA, lukker backstage, søger fejltekster og gemmer PrintWindow-screenshot |
@@ -60,6 +60,8 @@ agenter for projekter i dvale i `agents-inaktive/`.
 | `agents/pbi-powerquery.md` | M-kode, grain og fan-out, relationer, query folding |
 | `agents/pbi-tmdl.md` | TMDL-filerne: objekter, beregningsgrupper, relationships, load-diagnose. Kører `validate-tmdl.ps1` |
 | `agents/pbi-performance.md` | Diagnose af langsom refresh/render/query mod målt baseline. Rapporterer, implementerer ikke |
+| `agents/pbi-m-optimering.md` | M-optimering uden outputændring: én delt kæde frem for kopi-pasta'ede kæder, Buffer på flerfoldige referencer, fjern dødt arbejde; figur-eksakt verifikation pr. query (13-10-2026) |
+| `agents/pbi-dataflow.md` | Tværgående dataflow/ETL-arkitekt: afhængighedskort, dobbelt-parsning, afledte dimensioner vs. fakta, mål-arkitektur og migreringsrækkefølge med før/efter-kontrol pr. skridt (13-10-2026) |
 | `agents/pbi-naming.md` | Navnebeslutninger og -audits mod modellens egen, målte konvention |
 | `agents/md-optimizer.md` | Vedligehold af instruktions- og hukommelsesfiler på tværs af repos |
 
@@ -104,6 +106,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/sync-datakilder.ps1` | Spejler modellens datakilder fra Y: til `C:\BI-Data` (robocopy `/MIR`). Læser stierne i DATAKONTROLCENTER + parameteren `$Ekstra` med de fem mapper der kun har eksplicit sti i M-koden |
 | `tools/refresh-hr-oekonomi.ps1` | Refresh-rutinen: synkroniserer spejlet, **friskhedskontrollerer** at ingen kilde er nyere på Y: end i spejlet (`-KunKontrol` svarer uden at refreshe), og kører TMSL-refresh i én transaktion med fallback til tabel-for-tabel. `-Only` refresher præcis de navngivne tabeller |
 | `tools/afstem-kilde.ps1` | **Kontrollerer modellen op mod kildefilerne** (JSTs regel 2b, 08-09-2026). Tre kontroller, kun aggregater i output: er spejlet bagud i forhold til Y:, ligger der TEMP-ark i datakilderne, og er Z8050's raadata-ark identisk med modellen (distinkte cpr + sum af `bidrag_i_maaned`). Kontrol 1 overlapper `refresh-hr-oekonomi.ps1 -KunKontrol`; det nye er 2 og 3 |
+| `tools/tjek-datakilde-afhaengigheder.py` | **Kontrol af afhængighedslisterne bag kontrolcenterets tilstand `Ingen`** (13-10-2026): beregner for hver afledt import-tabel den transitive lukning af datakilde-numre (uden DIM-kilder) fra TMDL/M og sammenligner med `fxDatakildeRaekkerAfhaengig({…}, …)` i partitionen; exit 1 ved afvigelse, `--skriv` retter. Kontrol 2 fanger et genopstået `Folder.Files(fxDatakildeSti(n))`, som omgår `Ingen`. Kør efter enhver ændring i en partition/expression der læser en kilde |
 | `tools/rapport-krydsreferencer.py` | **Kontrollerer rapportlaget op mod den kørende model** (14-09-2026): hver feltreference i PBIR-json holdes op mod modellens faktiske felter og opdeles efter hvor den sidder — `query` (visualet kan ikke rendere), `sidefilter` (rammer hele siden) eller formatering (kulør tabt, intet fejler). Første kørsel fandt 8 alvorlige, heraf `L-Kalender[Aktuelt år + 4 historikår]` som sidefilter på **32 sider**. Docstringen rummer to fælder i selve opslaget: `ExplicitName` er tom for beregnede tabellers kolonner (navnet ligger i `InferredName`), og `NATURALLEFTOUTERJOIN` i DAX tabte navnene helt |
 | `tools/dax-udf-forberedelse.md` | Kandidatliste og forberedelse til DAX UDF-migreringer |
 | `tools/pq-analyse-og-optimering.md` | Analysenotat: Power Query-optimering og fxSheetImport |

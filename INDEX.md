@@ -120,8 +120,9 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/pptx/eksporter-til-png.ps1` | Eksporterer .pptx til PNG for visuel kontrol. **Kopierer altid til et tidsstemplet navn først** — PowerPoint COM cacher på filsti og serverer ellers en gammel udgave uden at fejle |
 | `tools/regneark-elevaktivitet/` | `byg.py` + 11 `.dax` + `run.ps1` + `verificer.py` + README: bygger ÉN formelstyret fil "Elevaktivitet pr. hold og måned" fra den kørende model — scenariefaner (faktor, nedlæg/flyt, ekstra elever → Δ ÅE/takst/færta/elever), Optag (hold a/b/c), Hold, Parametre (takster), Data (måned), effekt af nedlagte optag, budget pr. hold, kontrol mod `… (samlet)`, links og kopier af BRUGER-inputarkene. `verificer.py` beregner formlerne og tester facit/flytning/takst/1 elev/kapacitet. Kun holdniveau — ingen persondata. PR #97, #98 |
 | `Output/reviews/hr-oekonomi-audit-2026-10-15.md` | Audit og rettelsesfacit: Drift/Projekt, intervalvægtede årsværk, Z8050, kildeafstemning, gates og udestående gem/render |
-| `tools/afstem-aarsvaerk.py` | Uafhængig SD-kildeafstemning af løn-/beskæftigelsesårsværk pr. ansættelse/måned; hash-kontrollerer spejl og udskriver kun aggregater |
-| `Output/dax/aarsvaerk-grain-kontrol.dax` | 14 syntetiske forløb gennem årsværks-DAX: brøkskift, dubletter, fleransættelse, delmåneder, skudår og konfliktmutationer |
+| `tools/afstem-aarsvaerk.py` | Uafhængig SD6-kildeafstemning af løn-/beskæftigelsesårsværk pr. ansættelse/måned; status 1/3, hash-kontrolleret spejl, kun aggregater i output |
+| `Output/dax/aarsvaerk-grain-kontrol.dax` | Syntetiske forløb gennem produktions-DAX: statusskift, brøkskift, dubletter, fleransættelse, delmåneder, skudår og konfliktmutationer |
+| `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/LON-DATA-SDDW-Årsværksintervaller.tmdl` | Skjulte SD6-statusintervaller til årsværk; historisk status, reelle brøker og konfigureret datovindue |
 | `Output/Budget/Elevaktivitet pr. hold og måned - samlet regneark - <dato>.xlsx` | Regnearket fra `tools/regneark-elevaktivitet/` — øjebliksbillede af modellen den dag (2026-10-12: første; 2026-10-13: formelstyret med scenarier, nye Z8050-data). PR #97, #98 |
 | `Output/praesentationer/*.pptx` | De tre genererede præsentationer + årshjulet med rettede måneder (09-09). Genbygges med `python byg-*.py`; redigér generatoren, ikke .pptx-filen |
 

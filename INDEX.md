@@ -2,7 +2,7 @@
 
 > `<OneDrive>` = `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers` (arbejdskopier); `Y:\AI OS` / `Y:\AI SOSU` er delte kopier til kollegerne.
 
-> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 12 projekter.
+> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 13 projekter.
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `AGENTS.md`).
 > **Instruktionsfil**: I alle repos er `AGENTS.md` den eneste instruktionsfil (uafhængig af AI-model); `CLAUDE.md` er kun pegefilen `@AGENTS.md`, som Claude Code indlæser som import. `tools/sync-agents-md.ps1` skriver pegefilerne; `.githooks/check_md_mirror.py` håndhæver det ved commit.
 > **Obsidian**: Vault-roden er `<OneDrive>\AI OS\`. De fysiske projektfiler ligger separat og kanonisk i `<OneDrive>\AI SOSU\`; der findes ingen junction eller særskilte Obsidian-kopier af projektfilerne.
@@ -289,7 +289,25 @@ gruppemedlemsudtræk → adgangsoversigter ("hvem har adgang til hvilken mappe",
 
 ---
 
-## Fælles på tværs af alle 13 repos
+## ADM-BESPARELSER — `<OneDrive>\AI SOSU\ADM-BESPARELSER\` (lokalt repo, intet GitHub-remote)
+
+Personaletilpasninger ved besparelser: procesplaner for afskedigelser og individuelle varslinger
+om påtænkt opsigelse (partshøring) efter funktionærlovens § 2. Bragt under AI-styring 2026-10-16.
+`Input/` og `Output/` er begge gitignored i deres helhed — navne, CPR og helbredsoplysninger.
+
+| Fil | Beskrivelse |
+|---|---|
+| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: skærpet persondata, funktionærlovens varselstabel, SD-anciennitet ≠ lønanciennitet |
+| `tools/generer-varslinger.py` | Udfylder én varsling pr. medarbejder i opsigelsesrunden fra procesplan + skabelon + SD-udtræk; kontrollerer varsler mod § 2 og skriver kontrolrapport |
+| `tools/test-ful-varsel.py` | Grænsetilfælde for varselsberegningen (6 mdr., 3/6/9 år, prøvetid) |
+| `tools/verificer-varslinger.py` | Tilbagelæsning af genererede varslinger: navn, CPR, rest-pladsholdere, gul markering |
+| `Input/Procesplan afskedigelser - 2026-10-19.docx` | Procesplan med medarbejdere pr. opsigelsesrunde og samtaleskema (gitignored) |
+| `Input/Varsling om påtænkt opsigelse - SKABELON - 2026-10-19.docx` | Brevskabelon med gulmarkerede pladsholdere (gitignored) |
+| `Output/Varslinger oktober 2026/` | Udfyldte varslinger + `Kontrol af opsigelsesvarsler - oktober 2026.md` (gitignored) |
+
+---
+
+## Fælles på tværs af alle 14 repos
 
 | Fil | Beskrivelse |
 |---|---|
@@ -302,6 +320,6 @@ gruppemedlemsudtræk → adgangsoversigter ("hvem har adgang til hvilken mappe",
 | `.gitignore` | Bl.a. Excel-/rådata-ignorering hvor relevant |
 | `_Arkiv/` | Udgåede versioner (projekt-repos) |
 
-**13 repos** = AI OS + 12 projekter. Fire af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
+**14 repos** = AI OS + 13 projekter. Fem af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
 
 **Bemærk (kun Claude Code)**: Claude Codes persistente hukommelse ligger lokalt under `~/.claude/projects/<AI OS-projekt>/memory/` med eget indeks `MEMORY.md` — den er personlig, ikke versionsstyret og ikke en del af repo-strukturen.

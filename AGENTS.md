@@ -35,6 +35,7 @@ Alle arbejdsprojekter ligger i `<OneDrive>\AI SOSU\<PROJEKT>`, ét git-repo pr. 
 | `ADM-AFTALER` | Samarbejds- og samhandelsaftaler |
 | `ADM-BLANKET` | Blanketter og formularer |
 | `ADM-RETTIGHEDSSTYRING` | Rettighedsstyring på Y:-drevet: ACL- og gruppemedlemsudtræk → adgangsoversigter |
+| `ADM-BESPARELSER` | Afskedigelser ved besparelser: procesplaner og varslinger om påtænkt opsigelse |
 
 Hvert projekt har sin egen `AGENTS.md` med projektets regler — den er facit for arbejde der.
 Er opgaven ikke dækket af en række herover, så spørg hvilket projekt den hører til frem for at
@@ -44,11 +45,12 @@ gætte.
 `.git`). Bliver en af dem til et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken
 her.
 
-`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR` og `ADM-RETTIGHEDSSTYRING` har lokale repos
-**uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden JSTs ord.
-`ADM-AFTALER`, `ADM-BLANKET` og `ADM-RETTIGHEDSSTYRING` har `Input/` i `.gitignore`, fordi
-materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING` gitignorer også `Output/` af samme
-grund (adgangsoversigterne lister navngivne medarbejdere).
+`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER`
+har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden
+JSTs ord. `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER` har
+`Input/` i `.gitignore`, fordi materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING` og
+`ADM-BESPARELSER` gitignorer også `Output/` af samme grund (oversigter og varslinger med
+navngivne medarbejdere).
 
 ## Placering — én arbejdskopi, delte kopier på Y:
 

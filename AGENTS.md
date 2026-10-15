@@ -77,6 +77,9 @@ rapport "Filer der kun findes paa Y:" skal være 0 før en opgave meldes færdig
 OneDrive → Y:, så en PowerPoint lagt i `Y:\…\Input` var ellers usynlig for arbejdskopien (2026-09-15).
 **Y: og OneDrive skal være identiske — også gitignoreret Input/Output med persondata og repos uden
 remote** (JST 2026-09-15). Udgiv sørger for det; Y:-klonerne står dog altid på `main`.
+**Eneste undtagelse: `ADM-BESPARELSER` må aldrig kopieres til Y:** — hverken repo eller filer
+(JST 2026-10-16; afskedigelsesvarslinger med navn og CPR). Udgiv springer det over via
+`$IkkePaaY` i `tools/udgiv-til-y.ps1`; et nyt fortroligt projekt føjes til den liste.
 
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.

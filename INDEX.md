@@ -294,6 +294,7 @@ gruppemedlemsudtræk → adgangsoversigter ("hvem har adgang til hvilken mappe",
 Personaletilpasninger ved besparelser: procesplaner for afskedigelser og individuelle varslinger
 om påtænkt opsigelse (partshøring) efter funktionærlovens § 2. Bragt under AI-styring 2026-10-16.
 `Input/` og `Output/` er begge gitignored i deres helhed — navne, CPR og helbredsoplysninger.
+**Undtaget fra Udgiv — må aldrig kopieres til Y:** (`$IkkePaaY` i `tools/udgiv-til-y.ps1`, JST 2026-10-16).
 
 | Fil | Beskrivelse |
 |---|---|

@@ -114,6 +114,12 @@ fil som `AGENTS.md` henviser til.
 
 Opsætning af Codex på en ny maskine: `tools/codex-opsaetning.md`.
 
+## Faste kommandoer — pause, bogfør, udgiv
+
+**Kodeordet "pause"** → læs og udfør `.claude/skills/pause/SKILL.md`: gem sikkert i programmerne, verificér en lokal backup, skriv genoptagelsesstatus og stop. Det virker uden internet og udløser ikke bogfør eller udgiv.
+Det forhindrer, at ikke-gemte ændringer eller opgavekontekst mistes ved afbrydelse. Ved "genoptag"/"resume" læses projektets `.codex/tmp/pause/SENESTE.md` eller `GENOPTAG.md` før videre arbejde.
+**Kodeordet "udgiv"** følger fortsat den særskilte `/udgiv`-arbejdsgang ovenfor. Eksisterende regler for "bogfør" ændres ikke af pausekommandoen.
+
 ## Arbejdsform
 
 Du udfører selv alt du har værktøjer til — filsøgning, kopiering, git, PowerShell, PBI-refresh og

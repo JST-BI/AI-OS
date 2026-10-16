@@ -25,6 +25,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/sync-agents-md.ps1` | Skriver `CLAUDE.md`-pegefilen (`@AGENTS.md`) i alle mapper; `-Check` rapporterer drift (exit 1) |
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
 | `AI OS/.claude/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" |
+| `AI OS/.claude/skills/pause/SKILL.md` | Fælles kommando "pause": lokal gemning, hashverificeret backup, genoptagelsesnotat og stop; henvises fra alle 13 projekters AGENTS.md |
 | `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
 | `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv |
 | `AI OS/tools/validate-tmdl.ps1` | Offline TMDL-validering med PBI's egen TOM-deserializer — pre-flight-gate før PBI-åbning |

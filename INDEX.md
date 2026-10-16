@@ -125,6 +125,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `Output/reviews/hr-oekonomi-forecast-afklaringer-2026-10-16.md` | Beslutningsgrundlag med tre persondatafri eksempelforløb, allerede bindende regler og konkret næste arbejde |
 | `Output/reviews/hr-oekonomi-forecast-grundlag-2026-10-16.json` | Reproducerbart aggregatbilag til afklaringsarket: otte kørte DAX-queries, resultater og kodehashes, ingen personidentifikatorer i output |
 | `Output/reviews/hr-oekonomi-tidslinje-integration-2026-10-16.json` | Afgrænset foundation-GO runde 2: gem/kold 17-/104-felts multisetidentitet, skjulte hjælpefelter, coverage, modeltilstand, nye SD-årsværksaggregater og read-only Y-inventar |
+| `Output/reviews/hr-oekonomi-profilprogression-2026-10-16.json` | Aggregatbevis for PA 2002/version 6: 16 fase-/versionsgrupper, bevarede fysiske intervaller og præcist manglende kobling til profilens TP1–21 |
 | `Output/reviews/hr-oekonomi-final-refresh-2026-10-16.log` | Persondatafri refresh-log for den afsluttende live-modelkontrol: 36 tabeller, 0 uprocesserede og 0 fejlede |
 | `tools/byg-amu-periodekontrol.py` | Genopbygger AMU-kontrakter fra modellens faktiske målerliste og produktionsstatuskrop; kun query-lokale testmål |
 | `tools/afstem-amu-nulltakster.py` | Kilde 32: hash- og typekontrol, takstbærende ÅE kontra FKBPÅ/OMPPÅ-tællere; kun aggregater, teksttal stopper beviset |

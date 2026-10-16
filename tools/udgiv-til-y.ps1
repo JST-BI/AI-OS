@@ -10,6 +10,7 @@
   2b) Filer git ikke foelger (gitignoreret Input/Output m.m.) kopieres OneDrive -> Y:, naar de mangler
      eller er nyere. Ogsaa persondata - JSTs beslutning 2026-09-15.
   3) Rapporterer filer der KUN findes paa Y: - de skal hentes ind i OneDrive.
+  Projekter i $IkkePaaY (ADM-BESPARELSER) springes over i ALLE trin og maa aldrig ligge paa Y:.
   Y:-kopierne er kollegernes arbejdsgrundlag: DATAKONTROLCENTER paa Y: og Z8050 m.fl. paa Y: roeres IKKE.
   Koeres af agenten paa kodeordet "Udgiv" (se AI OS\\AGENTS.md) eller manuelt.
 
@@ -40,6 +41,10 @@ param(
   [string]$Log = (Join-Path $env:LOCALAPPDATA "Temp\udgiv-til-y.log")
 )
 $ErrorActionPreference = 'Continue'
+# Projekter der ALDRIG maa kopieres til Y: - hverken klones, fast-forwardes eller have filer
+# kopieret derud. Undtagelse fra "Y: og OneDrive skal vaere identiske" (JST 2026-10-16:
+# ADM-BESPARELSER rummer afskedigelsesvarslinger med navn og CPR). Bevidst ikke en parameter.
+$IkkePaaY = @('ADM-BESPARELSER')
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
 L "UDGIV start"
 # Y:-klonerne ejes af filserveren, saa git afviser dem som "dubious ownership".
@@ -103,7 +108,7 @@ function Ryd-IdentiskeUntracked($d, $n) {
 
 # 2a) Repos der findes i OneDrive men slet ikke paa Y: klones derud fra OneDrive-klonen.
 #     Origin fjernes igen, saa klonen ligner de andre lokale kloner (Udgiv henter dem fra OneDrive).
-Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-Path (Join-Path $_.FullName ".git\HEAD") } | ForEach-Object {
+Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-Path (Join-Path $_.FullName ".git\HEAD") } | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object {
   $y = Join-Path $YAISOSU $_.Name
   if (Test-Path $y) { return }
   & git clone -q $_.FullName $y 2>&1 | Out-Null
@@ -115,6 +120,7 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
 # 2) Y:\AI SOSU\<repo> <- GitHub (ff-only); kloner uden remote <- OneDrive-klonen (ff-only)
 Get-ChildItem -Directory $YAISOSU | ForEach-Object {
   $d = $_.FullName; $n = $_.Name
+  if ($IkkePaaY -contains $n) { L "ADVARSEL $n : ligger paa Y: men maa ALDRIG vaere der - roeres ikke; fjern mappen manuelt"; return }
   if (-not (Test-Path (Join-Path $d ".git\HEAD"))) { L "$n : ingen gyldig .git - springes over"; return }
   $remote = (& git -C $d remote get-url origin 2>$null)
   if (-not $remote) {
@@ -147,7 +153,7 @@ Get-ChildItem -Directory $YAISOSU | ForEach-Object {
 #     (JST 15-09-2026: Y: og OneDrive skal vaere identiske, ogsaa for persondata). En fil som
 #     Y:-klonens git FOELGER, roeres aldrig - BI-OEKONOMI staar paa en feature-gren i OneDrive,
 #     mens Y: skal staa paa main.
-Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-Path (Join-Path $_.FullName ".git\HEAD") } | ForEach-Object {
+Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-Path (Join-Path $_.FullName ".git\HEAD") } | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object {
   $od = $_.FullName; $y = Join-Path $YAISOSU $_.Name
   if (-not (Test-Path $y)) { return }
   $yTracked = @{}
@@ -177,7 +183,7 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
 #    checkout-tidsstempler fra git pull og siger intet om indholdet.
 if (-not (Test-Path $YAISOSU)) { L "FEJL: $YAISOSU forsvandt undervejs (Y:-mapping faldet) - koer igen mod UNC"; exit 1 }
 $par = @(@{ Y = $YAIOS; O = (Join-Path $OneDrive "AI OS") })
-Get-ChildItem -Directory $YAISOSU | ForEach-Object { $par += @{ Y = $_.FullName; O = (Join-Path $OneDrive "AI SOSU\$($_.Name)") } }
+Get-ChildItem -Directory $YAISOSU | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object { $par += @{ Y = $_.FullName; O = (Join-Path $OneDrive "AI SOSU\$($_.Name)") } }
 $kunY = 0
 foreach ($p in $par) {
   if (-not (Test-Path $p.O)) {

@@ -124,6 +124,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `Output/reviews/hr-oekonomi-statuskort-2026-10-16.png` | Persondatafrit reviewbilag med otte statuskort efter kold modelåbning; designgate og restfund i auditten |
 | `Output/reviews/hr-oekonomi-forecast-afklaringer-2026-10-16.md` | Beslutningsgrundlag med tre persondatafri eksempelforløb, allerede bindende regler og konkret næste arbejde |
 | `Output/reviews/hr-oekonomi-forecast-grundlag-2026-10-16.json` | Reproducerbart aggregatbilag til afklaringsarket: otte kørte DAX-queries, resultater og kodehashes, ingen personidentifikatorer i output |
+| `Output/reviews/hr-oekonomi-tidslinje-integration-2026-10-16.json` | Afgrænset foundation-GO runde 2: gem/kold 17-/104-felts multisetidentitet, skjulte hjælpefelter, coverage, modeltilstand, nye SD-årsværksaggregater og read-only Y-inventar |
 | `Output/reviews/hr-oekonomi-final-refresh-2026-10-16.log` | Persondatafri refresh-log for den afsluttende live-modelkontrol: 36 tabeller, 0 uprocesserede og 0 fejlede |
 | `tools/byg-amu-periodekontrol.py` | Genopbygger AMU-kontrakter fra modellens faktiske målerliste og produktionsstatuskrop; kun query-lokale testmål |
 | `tools/afstem-amu-nulltakster.py` | Kilde 32: hash- og typekontrol, takstbærende ÅE kontra FKBPÅ/OMPPÅ-tællere; kun aggregater, teksttal stopper beviset |
@@ -138,6 +139,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `Output/reviews/hr-oekonomi-aarsvaerk-2026-10-16.png` | Persondatafrit skærmbevis fra kold genåbning: korrigerede årsværkskort, periode og filterforklaring; designgate GO |
 | `Rapporter/HR_OEKONOMI/HR_OEKONOMI.Report/definition/pages/f7a8b9c0d1e2f3a4b5c6/visuals/dd117674d3424ac7b833/visual.json` | AMU-kort med dynamisk status for ufuldstændige fag-/takstoplysninger; afventer kold designkontrol |
 | `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/MSK-Elevmotor-Coverage.tmdl` | Skjult coverage-tabel der blokerer usikre elevforecast-/forventet-/resttal og bevarer faktiske tal |
+| `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/STU-GEN-Tidslinje-Fysisk.tmdl` | Skjult fysisk Z8112-sidecar: bevarer alle 17 kildefelter og multiplicitet, typed n?gler/signaturer, strict kontrakt og kildev?rn; foundation-GO runde 2, ingen forecast?bning |
 | `tools/afstem-aarsvaerk.py` | Uafhængig SD6-kildeafstemning af begge årsværk pr. ansættelse/måned og skolens månedstotaler; status 1/3, hash-kontrolleret spejl, kun aggregater i output |
 | `Output/dax/aarsvaerk-grain-kontrol.dax` | Syntetiske forløb gennem produktions-DAX: statusskift, brøkskift, dubletter, fleransættelse, delmåneder, skudår og konfliktmutationer |
 | `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/LON-DATA-SDDW-Årsværksintervaller.tmdl` | Skjulte SD6-statusintervaller til årsværk; historisk status, reelle brøker og konfigureret datovindue |

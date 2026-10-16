@@ -120,6 +120,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/pptx/eksporter-til-png.ps1` | Eksporterer .pptx til PNG for visuel kontrol. **Kopierer altid til et tidsstemplet navn først** — PowerPoint COM cacher på filsti og serverer ellers en gammel udgave uden at fejle |
 | `tools/regneark-elevaktivitet/` | `byg.py` + 11 `.dax` + `run.ps1` + `verificer.py` + README: bygger ÉN formelstyret fil "Elevaktivitet pr. hold og måned" fra den kørende model — scenariefaner (faktor, nedlæg/flyt, ekstra elever → Δ ÅE/takst/færta/elever), Optag (hold a/b/c), Hold, Parametre (takster), Data (måned), effekt af nedlagte optag, budget pr. hold, kontrol mod `… (samlet)`, links og kopier af BRUGER-inputarkene. `verificer.py` beregner formlerne og tester facit/flytning/takst/1 elev/kapacitet. Kun holdniveau — ingen persondata. PR #97, #98 |
 | `Output/reviews/hr-oekonomi-audit-2026-10-15.md` | Audit og rettelsesfacit: Drift/Projekt, SD6-årsværk, Z8050, kildeafstemning, kold persistenskontrol, gates og kildebegrænsninger |
+| `Output/reviews/hr-oekonomi-final-refresh-2026-10-16.log` | Persondatafri refresh-log for den afsluttende live-modelkontrol: 36 tabeller, 0 uprocesserede og 0 fejlede |
 | `tools/byg-amu-periodekontrol.py` | Genopbygger AMU-kontrakter fra modellens faktiske målerliste og produktionsstatuskrop; kun query-lokale testmål |
 | `tools/afstem-amu-nulltakster.py` | Kilde 32: hash- og typekontrol, takstbærende ÅE kontra FKBPÅ/OMPPÅ-tællere; kun aggregater, teksttal stopper beviset |
 | `Output/dax/amu-periodekontrakt.dax` | 29 cases mod 21 faktiske AMU-mål: delår, næsten-hele år, skudår, flerår og begge beregningsgrupper |
@@ -129,8 +130,10 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `Output/dax/z8050-fuld-output-kontrol.dax` | Sammenligning på alle 38 indlæste aggregerede Z8050-felter og multiplicitet; kun lokale snapshotfiler |
 | `Output/power-query/z8050-direkte-distinkt-optimering.patch` | Klargjort fjernelse af nested AlleRækker til fordel for direkte distinkt-tælling; afventer output-/ydelsesverifikation |
 | `Output/reviews/hr-oekonomi-amu-aarstal-foer-2026-10-16.csv` | Persondatafrit før-facit for AMU-årstal og subtotal, inklusive BLANK-felter |
+| `Output/reviews/hr-oekonomi-amu-aarstal-efter-2026-10-16.csv` | Persondatafrit efter-facit for AMU-årstal efter korrektion af PÅBEG-år og fælles periodeværn |
 | `Output/reviews/hr-oekonomi-aarsvaerk-2026-10-16.png` | Persondatafrit skærmbevis fra kold genåbning: korrigerede årsværkskort, periode og filterforklaring; designgate GO |
 | `Rapporter/HR_OEKONOMI/HR_OEKONOMI.Report/definition/pages/f7a8b9c0d1e2f3a4b5c6/visuals/dd117674d3424ac7b833/visual.json` | AMU-kort med dynamisk status for ufuldstændige fag-/takstoplysninger; afventer kold designkontrol |
+| `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/MSK-Elevmotor-Coverage.tmdl` | Skjult coverage-tabel der blokerer usikre elevforecast-/forventet-/resttal og bevarer faktiske tal |
 | `tools/afstem-aarsvaerk.py` | Uafhængig SD6-kildeafstemning af begge årsværk pr. ansættelse/måned og skolens månedstotaler; status 1/3, hash-kontrolleret spejl, kun aggregater i output |
 | `Output/dax/aarsvaerk-grain-kontrol.dax` | Syntetiske forløb gennem produktions-DAX: statusskift, brøkskift, dubletter, fleransættelse, delmåneder, skudår og konfliktmutationer |
 | `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/LON-DATA-SDDW-Årsværksintervaller.tmdl` | Skjulte SD6-statusintervaller til årsværk; historisk status, reelle brøker og konfigureret datovindue |

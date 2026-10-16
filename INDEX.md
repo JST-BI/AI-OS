@@ -129,7 +129,14 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `Output/reviews/hr-oekonomi-donor-version-2026-10-16.json` | Aggregatbevis for 25013→26013: historisk fordeling 10+1 bevares; uddannelsesversion 2→3 kræver dokumenteret overførselsgrundlag |
 | `Output/reviews/hr-oekonomi-donor-univers-2026-10-16.json` | Fuldt tilgængeligt routeunivers: 113 fuldkoder/265 grupper, nyere donor 25093/version 3 med 12/1, eksakt målfordeling 132/13+11/13; fordelings-GO, ingen aktivering |
 | `Output/power-query/donor-egne-foerste-observationer/` | Isoleret donor-kodeforslag: helper, tre faktiske værnsmutanter, fire selvstændige 73-tests-harnesses, manifest, koldbevis og README; kode-GO, ikke produktionsaktiveret |
+| `tools/kalenderprofil/` | Historiske kalenderprofiler: råkilde-/AJ-bygger, manuel XLSX-generator, godkendelsesskabelon og GUI-fri kilde-/plankalenderkontroller; kun aggregater skrives |
+| `Output/power-query/kalenderprofil/` | AJ-kerne med 27 tests; separat integrationskæde med 21 tests og to mutanter; godkendte GF2-PA-planbroer med 200 undervisningsdage og otte kildebeviste perioder |
+| `Output/reviews/kalenderprofil-2026-10-16/` | 10.405 historiske kandidatepisoder, 2.269 profilpunkter i 47 grupper, manuelt justerbart profilark, proveniens, kilde-/runtimebeviser og afgrænset slutkontrol; ingen produktionsaktivering |
 | `Output/power-query/fysisk-observation-identitet/` | Isoleret identitetsrettelse: seks frosne M-filer, 157 kontroller, faktiske mutanter, gemt/kold bevis og kode-GO; kræver særskilt kildeadapter |
+| `Output/power-query/fysisk-kilde-identitet/` | Kildebevist streng 6-4→10-adapter: 105 kontroller, to faktiske mutanter, uafhængigt kode-GO og præcise versionerede LF-hashes; ingen produktionsaktivering |
+| `tools/kalenderprofil/` | Reproducerbare rå/model-kalenderprofiler og kilde-/planverifikation; personidentitet valideres før forrensning, kodepins beskytter pakning |
+| `Output/power-query/kalenderprofil/` | Isoleret Aalen–Johansen-kerne og 27 syntetiske kontroller med faktisk KM-mutation; ingen produktionsgodkendelse |
+| `Output/reviews/kalenderprofil-2026-10-16/` | Aggregatprofiler, manuel review-prototype, kilde-/planbeviser og identitetsafstemning; 2269 profilpunkter er byte-identiske efter rettelsen |
 | `Output/reviews/hr-oekonomi-identitets-kildeformat-2026-10-16.json` | Faktiske aggregatprofiler: Z8050-Raw 104046 rækker og Z8312 49977 rækker bruger begge præcis seks cifre, bindestreg, fire cifre |
 | `Output/reviews/hr-oekonomi-final-refresh-2026-10-16.log` | Persondatafri refresh-log for den afsluttende live-modelkontrol: 36 tabeller, 0 uprocesserede og 0 fejlede |
 | `tools/byg-amu-periodekontrol.py` | Genopbygger AMU-kontrakter fra modellens faktiske målerliste og produktionsstatuskrop; kun query-lokale testmål |

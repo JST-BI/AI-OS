@@ -85,6 +85,8 @@ remote** (JST 2026-09-15). Udgiv sørger for det; Y:-klonerne står dog altid p�
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.
 
 Kør robocopy- og git-scripts fra PowerShell, ikke fra Bash: stier konverteres forkert.
+Læs Git-filnavne maskinelt med NUL-separeret output (`git ls-files -z`) og UTF-8-dekodning.
+Det forhindrer, at Gits citerede/oktale visning af danske filnavne behandles som ugyldige Windows-stier.
 `Y:` er en pr.-logon-mapping der kan falde ud midt i en session; `Test-Path` på UNC-stien vækker
 den.
 

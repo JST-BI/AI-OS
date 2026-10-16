@@ -134,6 +134,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `Output/reviews/kalenderprofil-2026-10-16/` | 10.405 historiske kandidatepisoder, 2.269 profilpunkter i 47 grupper, manuelt justerbart profilark, proveniens, kilde-/runtimebeviser og afgrænset slutkontrol; ingen produktionsaktivering |
 | `Output/power-query/fysisk-observation-identitet/` | Isoleret identitetsrettelse: seks frosne M-filer, 157 kontroller, faktiske mutanter, gemt/kold bevis og kode-GO; kræver særskilt kildeadapter |
 | `Output/power-query/fysisk-kilde-identitet/` | Kildebevist streng 6-4→10-adapter: 105 kontroller, to faktiske mutanter, uafhængigt kode-GO og præcise versionerede LF-hashes; ingen produktionsaktivering |
+| `Output/power-query/fysisk-identitet-callervaern/` | Særskilt værn mod delpopulationer: begge invalidtællere skal entydigt være nul; 78 kontroller og to faktiske branchmutanter, kode-GO uden aktivering |
 | `Output/reviews/hr-oekonomi-identitets-kildeformat-2026-10-16.json` | Faktiske aggregatprofiler: Z8050-Raw 104046 rækker og Z8312 49977 rækker bruger begge præcis seks cifre, bindestreg, fire cifre |
 | `Output/reviews/hr-oekonomi-final-refresh-2026-10-16.log` | Persondatafri refresh-log for den afsluttende live-modelkontrol: 36 tabeller, 0 uprocesserede og 0 fejlede |
 | `tools/byg-amu-periodekontrol.py` | Genopbygger AMU-kontrakter fra modellens faktiske målerliste og produktionsstatuskrop; kun query-lokale testmål |

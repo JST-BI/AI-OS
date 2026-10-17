@@ -600,3 +600,13 @@ om påtænkt opsigelse (partshøring) efter funktionærlovens § 2. Bragt under 
 | `BI-OEKONOMI/tools/kalenderprofil/source163-registry-proposal/prepare-actual-loader.py` | Byte-bound candidate evidence; production integration pending |
 | `BI-OEKONOMI/tools/kalenderprofil/source163-registry-proposal/prepare-native-registry.py` | Byte-bound candidate evidence; production integration pending |
 | `BI-OEKONOMI/tools/kalenderprofil/source163-registry-proposal/verify-package.py` | Portable archive verification without raw sources or old temp files |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/root-budget-financial-independent-review.json` | Budget financial R3: engine evidence and independent source/rate reconciliation |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-cross-type-correction/root-budget-financial-independent.py` | Budget financial R3: engine evidence and independent source/rate reconciliation |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-cross-type-correction/calendar-financial-kernel/build-budget-cross-type-financial.py` | Budget financial R3: engine evidence and independent source/rate reconciliation |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-nonfaerta-financial-r3/actual-financial.m` | Budget financial R3: engine evidence and independent source/rate reconciliation |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-nonfaerta-financial-r3/input-manifest.json` | Budget financial R3: engine evidence and independent source/rate reconciliation |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-nonfaerta-financial-r3/independent-reference.json.gz` | Budget financial R3: engine evidence and independent source/rate reconciliation |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-nonfaerta-financial-r3/root-stdout.json.gz` | Budget financial R3: engine evidence and independent source/rate reconciliation |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-nonfaerta-financial-r3/budget-financial-shadow.json.gz` | Budget financial R3: engine evidence and independent source/rate reconciliation |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-nonfaerta-financial-r3/budget-financial-by-academic-type.json.gz` | Budget financial R3: engine evidence and independent source/rate reconciliation |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-nonfaerta-financial-r3/verification.json` | Budget financial R3: engine evidence and independent source/rate reconciliation |

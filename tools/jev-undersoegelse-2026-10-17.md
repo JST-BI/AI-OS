@@ -55,12 +55,21 @@ Lovende som rådgivende tjek (fx i md-optimizer eller en `-Check` i `sync-agents
   nøgleord) lukkes deterministisk: `\d{10}` + datotjek, og en kolonneordliste.
 - **Øvrige `tools/*.ps1`** — deterministisk VVS (robocopy, git, TMDL, porte); intet at vurdere.
 
-## Åbne beslutninger (JST)
+## Beslutninger (JST 2026-10-17)
 
-1. **Standard til eller fra?** Vagten er opt-in, fordi BI-OEKONOMI's kalenderprofil-pipeline
-   bevidst henter CPR-rækker gennem `dax-query.ps1` til lokal aggregering. Slås den til som
-   standard, skal de kaldere først erklære lokal behandling (fx et `-LokalBehandling`-flag).
-2. **API nede:** i dag falder vagten tilbage til nøgleordsreglen (hit → review, ellers pass), så
-   arbejdet kan fortsætte offline. Alternativet er fail-closed.
+1. **Opt-in.** BI-OEKONOMI's kalenderprofil-pipeline henter bevidst CPR-rækker gennem
+   `dax-query.ps1` til lokal aggregering; den skal ikke brydes.
+2. **API nede → brugeren vælger.** Vagten stopper og viser valgene; `-VedVagtNede Noegleord`
+   (lokal nøgleordsregel, hit kræver `-BekraeftAggregat`) eller `-VedVagtNede Koer`. Agenten
+   spørger JST og vælger aldrig selv. Alle seks spor er afprøvet mod kørende HR_OEKONOMI med
+   simuleret nedbrud (`AI_OS_TYPESAFE_URL`).
 3. **Model-opgradering:** tærsklerne er målt på `jev-1.13.0` (fastlåst). `jev-1.14` findes som
    preview; kør `--selftest` før `MODEL` ændres.
+
+## Opsætning: API-nøglen
+
+Vagten kalder TypeSafe med JSTs personlige API-nøgle i Windows-brugermiljøvariablen
+`TYPESAFE_API_KEY` (sat på denne maskine). Nøglen er en adgangskode: forbruget faktureres JSTs
+konto, så den deles ikke med kolleger og committes aldrig. Ny maskine:
+`[Environment]::SetEnvironmentVariable('TYPESAFE_API_KEY', '<nøgle>', 'User')` og genstart
+terminalen. Mangler nøglen, opfører vagten sig som "API nede" (stopper og lader brugeren vælge).

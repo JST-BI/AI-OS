@@ -230,6 +230,7 @@ i konteksten. Det gælder også sub-agenter.
 Kør ad hoc-DAX, hvis output lander i samtalen, med `dax-query.ps1 -Persondatavagt`: TypeSafe/Jev
 vurderer queryen før kørsel (kun querytekst med maskerede literaler + kolonnenavne forlader maskinen).
 Nøgleordsregler duer ikke her: de fanger `DISTINCTCOUNT([cprnr])` og overser `TOPN(20, 'Løn')`.
+Er vagten utilgængelig, stopper den; `-VedVagtNede Noegleord|Koer` er JSTs valg — spørg, vælg aldrig selv.
 
 **Afgrænset undtagelse — ADM-KANTINE-bestillingsmails.** Når JST beder om at behandle en uge, må
 agenten læse mails og vedhæftninger i `ADM-KANTINE/Input/UBEHANDLEDE bestillinger/`, også når de

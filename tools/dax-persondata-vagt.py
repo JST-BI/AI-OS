@@ -9,8 +9,9 @@ Svarer FOER queryen koeres: pass / review / block. Kaldes af dax-query.ps1 -Pers
 Hvad forlader maskinen: queryteksten med tekstliteraler i sammenligninger/maengder maskeret ("LIT"),
 samt tabel- og kolonneNAVNE. Aldrig data - vagten koerer foer queryen.
 
-Exitkoder: 0 = pass, 10 = review (kraever -BekraeftAggregat), 20 = block, 2 = brugsfejl.
-Er API'et utilgaengeligt, falder vagten tilbage til en lokal noegleordsregel: hit -> review, ellers pass.
+Exitkoder: 0 = pass, 10 = review (kraever -BekraeftAggregat), 20 = block, 30 = vagt utilgaengelig, 2 = brugsfejl.
+Er API'et utilgaengeligt, vaelger vagten IKKE selv: den svarer "unavailable" (30) med resultatet af en lokal
+noegleordsregel, og brugeren vaelger i dax-query.ps1 med -VedVagtNede (JST 2026-10-17).
 En query for lang til Jev (32k tokens) giver altid review.
 
 Taerskler og formuleringer er maalt 2026-10-17 paa jev-1.13.0 (129 repo- og syntetiske queries + 14 holdout):
@@ -20,14 +21,14 @@ opgradering kan flytte sandsynlighederne - koer --selftest foer MODEL aendres.
 import argparse, hashlib, json, os, re, sys, time, urllib.error, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
-URL = "https://api.typesafe.ai/v1/systemone"
+URL = os.environ.get("AI_OS_TYPESAFE_URL", "https://api.typesafe.ai/v1/systemone")   # override kun til test af nede-sporet
 MODEL = "jev-1.13.0"
 PASS_BELOW, BLOCK_ABOVE = 0.35, 0.70   # max(helhed, delspoergsmaal): < pass, > block, ellers review
 PERSON_COLUMN_ABOVE = 0.30             # personkolonne; recall 1,00 paa 39 kendte + HR_OEKONOMI's 10
 CACHE = os.path.join(os.environ.get("LOCALAPPDATA", os.path.expanduser("~")), "AI-OS", "persondata-kolonner.json")
 CASES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dax-persondata-vagt.cases.json")
 
-EXIT = {"pass": 0, "review": 10, "block": 20}
+EXIT = {"pass": 0, "review": 10, "block": 20, "unavailable": 30}
 KEYWORD = re.compile(r"cpr|navn|mail|tjenestenum|fødselsdato|fornavn|efternavn|initial", re.I)
 
 # --- Maskering: literaler brugt som VAERDIER skjules; aliasnavne ("Antal") bevares --------------
@@ -173,8 +174,7 @@ def guard(query, columns=None):
         if "max_tokens_exceeded" in str(e):   # for lang til Jev: kan ikke vurderes -> altid review
             return {**base, "verdict": "review", "fallback": "queryen er for lang til vagten (32k tokens)"}
         hit = bool(KEYWORD.search(query))
-        return {**base, "verdict": "review" if hit else "pass", "fallback": f"vagt utilgaengelig ({e}) - lokal noegleordsregel",
-                "keyword_hit": hit}
+        return {**base, "verdict": "unavailable", "reason": str(e)[:80], "keyword_hit": hit}
 
 
 # --- Selvtest -------------------------------------------------------------------------------

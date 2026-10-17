@@ -42,6 +42,13 @@
 .PARAMETER BekraeftAggregat
   Agentens erklaering efter at have laest queryen: resultatet er kun aggregater. Laeser kun ved review.
 
+.PARAMETER VedVagtNede
+  Hvad der sker, naar vagten ikke kan naa TypeSafe (net, noegle, tjeneste nede). BRUGERENS valg -
+  agenten spoerger JST og vaelger aldrig selv.
+    Stop      (standard) Queryen koeres ikke; beskeden viser valgmulighederne.
+    Noegleord Lokal noegleordsregel: hit (cpr/navn/mail ...) -> som review, ellers koeres queryen.
+    Koer      Queryen koeres uden vurdering.
+
 .EXAMPLE
   & "AI OS\tools\dax-query.ps1" -QueryFile "$env:TEMP\q.dax"
   Port og katalog findes selv. Den normale form.
@@ -79,7 +86,10 @@ param(
 
   [switch]$Persondatavagt,
 
-  [switch]$BekraeftAggregat
+  [switch]$BekraeftAggregat,
+
+  [ValidateSet('Stop', 'Noegleord', 'Koer')]
+  [string]$VedVagtNede = 'Stop'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -193,6 +203,24 @@ if ($Persondatavagt) {
       Write-Warning "Persondatavagt: review tilsidesat med -BekraeftAggregat."
     }
     20 { throw "Persondatavagt: BLOKERET - resultatet ville eksponere personer. Skriv queryen om til antal/summer/distinkte taellinger. $svar" }
+    30 {
+      $nede = $svar | ConvertFrom-Json
+      switch ($VedVagtNede) {
+        'Stop' {
+          throw ("Persondatavagt: UTILGAENGELIG ($($nede.reason)) - queryen er IKKE koert. Brugeren vaelger (agenten spoerger JST):`n" +
+                 "  -VedVagtNede Noegleord  lokal noegleordsregel (hit i denne query: $($nede.keyword_hit))`n" +
+                 "  -VedVagtNede Koer       koer uden vurdering`n" +
+                 "  eller proev igen senere.")
+        }
+        'Noegleord' {
+          if ($nede.keyword_hit -and -not $BekraeftAggregat) {
+            throw "Persondatavagt utilgaengelig; noegleordsreglen ramte. Laes queryen igen; returnerer den kun aggregater, saa koer igen med -BekraeftAggregat."
+          }
+          Write-Warning "Persondatavagt utilgaengelig - lokal noegleordsregel brugt efter brugerens valg."
+        }
+        'Koer' { Write-Warning "Persondatavagt utilgaengelig - queryen koeres uden vurdering efter brugerens valg." }
+      }
+    }
     default { throw "Persondatavagt fejlede (exit $kode) - queryen er IKKE koert." }
   }
 }

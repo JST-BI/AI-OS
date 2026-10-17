@@ -191,8 +191,17 @@ if ($Persondatavagt) {
   }
   [System.IO.File]::WriteAllText($cf, (ConvertTo-Json -InputObject @($kolonner) -Depth 3 -Compress), $utf8NoBom)
   $vagt = Join-Path $PSScriptRoot 'dax-persondata-vagt.py'
-  $svar = & python -X utf8 $vagt --query-file $qf --columns-file $cf
-  $kode = $LASTEXITCODE
+  # Kan vagten slet ikke koere (ingen Python, kun Store-genvejen, eller et nedbrud), er den
+  # utilgaengelig som ved API-nedbrud - brugeren vaelger, scriptet fejler ikke haardt.
+  $svar = $null; $kode = -1
+  if (Get-Command python -ErrorAction SilentlyContinue) {
+    try { $svar = & python -X utf8 $vagt --query-file $qf --columns-file $cf; $kode = $LASTEXITCODE } catch { $kode = -1 }
+  }
+  if ($kode -notin 0, 10, 20, 30) {
+    $hit = [bool]($Query -match '(?i)cpr|navn|mail|tjenestenum|f.dselsdato|fornavn|efternavn|initial')
+    $svar = ConvertTo-Json -Compress -InputObject @{ verdict = 'unavailable'; reason = "vagten kunne ikke koere (exit $kode - Python mangler?)"; keyword_hit = $hit }
+    $kode = 30
+  }
   Write-Verbose "Persondatavagt: $svar"
   switch ($kode) {
     0  { }
@@ -221,7 +230,6 @@ if ($Persondatavagt) {
         'Koer' { Write-Warning "Persondatavagt utilgaengelig - queryen koeres uden vurdering efter brugerens valg." }
       }
     }
-    default { throw "Persondatavagt fejlede (exit $kode) - queryen er IKKE koert." }
   }
 }
 

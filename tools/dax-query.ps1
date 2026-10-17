@@ -32,9 +32,23 @@
   Katalog-GUID (ADOMD "Initial Catalog"). Udelades den, findes den automatisk.
   Alias: -Catalog (det gamle navn; begge virker).
 
+.PARAMETER Persondatavagt
+  Lader tools/dax-persondata-vagt.py (TypeSafe/Jev) vurdere queryen FOER den koeres:
+  pass -> koerer; review -> stopper, medmindre -BekraeftAggregat er givet; block -> stopper altid.
+  Sender kun queryteksten (med literaler maskeret) og modellens tabel-/kolonnenavne - aldrig data.
+  Opt-in, fordi lokale pipelines (fx BI-OEKONOMI/tools/kalenderprofil) bevidst henter personraekker
+  til lokal aggregering via dette script.
+
+.PARAMETER BekraeftAggregat
+  Agentens erklaering efter at have laest queryen: resultatet er kun aggregater. Laeser kun ved review.
+
 .EXAMPLE
   & "AI OS\tools\dax-query.ps1" -QueryFile "$env:TEMP\q.dax"
   Port og katalog findes selv. Den normale form.
+
+.EXAMPLE
+  & "AI OS\tools\dax-query.ps1" -QueryFile "$env:TEMP\q.dax" -Persondatavagt
+  Samme, men queryen vurderes af persondatavagten foerst.
 
 .EXAMPLE
   & "AI OS\tools\dax-query.ps1" -Query "EVALUATE ROW(""n"", COUNTROWS('L-Kalender'))"
@@ -61,7 +75,11 @@ param(
   [string]$Database,
 
   [ValidateSet('Table', 'Csv', 'Json')]
-  [string]$OutputFormat = 'Table'
+  [string]$OutputFormat = 'Table',
+
+  [switch]$Persondatavagt,
+
+  [switch]$BekraeftAggregat
 )
 
 $ErrorActionPreference = 'Stop'
@@ -142,7 +160,44 @@ if ($PSCmdlet.ParameterSetName -eq 'File') {
   $Query = [System.IO.File]::ReadAllText((Resolve-Path -LiteralPath $QueryFile), $utf8)
 }
 
-$dt = Invoke-Adomd -ConnStr "Data Source=localhost:$Port;Initial Catalog=$Database" -Dax $Query
+$connStr = "Data Source=localhost:$Port;Initial Catalog=$Database"
+
+# --- Persondatavagt (opt-in) ---------------------------------------------
+if ($Persondatavagt) {
+  $vagtDir = Join-Path $env:TEMP 'ai-os-persondatavagt'
+  New-Item -ItemType Directory -Force -Path $vagtDir | Out-Null
+  $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+  $qf = Join-Path $vagtDir 'query.dax'
+  $cf = Join-Path $vagtDir 'kolonner.json'
+  [System.IO.File]::WriteAllText($qf, $Query, $utf8NoBom)
+  # Kolonnenavne fra modellen, saa vagten ogsaa ser kolonnerne bag `EVALUATE 'Tabel'`.
+  # Type 3 = RowNumber (intern). Kolonnenavnene i DMV'erne er laest fra modellen 2026-10-17.
+  $tabeller = @{}
+  foreach ($r in (Invoke-Adomd -ConnStr $connStr -Dax 'SELECT [ID],[Name] FROM $SYSTEM.TMSCHEMA_TABLES').Rows) { $tabeller["$($r[0])"] = "$($r[1])" }
+  $kolonner = foreach ($r in (Invoke-Adomd -ConnStr $connStr -Dax 'SELECT [TableID],[ExplicitName],[Type] FROM $SYSTEM.TMSCHEMA_COLUMNS').Rows) {
+    if ("$($r[2])" -ne '3' -and "$($r[1])" -ne '' -and $tabeller.ContainsKey("$($r[0])")) {
+      [pscustomobject]@{ t = $tabeller["$($r[0])"]; c = "$($r[1])" }
+    }
+  }
+  [System.IO.File]::WriteAllText($cf, (ConvertTo-Json -InputObject @($kolonner) -Depth 3 -Compress), $utf8NoBom)
+  $vagt = Join-Path $PSScriptRoot 'dax-persondata-vagt.py'
+  $svar = & python -X utf8 $vagt --query-file $qf --columns-file $cf
+  $kode = $LASTEXITCODE
+  Write-Verbose "Persondatavagt: $svar"
+  switch ($kode) {
+    0  { }
+    10 {
+      if (-not $BekraeftAggregat) {
+        throw "Persondatavagt: REVIEW - queryen kan eksponere personer. Laes den igen; returnerer den kun aggregater, saa koer igen med -BekraeftAggregat. $svar"
+      }
+      Write-Warning "Persondatavagt: review tilsidesat med -BekraeftAggregat."
+    }
+    20 { throw "Persondatavagt: BLOKERET - resultatet ville eksponere personer. Skriv queryen om til antal/summer/distinkte taellinger. $svar" }
+    default { throw "Persondatavagt fejlede (exit $kode) - queryen er IKKE koert." }
+  }
+}
+
+$dt = Invoke-Adomd -ConnStr $connStr -Dax $Query
 
 switch ($OutputFormat) {
   'Csv'  { $dt | ConvertTo-Csv -NoTypeInformation | Write-Output }

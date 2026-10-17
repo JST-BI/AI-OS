@@ -57,8 +57,16 @@ Lovende som rådgivende tjek (fx i md-optimizer eller en `-Check` i `sync-agents
 
 ## Beslutninger (JST 2026-10-17)
 
-1. **Opt-in.** BI-OEKONOMI's kalenderprofil-pipeline henter bevidst CPR-rækker gennem
-   `dax-query.ps1` til lokal aggregering; den skal ikke brydes.
+1. **Opt-in nu (B), standard senere (C).** BI-OEKONOMI's kalenderprofil-pipeline henter bevidst
+   CPR-rækker gennem `dax-query.ps1` til lokal aggregering; den skal ikke brydes.
+   - **B (gjort):** `-Persondatavagt` står i `pbi-live-maaling`-skillens standardkommando, så den
+     normale agent-arbejdsgang får vagten uden at huske et flag.
+   - **C (opfølgning, kræver JSTs frigivelse af BI-OEKONOMI):** vend standarden — vagten altid på,
+     og de 8 committede kaldere (`afstem-aarsvaerk.py`, `afstem-kilde.ps1`,
+     `kalenderprofil/build-calendar-empirical-profile.py`, `kalenderprofil/pa-physical-candidate/
+     financial/audit-actual-input-boundary.py`, `pptx/byg-dataflow.py`, `pptx/byg-foedekaeder.py`,
+     `rapport-krydsreferencer.py`, `regneark-elevaktivitet/run.ps1`) erklærer `-LokalBehandling`.
+     Opt-in er kun et værn så længe agenten husker det; C gør det til et værn der kan fejle højlydt.
 2. **API nede → brugeren vælger.** Vagten stopper og viser valgene; `-VedVagtNede Noegleord`
    (lokal nøgleordsregel, hit kræver `-BekraeftAggregat`) eller `-VedVagtNede Koer`. Agenten
    spørger JST og vælger aldrig selv. Alle seks spor er afprøvet mod kørende HR_OEKONOMI med

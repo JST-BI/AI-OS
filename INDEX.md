@@ -26,7 +26,10 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
 | `AI OS/.claude/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" |
 | `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
-| `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv |
+| `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv; `-Persondatavagt` (opt-in) vurderer queryen før kørsel |
+| `AI OS/tools/dax-persondata-vagt.py` | Persondatavagt (TypeSafe/Jev, fastlåst `jev-1.13.0`): pass/review/block for en DAX-query ud fra modellens personkolonner; `--selftest` |
+| `AI OS/tools/dax-persondata-vagt.cases.json` | Regressionssæt til `--selftest`: 40 queries + 59 kolonnenavne med facit (kun kode/navne, ingen data) |
+| `AI OS/tools/jev-undersoegelse-2026-10-17.md` | Arbejdsnote: hvor Jev kan erstatte skrøbelig parsing i AI OS — eksperimenter, tal og afviste kandidater |
 | `AI OS/tools/validate-tmdl.ps1` | Offline TMDL-validering med PBI's egen TOM-deserializer — pre-flight-gate før PBI-åbning |
 | `AI OS/tools/tmdl-krydsreferencer.py` | Tjekker queryGroup-erklæringer, `ref table` ↔ filer, at `sortByColumn`/hierarkiniveauer/relationsender peger på kolonner der findes (13-10-2026), og dublerede lineageTags — den klasse `validate-tmdl.ps1` strukturelt ikke kan se |
 | `AI OS/tools/tmsl-refresh.ps1` | Tabel-scoped TMSL-refresh mod kørende PBI Desktop-instans (undgår fuld model-refresh) |

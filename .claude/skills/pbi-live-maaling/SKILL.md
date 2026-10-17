@@ -13,11 +13,13 @@ $q = @'
 EVALUATE SUMMARIZECOLUMNS ( 'L-Kalender'[År], "AAE", [Årselever] )
 '@
 [System.IO.File]::WriteAllText("$env:TEMP\q.dax", $q, (New-Object System.Text.UTF8Encoding $false))
-& "C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI OS\tools\dax-query.ps1" -QueryFile "$env:TEMP\q.dax"
+& "C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI OS\tools\dax-query.ps1" -QueryFile "$env:TEMP\q.dax" -Persondatavagt
 ```
 
 Port og katalog finder scriptet selv; brug `-QueryFile` frem for `-Query` når query'en indeholder
-æ/ø/å. Resten af brugsvejledningen står i scriptets egen `Get-Help` — den opdateres sammen med
+æ/ø/å. `-Persondatavagt` er fast del af kommandoen: Jev vurderer queryen før kørsel (pass /
+review → `-BekraeftAggregat` efter genlæsning / block → skriv om). Er vagten utilgængelig, stopper
+den — spørg JST om `-VedVagtNede Noegleord|Koer`, vælg aldrig selv. Resten af brugsvejledningen står i scriptets egen `Get-Help` — den opdateres sammen med
 scriptet og kan derfor ikke drive fra det.
 
 ## Hårde regler

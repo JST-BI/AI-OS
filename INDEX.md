@@ -25,6 +25,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/sync-agents-md.ps1` | Skriver `CLAUDE.md`-pegefilen (`@AGENTS.md`) i alle mapper; `-Check` rapporterer drift (exit 1) |
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
 | `AI OS/.claude/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" |
+| `AI OS/.claude/skills/pause/SKILL.md` | Fælles kommando "pause": lokal gemning, hashverificeret backup, genoptagelsesnotat og stop; henvises fra alle 13 projekters AGENTS.md |
 | `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
 | `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv; `-Persondatavagt` (opt-in) vurderer queryen før kørsel |
 | `AI OS/tools/dax-persondata-vagt.py` | Persondatavagt (TypeSafe/Jev, fastlåst `jev-1.13.0`): pass/review/block for en DAX-query ud fra modellens personkolonner; `--selftest` |
@@ -92,7 +93,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `Output/reviews/typesafe-2026-10-17/` | Resultatrapport, 36 syntetiske cases, 72 API-svar, optællinger, kildeinventar og SHA-256-manifest |
 | `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: modelarkitektur, DAX/M-konventioner, workflow, gotchas |
 | `.claude/rules/pbi-workflows.md` | Agent-workflow-mønstre for PBI-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20: dén mappe er til Starlark-`.rules`, ikke Markdown) |
-| `Rapporter/HR_OEKONOMI/` | Selve rapporten som `.pbip`: `HR_OEKONOMI.SemanticModel/` (TMDL) + `HR_OEKONOMI.Report/` (PBIR) |
+| `Rapporter/HR_OEKONOMI/` | Selve rapporten som `.pbip`: `HR_OEKONOMI.SemanticModel/` (TMDL) + `HR_OEKONOMI.Report/` (PBIR), inkl. årsværkskort/periodeetiket og gyldige Drift-bookmarks pr. kaldeside (15-10-2026) |
 | `Input/standards/tmdl-syntaks.md` | TMDL-syntaks og fejlmønstre. Flyttet ud af AGENTS.md 2026-09-05 — læs FØR enhver TMDL-redigering |
 | `Input/standards/power-query-step-naming.md` | Referencestandard for M-step-navngivning (VerbObject-Konkret) |
 | `Input/standards/pbir-visual-json.md` | PBIR visual-JSON: farvearkitektur (selector.metadata vs. data), queryGroup-placering, auto-date-time, sourceColumn ved rename, PBIR-struktur og formatering (flyttet fra AGENTS.md 2026-08-25) |
@@ -124,6 +125,48 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/pptx/byg-dataflow.py` | Præsentation om budgettets dataflow: de fem trin fra kildesystem til rapport, de 68 registrerede datakilder, budgetmotorens 17 rækker |
 | `tools/pptx/eksporter-til-png.ps1` | Eksporterer .pptx til PNG for visuel kontrol. **Kopierer altid til et tidsstemplet navn først** — PowerPoint COM cacher på filsti og serverer ellers en gammel udgave uden at fejle |
 | `tools/regneark-elevaktivitet/` | `byg.py` + 11 `.dax` + `run.ps1` + `verificer.py` + README: bygger ÉN formelstyret fil "Elevaktivitet pr. hold og måned" fra den kørende model — scenariefaner (faktor, nedlæg/flyt, ekstra elever → Δ ÅE/takst/færta/elever), Optag (hold a/b/c), Hold, Parametre (takster), Data (måned), effekt af nedlagte optag, budget pr. hold, kontrol mod `… (samlet)`, links og kopier af BRUGER-inputarkene. `verificer.py` beregner formlerne og tester facit/flytning/takst/1 elev/kapacitet. Kun holdniveau — ingen persondata. PR #97, #98 |
+| `Output/reviews/hr-oekonomi-audit-2026-10-15.md` | Audit og rettelsesfacit: Drift/Projekt, SD6-årsværk, Z8050, kildeafstemning, kold persistenskontrol, gates og kildebegrænsninger |
+| `Output/reviews/hr-oekonomi-statuskort-2026-10-16.png` | Persondatafrit reviewbilag med otte statuskort efter kold modelåbning; designgate og restfund i auditten |
+| `Output/reviews/hr-oekonomi-forecast-afklaringer-2026-10-16.md` | Beslutningsgrundlag med tre persondatafri eksempelforløb, allerede bindende regler og konkret næste arbejde |
+| `Output/reviews/hr-oekonomi-forecast-grundlag-2026-10-16.json` | Reproducerbart aggregatbilag til afklaringsarket: otte kørte DAX-queries, resultater og kodehashes, ingen personidentifikatorer i output |
+| `Output/reviews/hr-oekonomi-tidslinje-integration-2026-10-16.json` | Afgrænset foundation-GO runde 2: gem/kold 17-/104-felts multisetidentitet, skjulte hjælpefelter, coverage, modeltilstand, nye SD-årsværksaggregater og read-only Y-inventar |
+| `Output/reviews/hr-oekonomi-profilprogression-2026-10-16.json` | Aggregatbevis for PA 2002/version 6: 16 fase-/versionsgrupper, bevarede fysiske intervaller og præcist manglende kobling til profilens TP1–21 |
+| `Output/reviews/hr-oekonomi-donor-version-2026-10-16.json` | Aggregatbevis for 25013→26013: historisk fordeling 10+1 bevares; uddannelsesversion 2→3 kræver dokumenteret overførselsgrundlag |
+| `Output/reviews/hr-oekonomi-donor-univers-2026-10-16.json` | Fuldt tilgængeligt routeunivers: 113 fuldkoder/265 grupper, nyere donor 25093/version 3 med 12/1, eksakt målfordeling 132/13+11/13; fordelings-GO, ingen aktivering |
+| `Output/power-query/donor-egne-foerste-observationer/` | Isoleret donor-kodeforslag: helper, tre faktiske værnsmutanter, fire selvstændige 73-tests-harnesses, manifest, koldbevis og README; kode-GO, ikke produktionsaktiveret |
+| `tools/kalenderprofil/` | Historiske kalenderprofiler: råkilde-/AJ-bygger, uddannelsesforløb med interne PA-versionsskift, manuel XLSX-generator, modelhaleberegner og GUI-fri kilde-/anker-/plankalenderkontroller; kun aggregater skrives |
+| `Output/power-query/kalenderprofil/` | AJ-kerne med 27 tests; integrationskæde med 21 tests og to mutanter; aldersmix med 19 tests; modelhale og absorberet fortsættelse med hver 16 tests og målrettede mutanter; godkendte GF2-PA-planbroer med 200 undervisningsdage og otte kildebeviste perioder |
+| `Output/power-query/kalenderprofil/manual-aj-policy/` | Isoleret manuel AJ-justering med fastholdte completion-/skifthazarder: 81 M-kontroller, fire uafhængige brøkfacit og to effektmutanter; kodegate og bytebevis, endnu ingen produktionsaktivering |
+| `tools/kalenderprofil/pa-physical-candidate/` og `Output/power-query/kalenderprofil/pa-physical-candidate/` | Frossen, hashverificeret PA-kandidat: alle 150 fysiske punkter, dokumenteret donorfordeling og ikke-FÆRTA-økonomi; 83 manifestfiler, ingen produktionsaktivering |
+| `tools/kalenderprofil/pa-financial-registration-candidate/` og `Output/power-query/kalenderprofil/pa-financial-registration-candidate/` | Finansiel registreringsprofil fra 320 forløb, 100 punkter og 4.866 daterede prognoseposter; 48 hashbundne filer, store JSON-facit tabsfrit komprimeret, baselinekandidat uden produktionsaktivering |
+| `Output/power-query/kalenderprofil/pa26065-financial-boundary/` | Eksakte produktionsudtræk og afgrænset inputkontrakt for PA-økonomien |
+| `Output/reviews/kalenderprofil-2026-10-16/pa-*-gate*.md` | Afgrænsede gates for fysisk fordeling, økonomikandidat, registreringsprofil og fælles frafaldskalibrering; de enkelte scopegrænser fremgår af hver gate |
+| `Output/reviews/kalenderprofil-2026-10-16/source52-history-confirmation.json` | JSTs hashbundne bekræftelse af fuldstændigt Z8050V-udtræk til 12. oktober 2026 |
+| `Output/reviews/kalenderprofil-2026-10-16/` | 10.405 historiske kandidatepisoder, 2.269 profilpunkter i 47 grupper, manuelt justerbart profilark, proveniens, kilde-/runtimebeviser og afgrænset slutkontrol; ingen produktionsaktivering |
+| `Output/reviews/kalenderprofil-2026-10-16/pa-trajectory/` | Korrigerede PA-profiler: 320 uddannelsesforløb, 29 interne versionsskift, 105 empiriske punkter i fire grupper, separat manuelt profilark og markeret modelhale; 32 aktive observationsankre er dokumenteret i overmappens ankerbevis |
+| `Output/power-query/fysisk-observation-identitet/` | Isoleret identitetsrettelse: seks frosne M-filer, 157 kontroller, faktiske mutanter, gemt/kold bevis og kode-GO; kræver særskilt kildeadapter |
+| `Output/power-query/fysisk-kilde-identitet/` | Kildebevist streng 6-4→10-adapter: 105 kontroller, to faktiske mutanter, uafhængigt kode-GO og præcise versionerede LF-hashes; ingen produktionsaktivering |
+| `Output/power-query/fysisk-identitet-callervaern/` | Særskilt værn mod delpopulationer: begge invalidtællere skal entydigt være nul; 78 kontroller og to faktiske branchmutanter, kode-GO uden aktivering |
+| `Output/power-query/fysisk-aktuel-kildeprobe/` | 24 frosne M-kildeafhængigheder, dokumenterede tidsudløb, adapterforslag, scope-review samt runtime-source/: hashbundne kildeværn, 102 runner-tests, 327 enginekontroller og feltsanitiserede faktiske prøver; ingen populations- eller forecast-GO |
+| `Output/reviews/hr-oekonomi-identitets-kildeformat-2026-10-16.json` | Faktiske aggregatprofiler: Z8050-Raw 104046 rækker og Z8312 49977 rækker bruger begge præcis seks cifre, bindestreg, fire cifre |
+| `Output/reviews/hr-oekonomi-final-refresh-2026-10-16.log` | Persondatafri refresh-log for den afsluttende live-modelkontrol: 36 tabeller, 0 uprocesserede og 0 fejlede |
+| `tools/byg-amu-periodekontrol.py` | Genopbygger AMU-kontrakter fra modellens faktiske målerliste og produktionsstatuskrop; kun query-lokale testmål |
+| `tools/afstem-amu-nulltakster.py` | Kilde 32: hash- og typekontrol, takstbærende ÅE kontra FKBPÅ/OMPPÅ-tællere; kun aggregater, teksttal stopper beviset |
+| `Output/dax/amu-periodekontrakt.dax` | 29 cases mod 21 faktiske AMU-mål: delår, næsten-hele år, skudår, flerår og begge beregningsgrupper |
+| `Output/dax/amu-kildeprioritet-mutation.dax` | Kodemutation af genkompileret produktionsstatus; beviser kildeadvarslens prioritet, ikke reel kildefrakobling |
+| `Output/dax/amu-aarstal-baseline.dax` | Alle 21 AMU-tal og status for canonical år samt særskilt flerårssubtotal; eksakt før/efter-sammenligning |
+| `Output/dax/amu-periode-rettelse.patch` | Klargjort rettelse af AMU-årsværnet; query-testet og strukturvalideret, afventer lukket Desktop og kold produktionskontrol |
+| `Output/dax/z8050-fuld-output-kontrol.dax` | Sammenligning på alle 38 indlæste aggregerede Z8050-felter og multiplicitet; kun lokale snapshotfiler |
+| `Output/power-query/z8050-direkte-distinkt-optimering.patch` | Klargjort fjernelse af nested AlleRækker til fordel for direkte distinkt-tælling; afventer output-/ydelsesverifikation |
+| `Output/reviews/hr-oekonomi-amu-aarstal-foer-2026-10-16.csv` | Persondatafrit før-facit for AMU-årstal og subtotal, inklusive BLANK-felter |
+| `Output/reviews/hr-oekonomi-amu-aarstal-efter-2026-10-16.csv` | Persondatafrit efter-facit for AMU-årstal efter korrektion af PÅBEG-år og fælles periodeværn |
+| `Output/reviews/hr-oekonomi-aarsvaerk-2026-10-16.png` | Persondatafrit skærmbevis fra kold genåbning: korrigerede årsværkskort, periode og filterforklaring; designgate GO |
+| `Rapporter/HR_OEKONOMI/HR_OEKONOMI.Report/definition/pages/f7a8b9c0d1e2f3a4b5c6/visuals/dd117674d3424ac7b833/visual.json` | AMU-kort med dynamisk status for ufuldstændige fag-/takstoplysninger; afventer kold designkontrol |
+| `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/MSK-Elevmotor-Coverage.tmdl` | Skjult coverage-tabel der blokerer usikre elevforecast-/forventet-/resttal og bevarer faktiske tal |
+| `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/STU-GEN-Tidslinje-Fysisk.tmdl` | Skjult fysisk Z8112-sidecar: bevarer alle 17 kildefelter og multiplicitet, typed n?gler/signaturer, strict kontrakt og kildev?rn; foundation-GO runde 2, ingen forecast?bning |
+| `tools/afstem-aarsvaerk.py` | Uafhængig SD6-kildeafstemning af begge årsværk pr. ansættelse/måned og skolens månedstotaler; status 1/3, hash-kontrolleret spejl, kun aggregater i output |
+| `Output/dax/aarsvaerk-grain-kontrol.dax` | Syntetiske forløb gennem produktions-DAX: statusskift, brøkskift, dubletter, fleransættelse, delmåneder, skudår og konfliktmutationer |
+| `Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/LON-DATA-SDDW-Årsværksintervaller.tmdl` | Skjulte SD6-statusintervaller til årsværk; historisk status, reelle brøker og konfigureret datovindue |
 | `Output/Budget/Elevaktivitet pr. hold og måned - samlet regneark - <dato>.xlsx` | Regnearket fra `tools/regneark-elevaktivitet/` — øjebliksbillede af modellen den dag (2026-10-12: første; 2026-10-13: formelstyret med scenarier, nye Z8050-data). PR #97, #98 |
 | `Output/praesentationer/*.pptx` | De tre genererede præsentationer + årshjulet med rettede måneder (09-09). Genbygges med `python byg-*.py`; redigér generatoren, ikke .pptx-filen |
 
@@ -329,3 +372,231 @@ om påtænkt opsigelse (partshøring) efter funktionærlovens § 2. Bragt under 
 **14 repos** = AI OS + 13 projekter. Fem af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
 
 **Bemærk (kun Claude Code)**: Claude Codes persistente hukommelse ligger lokalt under `~/.claude/projects/<AI OS-projekt>/memory/` med eget indeks `MEMORY.md` — den er personlig, ikke versionsstyret og ikke en del af repo-strukturen.
+
+## BI-OEKONOMI: PA manual profiles and cross-type correction (candidate evidence)
+
+| Fil | Beskrivelse |
+|---|---|
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/README.md` | Scope, superseded results and remaining integration boundary |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-cross-type-independent-expected.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-planned-entry-outer-full187-r6/budget-adjusted-planned-entry-points.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-planned-entry-outer-full187-r6/budget-outer-query.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-planned-entry-outer-full187-r6/independent-point-reference.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-planned-entry-outer-full187-r6/independent-pool-bin-reference.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-planned-entry-outer-full187-r6/input-manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-planned-entry-outer-full187-r6/physical-allocation-reference.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/budget-planned-entry-outer-full187-r6/root-stdout.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/cross-type-supplementary-independent-expected.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/forecast-all150-cross-type-audit-r1.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/forecast-cross-type-independent-review.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/forecast-financial-cross-type-independent-review.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/full187-budget-engine-verifier-tests/quality.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-nonfaerta-financial-r3/actual-financial.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-nonfaerta-financial-r3/forecast-financial-by-academic-type.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-nonfaerta-financial-r3/forecast-financial-shadow.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-nonfaerta-financial-r3/independent-reference.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-nonfaerta-financial-r3/input-manifest-before-byte-fix.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-nonfaerta-financial-r3/input-manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-nonfaerta-financial-r3/query-byte-hash-amendment.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-nonfaerta-financial-r3/root-stdout.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-nonfaerta-financial-r3/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-physical-forecast-r4/contributions.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-physical-forecast-r4/manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-physical-forecast-r4/manual-physical-contributions.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-physical-forecast-r4/manual-physical-points.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-physical-forecast-r4/manual-physical.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-physical-forecast-r4/reference-contributions.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-physical-forecast-r4/reference.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-physical-forecast-r4/root-stdout.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/manual-physical-forecast-r4/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/package-manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/root-cross-type-engine-independent-proof.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-cross-type-correction/target-auxiliary-membership-r10/target-auxiliary-membership.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/README.md` | Scope, superseded results and remaining integration boundary |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/academic-scenario-aj-r2/academic-scenario-query.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/academic-scenario-aj-r2/adjusted-academic-scenario-profiles.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/academic-scenario-aj-r2/binding-effect-tests.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/academic-scenario-aj-r2/input-manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/academic-scenario-aj-r2/root-stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/academic-scenario-aj-r2/scenario-inputs.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/budget-financial-registration-r2/actual-financial-registration.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/budget-financial-registration-r2/dated-first-registration-ledger-candidate.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/budget-financial-registration-r2/manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/budget-financial-registration-r2/reference.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/budget-financial-registration-r2/root-stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/budget-financial-registration-r2/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/combined-manual-by-type-r2/combined-forecast.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/combined-manual-by-type-r2/combined-ledger-candidate.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/combined-manual-by-type-r2/manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/combined-manual-by-type-r2/normalized-safe-inputs.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/combined-manual-by-type-r2/reference.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/combined-manual-by-type-r2/reused-r1-root-stdout.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/combined-manual-by-type-r2/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/financial-registration-shared-alpha-cached-r1/actual-financial-registration.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/financial-registration-shared-alpha-cached-r1/dated-first-registration-ledger-candidate.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/financial-registration-shared-alpha-cached-r1/manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/financial-registration-shared-alpha-cached-r1/reference.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/financial-registration-shared-alpha-cached-r1/root-stdout.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/financial-registration-shared-alpha-cached-r1/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-nonfaerta-financial-r2/actual-financial.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-nonfaerta-financial-r2/forecast-financial-shadow.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-nonfaerta-financial-r2/independent-reference.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-nonfaerta-financial-r2/input-manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-nonfaerta-financial-r2/root-stdout.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-nonfaerta-financial-r2/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-physical-forecast-r3/contributions.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-physical-forecast-r3/manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-physical-forecast-r3/manual-physical-points.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-physical-forecast-r3/manual-physical.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-physical-forecast-r3/reference.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-physical-forecast-r3/root-stdout.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/actual/manual-physical-forecast-r3/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/binding-proofs/budget-financial-registration-binding-tests/results.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/binding-proofs/financial-shared-alpha-binding-tests/results.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/binding-proofs/manual-combined-binding-effects-r2/results.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/binding-proofs/manual-financial-binding-tests/results.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/24065-donor-net-contribution-audit.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/26065-future-placement-allocation.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/26065-historical-allocation-donor-inventory.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/power-query/kalenderprofil/manual-aj-policy/fxManualAJStatePolicy.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/reviews/kalenderprofil-2026-10-16/actual-age-bins-diagnostic.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/reviews/kalenderprofil-2026-10-16/pa-active-anchor-contract.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/reviews/kalenderprofil-2026-10-16/pa-trajectory/CalendarProfiles-review.xlsx` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/reviews/kalenderprofil-2026-10-16/pa-trajectory/actual-source-binding-proof.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/reviews/kalenderprofil-2026-10-16/pa-trajectory/calendar-workbook-qa.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/reviews/kalenderprofil-2026-10-16/pa-trajectory/pa-trajectory-metadata.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/reviews/kalenderprofil-2026-10-16/pa-trajectory/pa-trajectory-points.csv` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/reviews/kalenderprofil-2026-10-16/raw-calendar-profile-metadata.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Output/reviews/kalenderprofil-2026-10-16/source52-history-confirmation.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/expressions.tmdl` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/STU-GEN-HoldIntake-Budget.tmdl` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/Rapporter/HR_OEKONOMI/HR_OEKONOMI.SemanticModel/definition/tables/STU-GEN-HoldIntake-Prognose.tmdl` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/actual-observation-map/actual-observation-map-safe-capture.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/actual-observation-map/donor-target-calendar-capture.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/budget-entry-financial-eligibility/entry-financial-eligibility.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/budget-entry-net-audit/entry-native-net-audit.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/calendar-absorbed/fxFinancialRegistrationForecastSharedAlphaCached.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/calendar-absorbed/fxFinancialSharedAlphaStatePolicy.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/calendar-absorbed/fxPlannedFinancialRegistration.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/calendar-absorbed/fxWeightedPhysicalAllocation.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/calendar-financial-kernel/actual-input-boundary-audit.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/calendar-financial-kernel/fxPAAllocatedFinancialKernel.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/cohort-manual-aj/fxCohortManualAJPolicy.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa-combined-forecast/fxPACombinedForecastManualByType.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa-financial-registration-aj-v2/financial-registration-metadata.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa-financial-registration-aj-v2/financial-registration-state-points.csv` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa-rate-provenance.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa-trajectories-aggregates.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa-trajectory-candidate-points-canonical.csv` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa26065-actual-financial-dates-safe.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa26065-actual-source52-safe.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa26065-intake-Budget.dax` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa26065-intake-Prognose.dax` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/pa26065-scenario-intake.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/planned-entry/fxPlannedEntryConsumer.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/source52-schema.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-allocated-composition-r2/actual-composition.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-allocated-composition-r2/actual-points-MODELANTAGELSE-candidate.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-allocated-composition-r2/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-tail-prepared-final/actual-stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-tail-prepared-final/independent-reference.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-tail-prepared-final/input-manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-tail-prepared-final/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-weighted-composition-r3c/actual-points-MODELANTAGELSE-weighted.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-weighted-composition-r3c/actual-weighted-composition.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-weighted-composition-r3c/manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-weighted-composition-r3c/reference.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-weighted-composition-r3c/root-stdout.json.gz` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/bound-inputs/trajectory-weighted-composition-r3c/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/financial-shared-alpha-cached-harness-proof/ignore-alpha-mutant.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/financial-shared-alpha-cached-harness-proof/normal.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/financial-shared-alpha-cached-harness-proof/summary.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/actual-basis.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/actual-basis.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/future-plan.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/future-plan.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/monthly-axis.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/monthly-axis.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/normal.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/normal.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/null-sum.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/null-sum.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-effects-root/proof.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-physical-independent-effects/missing-as-zero.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-physical-independent-effects/missing-as-zero.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-physical-independent-effects/normal.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-physical-independent-effects/normal.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-physical-independent-effects/proof.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-physical-independent-effects/wrong-denominator.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/manual-physical-independent-effects/wrong-denominator.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/planned-financial-harness-proof-v2/fullpool-per-origin-mutant.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/planned-financial-harness-proof-v2/normal.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/effect-proofs/planned-financial-harness-proof-v2/summary.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/helpers/BUDGET-FINANCIAL-REGISTRATION-CONTRACT.md` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/helpers/FINANCIAL-COMPONENT-EVIDENCE.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/helpers/FINANCIAL-MANUAL-ALPHA-CONTRACT.md` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/independent-proofs/budget-financial-independent-audit.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/independent-proofs/financial-shared-alpha-cached-reference-equivalence.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/independent-proofs/manual-financial-independent-audit.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/package-manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/reviews/pa-manual-academic-physical-application-gate.md` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/reviews/pa-manual-financial-component-gate.md` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/synthetic-queries/financial-shared-alpha-cached-ignore-alpha-mutant.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/synthetic-queries/financial-shared-alpha-cached-normal.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/synthetic-queries/planned-financial-fullpool-per-origin-mutant.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/pa-manual-scenario-candidate/synthetic-queries/planned-financial-normal.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/DATAKILDER.source163-proposal.xlsx` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/PACKAGE.md` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/README.md` | Scope, superseded results and remaining integration boundary |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/actual-loader-r2/actual-source163-loader.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/actual-loader-r2/manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/actual-loader-r2/root-with-local-folder.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/actual-loader-r2/verification.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/after.png` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/before.png` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/fxCalendarProfileWorkbook163.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/fxSelectCalendarWorkbook163.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/install-plan.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/package-manifest.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/selection-engine-proof.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/selection-engine.stdout.json` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/Output/power-query/kalenderprofil/source163-registry-proposal/source163-selection-harness.m` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-cross-type-correction/audit-forecast-cross-type-membership.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-cross-type-correction/build-budget-planned-entry-outer.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-cross-type-correction/build-manual-physical-forecast-cross-type.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-cross-type-correction/calendar-financial-kernel/build-cross-type-manual-financial.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-cross-type-correction/test-full187-budget-engine-verifier.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-cross-type-correction/verify-package.py` | Portable archive verification without raw sources or old temp files |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/audit-budget-entry-financial-eligibility.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/audit-pa-completion-source52.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/audit-pa-entry-net-and-budget-mix.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/audit-pa-future-placement-allocation.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/build-academic-scenario-aj.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/build-manual-physical-forecast.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/build-pa-financial-registration-aj.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/inspect-source52-schema.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/tools/kalenderprofil/build-pa-education-trajectories.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/tools/kalenderprofil/build-raw-calendar-empirical-profile.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/bound-code/tools/kalenderprofil/pa-trajectory-source.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/combined/build-combined-forecast-manual-by-type.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/combined/test-manual-combined-bindings.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/independent-budget-financial-audit.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/independent-manual-financial-audit.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/nonfaerta/build-manual-financial-candidate.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/nonfaerta/test-manual-financial-bindings.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/nonfaerta/verify-manual-financial-candidate.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/registration/build-budget-financial-registration.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/registration/build-financial-registration-shared-alpha-cached.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/registration/build-financial-shared-alpha-cached.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/registration/build-financial-shared-alpha-harness.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/registration/build-financial-shared-alpha.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/registration/build-planned-financial-harness.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/registration/build-planned-financial-helper.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/registration/test-financial-registration-bindings.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/review-manual-combined-effects.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/test-academic-scenario-bindings.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa-manual-scenario-candidate/verify-package.py` | Portable archive verification without raw sources or old temp files |
+| `BI-OEKONOMI/tools/kalenderprofil/source163-registry-proposal/build-registry.mjs` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/source163-registry-proposal/prepare-actual-loader.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/source163-registry-proposal/prepare-native-registry.py` | Byte-bound candidate evidence; production integration pending |
+| `BI-OEKONOMI/tools/kalenderprofil/source163-registry-proposal/verify-package.py` | Portable archive verification without raw sources or old temp files |

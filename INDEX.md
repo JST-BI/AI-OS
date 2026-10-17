@@ -27,7 +27,10 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/.claude/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" |
 | `AI OS/.claude/skills/pause/SKILL.md` | Fælles kommando "pause": lokal gemning, hashverificeret backup, genoptagelsesnotat og stop; henvises fra alle 13 projekters AGENTS.md |
 | `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
-| `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv |
+| `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv; `-Persondatavagt` (opt-in) vurderer queryen før kørsel |
+| `AI OS/tools/dax-persondata-vagt.py` | Persondatavagt (TypeSafe/Jev, fastlåst `jev-1.13.0`): pass/review/block for en DAX-query ud fra modellens personkolonner; `--selftest` |
+| `AI OS/tools/dax-persondata-vagt.cases.json` | Regressionssæt til `--selftest`: 40 queries + 59 kolonnenavne med facit (kun kode/navne, ingen data) |
+| `AI OS/tools/jev-undersoegelse-2026-10-17.md` | Arbejdsnote: hvor Jev kan erstatte skrøbelig parsing i AI OS — eksperimenter, tal og afviste kandidater |
 | `AI OS/tools/validate-tmdl.ps1` | Offline TMDL-validering med PBI's egen TOM-deserializer — pre-flight-gate før PBI-åbning |
 | `AI OS/tools/tmdl-krydsreferencer.py` | Tjekker queryGroup-erklæringer, `ref table` ↔ filer, at `sortByColumn`/hierarkiniveauer/relationsender peger på kolonner der findes (13-10-2026), og dublerede lineageTags — den klasse `validate-tmdl.ps1` strukturelt ikke kan se |
 | `AI OS/tools/tmsl-refresh.ps1` | Tabel-scoped TMSL-refresh mod kørende PBI Desktop-instans (undgår fuld model-refresh) |
@@ -86,6 +89,8 @@ Power BI-rapport og semantisk model for HR/økonomi.
 
 | Fil | Beskrivelse |
 |---|---|
+| `tools/typesafe-research/` | Syntetiske Jev-forsøg: API-runner, offline genberegning, forslagspolitik med tests og M-regex-diagnose |
+| `Output/reviews/typesafe-2026-10-17/` | Resultatrapport, 36 syntetiske cases, 72 API-svar, optællinger, kildeinventar og SHA-256-manifest |
 | `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: modelarkitektur, DAX/M-konventioner, workflow, gotchas |
 | `.claude/rules/pbi-workflows.md` | Agent-workflow-mønstre for PBI-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20: dén mappe er til Starlark-`.rules`, ikke Markdown) |
 | `Rapporter/HR_OEKONOMI/` | Selve rapporten som `.pbip`: `HR_OEKONOMI.SemanticModel/` (TMDL) + `HR_OEKONOMI.Report/` (PBIR), inkl. årsværkskort/periodeetiket og gyldige Drift-bookmarks pr. kaldeside (15-10-2026) |

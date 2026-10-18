@@ -227,9 +227,11 @@ tool-output sendes til Anthropics servere. For kilder med persondata (Z8050/`cpr
 INNOMATE-eksporter, elevlister m.fl.) gælder fortsat: skriv et lokalt script der kun udskriver
 antal, summer, distinkte tællinger, deltaer og ikke-personhenførbare nøgler; læs aldrig kilden ind
 i konteksten. Det gælder også sub-agenter.
-Kør ad hoc-DAX, hvis output lander i samtalen, med `dax-query.ps1 -Persondatavagt`: TypeSafe/Jev
-vurderer queryen før kørsel (kun querytekst med maskerede literaler + kolonnenavne forlader maskinen).
-Nøgleordsregler duer ikke her: de fanger `DISTINCTCOUNT([cprnr])` og overser `TOPN(20, 'Løn')`.
+`dax-query.ps1` lader altid TypeSafe/Jev vurdere queryen før kørsel (kun querytekst med maskerede
+literaler + kolonnenavne forlader maskinen). Nøgleordsregler duer ikke her: de fanger
+`DISTINCTCOUNT([cprnr])` og overser `TOPN(20, 'Løn')`. Kun et committet script, der aggregerer
+resultatet lokalt og aldrig viser rækkerne, må erklære `-LokalBehandling` — aldrig en ad hoc-query
+hvis output lander i samtalen.
 Er vagten utilgængelig, stopper den; `-VedVagtNede Noegleord|Koer` er JSTs valg — spørg, vælg aldrig selv.
 
 **Afgrænset undtagelse — ADM-KANTINE-bestillingsmails.** Når JST beder om at behandle en uge, må

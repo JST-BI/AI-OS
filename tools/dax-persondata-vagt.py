@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Persondatavagt for DAX-queries (TypeSafe/Jev) - vurderer om EVALUATE-resultatet eksponerer personer.
 
-Svarer FOER queryen koeres: pass / review / block. Kaldes af dax-query.ps1 -Persondatavagt, eller direkte:
+Svarer FOER queryen koeres: pass / review / block. Kaldes af dax-query.ps1 (altid, medmindre -LokalBehandling), eller direkte:
   python tools/dax-persondata-vagt.py --query-file q.dax [--columns-file kolonner.json]
   python tools/dax-persondata-vagt.py --selftest
 

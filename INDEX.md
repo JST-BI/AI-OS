@@ -807,3 +807,4 @@ om påtænkt opsigelse (partshøring) efter funktionærlovens § 2. Bragt under 
 | `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/scripts/iso-engine-transaction.ps1` | PA26065: R2 engine test on a throw-away database - Rollback undoes TMSL refresh, DateTime without offset |
 | `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/scripts/iso-helper.ps1` | PA26065: R2 engine test on a throw-away database - Rollback undoes TMSL refresh, DateTime without offset |
 | `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/scripts/iso-transaction-test.py` | PA26065: R2 engine test on a throw-away database - Rollback undoes TMSL refresh, DateTime without offset |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/production-activation-2026-10-18.json` | PA26065: production activation in HR_OEKONOMI 2026-10-18 - InitialBaselineCommitted, cold-reopen proof (aggregates only) |

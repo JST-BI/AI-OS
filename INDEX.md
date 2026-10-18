@@ -782,3 +782,24 @@ om påtænkt opsigelse (partshøring) efter funktionærlovens § 2. Bragt under 
 | `BI-OEKONOMI/Output/power-query/kalenderprofil/pa26065-runtime/evidence/model-r9-metadata/change-manifest.json` | PA26065: reviewed headless runtime, isolated model and aggregate validation; production activation pending |
 | `BI-OEKONOMI/Output/power-query/kalenderprofil/pa26065-runtime/evidence/model-r9-metadata/package-manifest.json` | PA26065: reviewed headless runtime, isolated model and aggregate validation; production activation pending |
 | `BI-OEKONOMI/Output/power-query/kalenderprofil/pa26065-runtime/model/metadata-only-proof.json` | PA26065: reviewed headless runtime, isolated model and aggregate validation; production activation pending |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/EVIDENCE.md` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/mutations-3d5-28.json` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/mutations-r2-28.json` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/mutations-r2-fresh10.json` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/review-3d5.json` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/review-3d5.md` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/review-r2.md` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/scripts/fresh-mutants-reviewer.py` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/scripts/mutate-r2.py` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/scripts/testwrap.py` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/Output/reviews/kalenderprofil-2026-10-16/initial-activation-r2/tests-r2.json` | PA26065: R2 evidence - independent reviews of 3d5 and R2, tests and mutation results |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/initial-activation-tests.json` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/runtime-cli/README.md` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/runtime-cli/activation_core.py` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/runtime-cli/adomd-session.ps1` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/runtime-cli/baseline.json.gz` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/runtime-cli/manifest.json` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/runtime-cli/model-contract.json` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/runtime-cli/pa-initial-activation.py` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/test-fake-adomd.cs` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |
+| `BI-OEKONOMI/tools/kalenderprofil/pa26065-initial-activation-r2/test-initial-activation.py` | PA26065: initial activation CLI R2 (read-only candidate; supersedes unarchived 3d5); production activation pending |

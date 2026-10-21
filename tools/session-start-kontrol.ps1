@@ -44,7 +44,8 @@ if ($LASTEXITCODE -ne 0) {
 # 2) AI OS-roden indeholder kun infrastruktur - ingen loese noter, ingen projektmapper
 $tilladt = @('agents','agents-inaktive','tools','vault','.githooks','.claude','.agents','.codex',
              '.codex-tmp','.obsidian','.vscode','.git','CLAUDE.md','AGENTS.md','INDEX.md',
-             '.gitattributes','.gitignore')
+             '.gitattributes','.gitignore',
+             'docs','skills-lock.json')  # docs\agents = Agent skills-konfig (21-10); skills-lock.json = npx skills (obsidian-skills)
 $fremmede = @(Get-ChildItem -LiteralPath $AIOS -Force | Where-Object { $tilladt -notcontains $_.Name })
 if ($fremmede.Count -gt 0) {
   $fejl.Add("AI OS-roden indeholder fremmede elementer: $(($fremmede.Name) -join ', ') - loese .md hoerer i vault\")

@@ -19,6 +19,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 |---|---|
 | `AI OS/AGENTS.md` (+ `CLAUDE.md`-pegefil) | Overordnede agentregler: startkontrol, routing, sikkerhedsregler, datagovernance, TMDL/PBIR-gotchas |
 | `AI OS/INDEX.md` | Dette indeks |
+| `AI OS/.claude/skills/` + `AI OS/.agents/skills/` (obsidian-skills) | Kepanos Obsidian-skills til Claude Code og Codex (kopier, ikke symlinks): `obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle`, `knap`. Kilde og hashes i `AI OS/skills-lock.json`; opdatér med `npx skills update -p` |
 | `AI OS/docs/agents/` | Konfiguration for Matt Pococks engineering-skills: `issue-tracker.md` (GitHub Issues, persondataforbud), `triage-labels.md` (fem standardlabels), `domain.md` (single-context: `GLOSSARY.md` + `docs/adr/` oprettes ved brug) |
 | `AI OS/tools/setup-new-repo.ps1` | Opsætning af nyt repo: begge pre-commit hooks, `.gitattributes`, `.codex/config.toml`, `core.hooksPath` |
 | `AI OS/tools/session-start-kontrol.ps1` | Deterministisk session-startkontrol (SessionStart-hook): pegefil, rodrenhed, INDEX.md, projektfiler. Tavs ved succes |

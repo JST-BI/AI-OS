@@ -19,6 +19,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 |---|---|
 | `AI OS/AGENTS.md` (+ `CLAUDE.md`-pegefil) | Overordnede agentregler: startkontrol, routing, sikkerhedsregler, datagovernance, TMDL/PBIR-gotchas |
 | `AI OS/INDEX.md` | Dette indeks |
+| `AI OS/docs/agents/` | Konfiguration for Matt Pococks engineering-skills: `issue-tracker.md` (GitHub Issues, persondataforbud), `triage-labels.md` (fem standardlabels), `domain.md` (single-context: `GLOSSARY.md` + `docs/adr/` oprettes ved brug) |
 | `AI OS/tools/setup-new-repo.ps1` | Opsætning af nyt repo: begge pre-commit hooks, `.gitattributes`, `.codex/config.toml`, `core.hooksPath` |
 | `AI OS/tools/session-start-kontrol.ps1` | Deterministisk session-startkontrol (SessionStart-hook): pegefil, rodrenhed, INDEX.md, projektfiler. Tavs ved succes |
 | `AI OS/tools/codex-opsaetning.md` | Codex på en ny maskine: trust, `project_doc_max_bytes`, hooks, `.codex/rules/`. Flyttet ud af AGENTS.md 2026-09-05 |
@@ -91,6 +92,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/typesafe-research/` | Syntetiske Jev-forsøg: API-runner, offline genberegning, forslagspolitik med tests og M-regex-diagnose |
 | `Output/reviews/typesafe-2026-10-17/` | Resultatrapport, 36 syntetiske cases, 72 API-svar, optællinger, kildeinventar og SHA-256-manifest |
 | `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: modelarkitektur, DAX/M-konventioner, workflow, gotchas |
+| `docs/agents/` | Konfiguration for Matt Pococks engineering-skills: `issue-tracker.md` (GitHub Issues, persondataforbud), `triage-labels.md` (fem standardlabels), `domain.md` (single-context: `GLOSSARY.md` + `docs/adr/` oprettes ved brug) |
 | `.claude/rules/pbi-workflows.md` | Agent-workflow-mønstre for PBI-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20: dén mappe er til Starlark-`.rules`, ikke Markdown) |
 | `Rapporter/HR_OEKONOMI/` | Selve rapporten som `.pbip`: `HR_OEKONOMI.SemanticModel/` (TMDL) + `HR_OEKONOMI.Report/` (PBIR) |
 | `Input/standards/tmdl-syntaks.md` | TMDL-syntaks og fejlmønstre. Flyttet ud af AGENTS.md 2026-09-05 — læs FØR enhver TMDL-redigering |

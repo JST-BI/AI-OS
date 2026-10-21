@@ -259,3 +259,17 @@ maskine — kald scriptet med `&`.
 **Før første commit**: tilføj `*.pdf binary` (+ `*.png`, `*.jpg`, `*.xlsx`) i `.gitattributes`. Små
 ukomprimerede PDF'er fejldetekteres som tekst → CRLF-konvertering → korrupt fil. Verificér med
 `git check-attr text -- <fil>` (skal give `text: unset`).
+
+## Agent skills
+
+### Issue tracker
+
+Issues ligger i GitHub Issues for `JST-BI/AI-OS` (gh-CLI). Persondata må aldrig i et issue. Se `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Standardnavnene: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Se `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` og `docs/adr/` i roden — oprettes først når de bruges. Se `docs/agents/domain.md`.

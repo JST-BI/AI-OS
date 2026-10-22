@@ -85,6 +85,8 @@ remote** (JST 2026-09-15). Udgiv sørger for det; Y:-klonerne står dog altid p�
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.
 
 Kør robocopy- og git-scripts fra PowerShell, ikke fra Bash: stier konverteres forkert.
+Læs Git-filnavne maskinelt med NUL-separeret output (`git ls-files -z`) og UTF-8-dekodning.
+Det forhindrer, at Gits citerede/oktale visning af danske filnavne behandles som ugyldige Windows-stier.
 `Y:` er en pr.-logon-mapping der kan falde ud midt i en session; `Test-Path` på UNC-stien vækker
 den.
 
@@ -111,6 +113,12 @@ indlæses ved hver eneste session. Vokser et afsnit ud over ~20 linjer, hører d
 fil som `AGENTS.md` henviser til.
 
 Opsætning af Codex på en ny maskine: `tools/codex-opsaetning.md`.
+
+## Faste kommandoer — pause, bogfør, udgiv
+
+**Kodeordet "pause"** → læs og udfør `.claude/skills/pause/SKILL.md`: gem sikkert i programmerne, verificér en lokal backup, skriv genoptagelsesstatus og stop. Det virker uden internet og udløser ikke bogfør eller udgiv.
+Det forhindrer, at ikke-gemte ændringer eller opgavekontekst mistes ved afbrydelse. Ved "genoptag"/"resume" læses projektets `.codex/tmp/pause/SENESTE.md` eller `GENOPTAG.md` før videre arbejde.
+**Kodeordet "udgiv"** følger fortsat den særskilte `/udgiv`-arbejdsgang ovenfor. Eksisterende regler for "bogfør" ændres ikke af pausekommandoen.
 
 ## Arbejdsform
 

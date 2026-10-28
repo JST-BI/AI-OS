@@ -197,6 +197,9 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `Input/` | Rådata: Navision-finansposter, budget, prognose, finanslov, årsrapporter (gitignored) |
 | `Output/` | .xlsx-leverancer med danske formater (rene leverancer må committes) |
 | `tools/budget2027/byg_budget_2027_2028.py` | Bestyrelsens 4.2 til 2035 (l30–l40, byg_drill, byg_aarsvaerk, byg_bro_stuk, byg_bro_balance). `--motormappe` = scenariemotorens kørsel; `--kontrolversion` = fortrolig version med skoleforløb og løn/årsværk pr. medarbejder (gitignoreret) |
+| `tools/budget2027/l42_q4_2026.py` | Kvartalsrater i forventet 2026: AMU 101121/101126, 227020, 265025/265020, 228066 og FVU. Rettelserne er betinget af posteringerne ved ankeret og stopper ved delvis bogføring; `--fra-snapshot` genbruger udtrækkets kontosummer (#10, #11) |
+| `tools/budget2027/ankerdato.py` | Én ankerdato for l33, l42 og generatoren (`<grundlag>\ankerdato.json`); stopper, hvis udtræk, argument og kildefiler ikke hører til samme dag (#11) |
+| `tools/budget2027/pbi-udtraek/` | Power BI-udtrækket bag 4.2: `oko-linjer/konti/niv3.dax`, `parse-oko.py` og `udtraek.ps1`, der danner `oko-grundlag.json` og skriver ankerdatoen (#12) |
 | `Output/Budget/Budget 2027-2035 - beregning <dato>.xlsx` | 4.2 med broer, STUK-ark (6.1.1/6.2) og bæredygtighed; gitignoreret, ligger i OneDrive og på Y: |
 
 ---

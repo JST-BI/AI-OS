@@ -45,7 +45,10 @@ $drift = @(); $skrevet = 0; $slettet = 0
 # Skills der kun findes i spejlet: kilden er uklar - aldrig slet automatisk
 $kunSpejl = @()
 if (Test-Path -LiteralPath $spejl) {
-  $kunSpejl = @(Get-ChildItem -LiteralPath $spejl -Directory | Where-Object { $kildeSkills -notcontains $_.Name } | Select-Object -ExpandProperty Name)
+  # En mappe uden filer er ingen skill (git kan ikke spore den; OneDrive efterlader dem) - ignoreres
+  $kunSpejl = @(Get-ChildItem -LiteralPath $spejl -Directory | Where-Object {
+      $kildeSkills -notcontains $_.Name -and @(Get-ChildItem -LiteralPath $_.FullName -Recurse -File -Force).Count -gt 0
+    } | Select-Object -ExpandProperty Name)
 }
 foreach ($n in $kunSpejl) { $drift += ".claude\skills\$n findes ikke i .agents\skills\ - flyt den dertil (kilden), og koer scriptet igen" }
 

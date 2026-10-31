@@ -42,6 +42,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/.githooks/README.md` | Aktivering af hooks efter clone (findes i alle 12 repos) |
 | `AI OS/.claude/` | Claude Code-indstillinger |
 | `AI OS/.claude/skills/pbi-live-maaling/SKILL.md` | Skill (kun Claude Code): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
+| `AI OS/.claude/skills/reverse-engineering-tal/SKILL.md` + `AI OS/.agents/skills/reverse-engineering-tal/SKILL.md` | Skill (Claude Code og Codex, identiske kopier): reverse engineering af vedtagne/rapporterede tal — frys facit, proveniens og beslutningshistorik før rettelse, konkurrerende hypoteser testet mod ejerens facit, bevist vs. konsistent, forlæns verifikation |
 | `AI OS/.codex/config.toml` | Codex-konfiguration (TOML). Hæver `project_doc_max_bytes`, sætter sandkasse og AGENTS.md-fallback. Erstattede 2026-08-20 en virkningsløs `.Codex/settings.json` i Claude Codes JSON-format |
 | `AI OS/.obsidian/` | Stabil Obsidian-konfiguration for vaulten med `AI OS/` som rod; maskinspecifik `workspace*.json` og cache er gitignored. `app.json`/`daily-notes.json`/`templates.json` dirigerer nye noter til `vault/` — uden dem skrev daily-notes-pluginet i roden |
 | `AI OS/vault/` | De frie Obsidian-noter (`inbox/`, `journal/`, `notes/{,people,decisions}/`, `meetings/`, `resources/`, `_templates/`, `_attachments/`). Adskilt fra de styrede filer — se AGENTS.md → *Obsidian-vaultregler* |

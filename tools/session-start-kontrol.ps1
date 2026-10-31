@@ -41,6 +41,13 @@ if ($LASTEXITCODE -ne 0) {
   $fejl.Add("Instruktionsfil-drift (CLAUDE.md skal kun vaere pegefilen @AGENTS.md): $($linjer -join ' | ')")
 }
 
+# 1b) .agents\skills\ er eneste kilde til skills, .claude\skills\ et genereret spejl (samme princip)
+$ud = & (Join-Path $AIOS 'tools\sync-skills.ps1') -Check *>&1
+if ($LASTEXITCODE -ne 0) {
+  $linjer = @($ud | Where-Object { "$_" -match '\S' } | ForEach-Object { "$_".Trim() })
+  $fejl.Add("Skill-drift (.claude\skills\ skal vaere et spejl af .agents\skills\): $($linjer -join ' | ')")
+}
+
 # 2) AI OS-roden indeholder kun infrastruktur - ingen loese noter, ingen projektmapper
 $tilladt = @('agents','agents-inaktive','tools','vault','.githooks','.claude','.agents','.codex',
              '.codex-tmp','.obsidian','.vscode','.git','CLAUDE.md','AGENTS.md','INDEX.md',

@@ -98,6 +98,11 @@ skriver pegefilerne og melder drift (`-Check`); pre-commit-hooken `.githooks/che
 blokerer en `CLAUDE.md` der er andet end pegefilen. Reglerne må aldrig afhænge af hvilken model
 der kører (JST 2026-10-12) — før den dato var `CLAUDE.md` kilden og `AGENTS.md` en byte-kopi.
 
+**Skills følger samme princip:** `.agents/skills/<navn>/` er eneste kilde (Codex læser den);
+`.claude/skills/` er et byte-identisk spejl, som kun `tools/sync-skills.ps1` skriver — Claude Code
+har ingen import for skills, og filserveren afviser symlinks. Redigér aldrig i `.claude/skills/`;
+`.githooks/check_skills_mirror.py` blokerer drift, og sessionsstartkontrollen melder den.
+
 Codex finder `AGENTS.md` ved at gå opad mod nærmeste `.git` — aldrig på tværs. En regel der skal
 gælde i et projekt, skal stå i det projekts egen fil.
 

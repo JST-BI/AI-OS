@@ -4,7 +4,7 @@
 
 > **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 13 projekter.
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `AGENTS.md`).
-> **Instruktionsfil**: I alle repos er `AGENTS.md` den eneste instruktionsfil (uafhængig af AI-model); `CLAUDE.md` er kun pegefilen `@AGENTS.md`, som Claude Code indlæser som import. `tools/sync-agents-md.ps1` skriver pegefilerne; `.githooks/check_md_mirror.py` håndhæver det ved commit.
+> **Instruktionsfil**: I alle repos er `AGENTS.md` den eneste instruktionsfil (uafhængig af AI-model); `CLAUDE.md` er kun pegefilen `@AGENTS.md`, som Claude Code indlæser som import. `tools/sync-agents-md.ps1` skriver pegefilerne; `.githooks/check_md_mirror.py` håndhæver det ved commit. **Skills** samme princip: `.agents/skills/` er eneste kilde, `.claude/skills/` et spejl skrevet af `tools/sync-skills.ps1`; `.githooks/check_skills_mirror.py` håndhæver det.
 > **Obsidian**: Vault-roden er `<OneDrive>\AI OS\`. De fysiske projektfiler ligger separat og kanonisk i `<OneDrive>\AI SOSU\`; der findes ingen junction eller særskilte Obsidian-kopier af projektfilerne.
 > **Stier**: AI OS ligger i `<OneDrive>\AI OS\`, og alle arbejdsprojekter ligger i den separate kanoniske projektrod `<OneDrive>\AI SOSU\`.
 > Rådata i projekternes `Input/`-mapper (xlsx/pdf m.m.) er gitignored og indekseres ikke enkeltvis — **undtagen `ADM-KANTINE`**, hvor de små, persondatafrie menu-PDF'er committes.
@@ -24,8 +24,9 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/session-start-kontrol.ps1` | Deterministisk session-startkontrol (SessionStart-hook): pegefil, rodrenhed, INDEX.md, projektfiler. Tavs ved succes |
 | `AI OS/tools/codex-opsaetning.md` | Codex på en ny maskine: trust, `project_doc_max_bytes`, hooks, `.codex/rules/`. Flyttet ud af AGENTS.md 2026-09-05 |
 | `AI OS/tools/sync-agents-md.ps1` | Skriver `CLAUDE.md`-pegefilen (`@AGENTS.md`) i alle mapper; `-Check` rapporterer drift (exit 1) |
+| `AI OS/tools/sync-skills.ps1` | Spejler `.agents/skills/` (kilden) til `.claude/skills/`; `-Check` rapporterer drift (exit 1, kaldes af sessionsstartkontrollen) |
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
-| `AI OS/.claude/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" |
+| `AI OS/.agents/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" (spejl i `.claude/skills/`) |
 | `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
 | `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv; persondatavagten vurderer altid queryen før kørsel; `-LokalBehandling` slår den fra for scripts der aggregerer lokalt |
 | `AI OS/tools/dax-persondata-vagt.py` | Persondatavagt (TypeSafe/Jev, fastlåst `jev-1.13.0`): pass/review/block for en DAX-query ud fra modellens personkolonner; `--selftest` |
@@ -39,9 +40,11 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/.githooks/pre-commit` | Versioneret pre-commit hook; kalder begge checks nedenfor (findes i alle 12 repos) |
 | `AI OS/.githooks/check_excel_pii.py` | Blokerer commit af Excel med persondata (CPR/e-mail/navnekolonner) |
 | `AI OS/.githooks/check_md_mirror.py` | Blokerer commit hvor CLAUDE.md er andet end pegefilen `@AGENTS.md` |
+| `AI OS/.githooks/check_skills_mirror.py` | Blokerer commit hvor `.claude/skills/` afviger fra kilden `.agents/skills/` (git-index, blob-hash) |
 | `AI OS/.githooks/README.md` | Aktivering af hooks efter clone (findes i alle 12 repos) |
 | `AI OS/.claude/` | Claude Code-indstillinger |
-| `AI OS/.claude/skills/pbi-live-maaling/SKILL.md` | Skill (kun Claude Code): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
+| `AI OS/.agents/skills/pbi-live-maaling/SKILL.md` | Skill (spejl i `.claude/skills/`): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
+| `AI OS/.agents/skills/reverse-engineering-tal/SKILL.md` | Skill (spejl i `.claude/skills/`): reverse engineering af vedtagne/rapporterede tal — frys facit, proveniens og beslutningshistorik før rettelse, konkurrerende hypoteser testet mod ejerens facit, bevist vs. konsistent, forlæns verifikation |
 | `AI OS/.codex/config.toml` | Codex-konfiguration (TOML). Hæver `project_doc_max_bytes`, sætter sandkasse og AGENTS.md-fallback. Erstattede 2026-08-20 en virkningsløs `.Codex/settings.json` i Claude Codes JSON-format |
 | `AI OS/.obsidian/` | Stabil Obsidian-konfiguration for vaulten med `AI OS/` som rod; maskinspecifik `workspace*.json` og cache er gitignored. `app.json`/`daily-notes.json`/`templates.json` dirigerer nye noter til `vault/` — uden dem skrev daily-notes-pluginet i roden |
 | `AI OS/vault/` | De frie Obsidian-noter (`inbox/`, `journal/`, `notes/{,people,decisions}/`, `meetings/`, `resources/`, `_templates/`, `_attachments/`). Adskilt fra de styrede filer — se AGENTS.md → *Obsidian-vaultregler* |

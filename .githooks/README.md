@@ -1,6 +1,6 @@
 # Versionerede git-hooks
 
-`pre-commit` kører to spærringer. Begge skal passere, før en commit går igennem.
+`pre-commit` kører tre spærringer. Alle skal passere, før en commit går igennem.
 
 ## 1. Persondata i Excel — `check_excel_pii.py`
 
@@ -23,6 +23,17 @@ tværs af alle mapper på én gang:
 
 ```
 & "AI OS\tools\sync-agents-md.ps1"
+```
+
+## 3. .agents/skills er kilden, .claude/skills et spejl — `check_skills_mirror.py`
+
+Blokerer commits der rører en skill, hvis `.claude/skills/` ikke har præcis de samme filer med
+samme indhold som `.agents/skills/` (sammenlignet i git-index). Codex læser `.agents/skills/`,
+Claude Code `.claude/skills/`; spejlet skrives kun af sync-scriptet, så ingen skill kan drive
+mellem værktøjerne. Redigér i `.agents/skills/` og kør:
+
+```
+& "AI OS\tools\sync-skills.ps1"
 ```
 
 ## Aktivér efter `git clone` (ÉN gang pr. klon — også på Windows/PowerShell)

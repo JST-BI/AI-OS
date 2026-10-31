@@ -10,3 +10,4 @@ fi
 
 "$PY" "$dir/check_excel_pii.py" || exit 1
 "$PY" "$dir/check_md_mirror.py" || exit 1
+"$PY" "$dir/check_skills_mirror.py" || exit 1

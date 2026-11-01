@@ -91,6 +91,14 @@ else {
   Write-Warning "  codex-config.template.toml not found at $codexTpl - skipped"
 }
 
+# 3b) REVIEW.md from the shared template (never overwrites the repo's own copy)
+$reviewTpl = Join-Path $PSScriptRoot 'review-skabelon.md'
+$reviewDst = Join-Path $RepoPath 'REVIEW.md'
+if ((Test-Path $reviewTpl) -and -not (Test-Path $reviewDst)) {
+  Copy-Item $reviewTpl $reviewDst
+  Write-Host "  REVIEW.md written - add a line '@REVIEW.md' to AGENTS.md so /code-review follows it"
+}
+
 # 4) Activate the versioned hooks for this clone
 & git -C $RepoPath config core.hooksPath .githooks
 Write-Host "OK: hooks installed (Excel-PII + AGENTS.md-only + skills mirror) + core.hooksPath set for: $RepoPath"

@@ -195,6 +195,16 @@ betyder, hvad agenten skal efterprøve mod kilden, og et eksplicit persondata-fo
 stop og læg valget frem for JST med de udestående fund. Send alt kendt til gaten på én gang frem
 for ét fix ad gangen, og kør de to gates parallelt.
 
+## Review
+
+`REVIEW.md` er facit for hvad et review leder efter, og hvordan fund mærkes
+(`Important`/`Nit`/`Pre-existing`). Linjen herunder importerer den i Claude Code, så også lokal
+`/code-review` følger den (efterprøvet 2026-11-01 — kommandoen læser ellers ikke `REVIEW.md`);
+andre værktøjer læser filen direkte. Hvert projekt har sin egen `REVIEW.md` med samme import;
+den fælles del kommer fra `tools/review-skabelon.md`.
+
+@REVIEW.md
+
 ## Mail — agenten sender ALDRIG
 
 **Agenten må aldrig sende en mail.** Ikke via Gmail-/Outlook-værktøjer, ikke via script, ikke

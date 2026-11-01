@@ -4,7 +4,7 @@
 
 > **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 13 projekter.
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `AGENTS.md`).
-> **Instruktionsfil**: I alle repos er `AGENTS.md` den eneste instruktionsfil (uafhængig af AI-model); Codex og Claude Code (≥ v2.1.277) læser den direkte, og der må ingen `CLAUDE.md`, `CLAUDE.local.md` eller `.claude/CLAUDE.md` findes (de får Claude Code til at ignorere `AGENTS.md`). `tools/sync-agents-md.ps1` melder og fjerner dem; `.githooks/check_kun_agents_md.py` håndhæver det ved commit. **Skills** samme princip: `.agents/skills/` er eneste kilde, `.claude/skills/` et spejl skrevet af `tools/sync-skills.ps1`; `.githooks/check_skills_mirror.py` håndhæver det.
+> **Instruktionsfil**: I alle repos er `AGENTS.md` den eneste instruktionsfil (uafhængig af AI-model); Codex og Claude Code (≥ v2.1.277) læser den direkte, og der må ingen `CLAUDE.md`, `CLAUDE.local.md` eller `.claude/CLAUDE.md` findes (de får Claude Code til at ignorere `AGENTS.md`). `tools/sync-agents-md.ps1` melder og fjerner dem; `.githooks/check_kun_agents_md.py` håndhæver det ved commit. **Review**: hvert repo har `REVIEW.md` (review-instruktioner), som `AGENTS.md` importerer med `@REVIEW.md`, så også lokal `/code-review` følger den; fælles skabelon `tools/review-skabelon.md`. **Skills** samme princip: `.agents/skills/` er eneste kilde, `.claude/skills/` et spejl skrevet af `tools/sync-skills.ps1`; `.githooks/check_skills_mirror.py` håndhæver det.
 > **Obsidian**: Vault-roden er `<OneDrive>\AI OS\`. De fysiske projektfiler ligger separat og kanonisk i `<OneDrive>\AI SOSU\`; der findes ingen junction eller særskilte Obsidian-kopier af projektfilerne.
 > **Stier**: AI OS ligger i `<OneDrive>\AI OS\`, og alle arbejdsprojekter ligger i den separate kanoniske projektrod `<OneDrive>\AI SOSU\`.
 > Rådata i projekternes `Input/`-mapper (xlsx/pdf m.m.) er gitignored og indekseres ikke enkeltvis — **undtagen `ADM-KANTINE`**, hvor de små, persondatafrie menu-PDF'er committes.
@@ -18,6 +18,8 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | Fil | Beskrivelse |
 |---|---|
 | `AI OS/AGENTS.md` | Overordnede agentregler: startkontrol, routing, sikkerhedsregler, datagovernance, TMDL/PBIR-gotchas |
+| `AI OS/REVIEW.md` | Review-instruktioner (Important/Nit/Pre-existing); importeret i `AGENTS.md` med `@REVIEW.md` |
+| `AI OS/tools/review-skabelon.md` | Fælles skabelon for `REVIEW.md` i alle repos; projektets egne regler tilføjes nederst |
 | `AI OS/INDEX.md` | Dette indeks |
 | `AI OS/docs/agents/` | Konfiguration for Matt Pococks engineering-skills: `issue-tracker.md` (GitHub Issues, persondataforbud), `triage-labels.md` (fem standardlabels), `domain.md` (single-context: `GLOSSARY.md` + `docs/adr/` oprettes ved brug) |
 | `AI OS/tools/setup-new-repo.ps1` | Opsætning af nyt repo: begge pre-commit hooks, `.gitattributes`, `.codex/config.toml`, `core.hooksPath` |
@@ -96,6 +98,7 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/typesafe-research/` | Syntetiske Jev-forsøg: API-runner, offline genberegning, forslagspolitik med tests og M-regex-diagnose |
 | `Output/reviews/typesafe-2026-10-17/` | Resultatrapport, 36 syntetiske cases, 72 API-svar, optællinger, kildeinventar og SHA-256-manifest |
 | `AGENTS.md` | Projektregler: modelarkitektur, DAX/M-konventioner, workflow, gotchas |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `docs/agents/` | Konfiguration for Matt Pococks engineering-skills: `issue-tracker.md` (GitHub Issues, persondataforbud), `triage-labels.md` (fem standardlabels), `domain.md` (single-context: `GLOSSARY.md` + `docs/adr/` oprettes ved brug) |
 | `.claude/rules/pbi-workflows.md` | Agent-workflow-mønstre for PBI-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20: dén mappe er til Starlark-`.rules`, ikke Markdown) |
 | `Rapporter/HR_OEKONOMI/` | Selve rapporten som `.pbip`: `HR_OEKONOMI.SemanticModel/` (TMDL) + `HR_OEKONOMI.Report/` (PBIR) |
@@ -146,6 +149,7 @@ Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE.
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: orkestrator-rolle, CPR-regel, merge-felter, workflow |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `.claude/rules/inno-workflows.md` | Agent-workflow-mønstre for INNOMATE-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20, se ovenfor) |
 | `generate-procesplan-v3.js` (+ `package.json`) | Procesplan-generator (Node.js) |
 | `Input/Oprettelse af medarbejder/`, `Input/Nedlæggelse af medarbejder/`, `Input/Generelle skabeloner/` | Kildefiler: procesplaner, INNOMATE-skabeloner, korrespondance |
@@ -160,6 +164,7 @@ Personalehåndbog og Lederhåndbog — afspejler hinandens emner.
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: håndbogs-parallelitet, workflow |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `Personalehåndbog/` | Indhold målrettet medarbejdere |
 | `Lederhåndbog/` | Samme emner, ledervinkel |
 | `Input/` / `Output/` | Kildemateriale hhv. færdige/godkendte versioner |
@@ -173,6 +178,7 @@ Personalehåndbog og Lederhåndbog — afspejler hinandens emner.
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: dokumentrelationer, workflow |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `Regnskabsinstruks/` | Regler for bogføring, godkendelse, regnskabsaflæggelse |
 | `Indkøbspolitik/` | Rammer for indkøb, leverandørstyring, udbudspligt |
 | `Strategi for finansiel risiko/` | Risikovurdering, likviditetsstyring, finansielle principper |
@@ -187,6 +193,7 @@ BI governance og styringsdokumenter.
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: governance-scope, relation til BI-OEKONOMI |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `Input/` / `Output/` | Kildemateriale hhv. godkendte standarder (normgivende for BI-OEKONOMI) |
 
 ---
@@ -198,6 +205,7 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: datakilder, formålskoder, fin-agent-routing |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `Input/` | Rådata: Navision-finansposter, budget, prognose, finanslov, årsrapporter (gitignored) |
 | `Output/` | .xlsx-leverancer med danske formater (rene leverancer må committes) |
 | `tools/budget2027/byg_budget_2027_2028.py` | Bestyrelsens 4.2 til 2035 (l30–l40, byg_drill, byg_aarsvaerk, byg_bro_stuk, byg_bro_balance). `--motormappe` = scenariemotorens kørsel; `--kontrolversion` = fortrolig version med skoleforløb og løn/årsværk pr. medarbejder (gitignoreret) |
@@ -217,6 +225,7 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: kilder, filnavngivning, ugentlig arbejdsgang |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `tools/hent-portionsanretning.py` | Henter kilde-PDF'en fra torvekoekken.dk når den ikke allerede ligger i `Input/` — regex på knappens `onClick`-attribut i den rå HTML, ingen browser nødvendig; vælger altid den danske "Uge `<N>`"-knap, ikke den engelske |
 | `tools/byg-ugekort.py` | Generator: bygger `Output/Kantine Ugekort <uge>.pdf` (kun FAVORIT + stående Bowl+Sandwich-tilbud). Auto-skalerer dagsblokkene så de aldrig løber ned over allergen-footeren — kræver `reportlab` |
 | `tools/test-layout.py` | Layout-værn: tjekker ugens indhold + et værre tilfælde, med negativ kontrol der kræver at et fast layout faktisk overlapper |
@@ -249,6 +258,7 @@ Power BI-rapport: medarbejderes opgaveoversigt mod arbejdstidsnorm. Kilde: Budge
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: datamodel, ShowRow-grain, normvarianter, rapportfiltre, PBI-/refresh-arbejdsgang |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `Power BI - Opgaveoversigt - Ledere.pbip` | PBIP-projektfil |
 | `…SemanticModel/definition/tables/` | `DB Budget underviser og SPS medarbejder.tmdl` (fakta + alle målere), `Arbejdstidsnorm.tmdl`, `L-Kalender.tmdl` |
 | `…SemanticModel/definition/expressions.tmdl` | M-queries, bl.a. `UV Medarbejder` og `Støtte Medarbejder` (normvarianterne) |
@@ -263,6 +273,7 @@ Power BI-rapport: elevoptag og skoleforløbsfravær. Kilde: Studie+-udtræk `Z83
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: datagrundlag, målergrupper, agentbrug, skærpet persondata-opmærksomhed |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `SOSU BI OPTAG FRAVÆR.pbip` | PBIP-projektfil |
 | `…SemanticModel/definition/tables/` | Målergrupper (`#Measures - ELEV/HRLØN/KPI/TEMATIK/ØKONOMI`), `L-Kalender`, `L-STU Dim…`-dimensioner, `L-STU Fact Z8224S…` |
 | `.codex/config.toml` | Codex-projektkonfiguration |
@@ -276,6 +287,7 @@ Samarbejds- og samhandelsaftaler med eksterne parter. Bragt under AI-styring 202
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: versionssammenligning af aftaletekst, juridisk forbehold, persondata |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `.codex/config.toml` | Codex-projektkonfiguration |
 
 ---
@@ -287,6 +299,7 @@ Administrative blanketter og formularer (i dag kørselsbemyndigelser). Bragt und
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: blanketstruktur, skærpet persondata-advarsel mod `--no-verify` |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `.codex/config.toml` | Codex-projektkonfiguration |
 
 ---
@@ -302,6 +315,7 @@ gruppemedlemsudtræk → adgangsoversigter ("hvem har adgang til hvilken mappe",
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: datamodel (ACL-join, indlejrede grupper), persondataregler, workflow |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `Input/Fællesdrev/udtræk sikkerhedsgrupper.xlsx` | ACL-udtræk: mappe → sikkerhedsgruppe → rettighed (gitignored) |
 | `Input/Fællesdrev/Udtræk medlemmer.xlsx` | Gruppemedlemskab: gruppe → medlem (navn, e-mail m.m.) — persondata (gitignored) |
 | `tools/byg-rettighedsoversigt.py` | Genbygger Output-oversigten fra de to udtræk; udleder snapshot-dato fra ACL-arkets titel |
@@ -319,6 +333,7 @@ om påtænkt opsigelse (partshøring) efter funktionærlovens § 2. Bragt under 
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: skærpet persondata, funktionærlovens varselstabel, SD-anciennitet ≠ lønanciennitet |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `tools/generer-varslinger.py` | Udfylder én varsling pr. medarbejder i opsigelsesrunden fra procesplan + skabelon + SD-udtræk; kontrollerer varsler mod § 2 og skriver kontrolrapport |
 | `tools/test-ful-varsel.py` | Grænsetilfælde for varselsberegningen (6 mdr., 3/6/9 år, prøvetid) |
 | `tools/verificer-varslinger.py` | Tilbagelæsning af genererede varslinger: navn, CPR, rest-pladsholdere, gul markering |
@@ -335,6 +350,7 @@ Epx-reformen: skolens tilkendegivelse til STUK (frist 20-01-2027). `Input/` og `
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: felter, STUK's aktivitetsdefinition, udfyldning uden at bryde indholdskontrollerne |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `tools/udfyld_tilkendegivelse.py` | Udfylder en KOPI af skabelonen fra en svar-JSON med gul markering; afviser for lange tekster og verificerer at kun felterne er ændret |
 | `docs/felter.md` | Alle indholdskontrollers `w:tag` med felt og type |
 

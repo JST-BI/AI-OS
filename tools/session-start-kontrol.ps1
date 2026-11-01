@@ -50,7 +50,7 @@ if ($LASTEXITCODE -ne 0) {
 
 # 2) AI OS-roden indeholder kun infrastruktur - ingen loese noter, ingen projektmapper
 $tilladt = @('agents','agents-inaktive','tools','vault','docs','.githooks','.claude','.agents','.codex',
-             '.codex-tmp','.obsidian','.vscode','.git','AGENTS.md','INDEX.md',
+             '.codex-tmp','.obsidian','.vscode','.git','AGENTS.md','REVIEW.md','INDEX.md',
              '.gitattributes','.gitignore')
 $fremmede = @(Get-ChildItem -LiteralPath $AIOS -Force | Where-Object { $tilladt -notcontains $_.Name })
 if ($fremmede.Count -gt 0) {
@@ -75,7 +75,7 @@ elseif ($Fuld) {
   })
   if ($repos.Count -eq 0) { $fejl.Add("Ingen gyldige git-repos fundet under $SOSU") }
   foreach ($r in $repos) {
-    foreach ($f in @('AGENTS.md', '.githooks', '.codex')) {
+    foreach ($f in @('AGENTS.md', 'REVIEW.md', '.githooks', '.codex')) {
       if (-not (Test-Path -LiteralPath (Join-Path $r.FullName $f))) {
         $fejl.Add("$($r.Name): mangler $f")
       }

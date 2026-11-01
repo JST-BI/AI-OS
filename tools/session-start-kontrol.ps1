@@ -49,7 +49,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # 2) AI OS-roden indeholder kun infrastruktur - ingen loese noter, ingen projektmapper
-$tilladt = @('agents','agents-inaktive','tools','vault','.githooks','.claude','.agents','.codex',
+$tilladt = @('agents','agents-inaktive','tools','vault','docs','.githooks','.claude','.agents','.codex',
              '.codex-tmp','.obsidian','.vscode','.git','AGENTS.md','INDEX.md',
              '.gitattributes','.gitignore')
 $fremmede = @(Get-ChildItem -LiteralPath $AIOS -Force | Where-Object { $tilladt -notcontains $_.Name })

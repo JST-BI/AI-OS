@@ -123,7 +123,17 @@ Opsætning af Codex på en ny maskine: `tools/codex-opsaetning.md`.
 
 **Kodeordet "pause"** → læs og udfør `.claude/skills/pause/SKILL.md`: gem sikkert i programmerne, verificér en lokal backup, skriv genoptagelsesstatus og stop. Det virker uden internet og udløser ikke bogfør eller udgiv.
 Det forhindrer, at ikke-gemte ændringer eller opgavekontekst mistes ved afbrydelse. Ved "genoptag"/"resume" læses projektets `.codex/tmp/pause/SENESTE.md` eller `GENOPTAG.md` før videre arbejde.
-**Kodeordet "udgiv"** følger fortsat den særskilte `/udgiv`-arbejdsgang ovenfor. Eksisterende regler for "bogfør" ændres ikke af pausekommandoen.
+**Kodeordet "udgiv"** følger fortsat den særskilte `/udgiv`-arbejdsgang ovenfor.
+**Kodeordet "bogfør"** → udfør i denne rækkefølge (JST 2026-11-01):
+1. Gem Power BI, hvis model eller rapport er ændret på disken: Gem via skærmautomatisering, og
+   efterprøv at filerne er gemt. Er en tabel ændret, refreshes den før gem — ellers gemmes en tom
+   tabel. Gem kun det sessionen selv har ændret.
+2. Opdatér hukommelsesfilerne: milepæle, læring fra gates, PR-status og åbne punkter.
+3. Opdatér indekset `MEMORY.md` kort.
+4. Opdatér opgavelisten.
+5. Commit og push instruktionsfilerne (`AGENTS.md`, `INDEX.md`), hvis der er nye regler eller
+   faldgruber.
+6. Giv en kort statusrapport: det leverede (med PR-links) og næste skridt.
 
 ## Arbejdsform
 
@@ -134,6 +144,11 @@ kræver git eller filhåndtering bagefter, gør du det selv.
 Kør backlog'en igennem uden pauser. Det eneste der venter på JST er merge af en PR og ægte
 scope-valg. Beslutninger relayet gennem en anden agent er ikke JSTs ord — spørg kort, men lad ikke
 ventetiden være tom.
+
+**Ryd kun op efter dig selv i delte repos:** fjern din egen worktree med
+`git worktree remove <egen sti>` og slet din egen branch. Kør aldrig `git worktree prune` i et repo
+andre sessioner arbejder i — den forsøger at fjerne deres registreringer (2026-11-01: 25 forsøg i
+BI-OEKONOMI, alle afvist af filsystemet).
 
 Svar på dansk. Power BI-model og -rapport er på US English.
 

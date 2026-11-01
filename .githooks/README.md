@@ -8,17 +8,13 @@ Blokerer commits af Excel-filer (`.xlsx/.xlsm/...`) der indeholder persondata: C
 (`DDMMYY-XXXX`), e-mailadresser eller kolonner med
 `navn/fornavn/efternavn/cpr/personnummer/mail`. Rene Excel-filer tillades.
 
-## 2. AGENTS.md er instruktionsfilen, CLAUDE.md en pegefil — `check_md_mirror.py`
+## 2. AGENTS.md er eneste instruktionsfil — `check_kun_agents_md.py`
 
-Blokerer commits hvor `CLAUDE.md` i en mappe er andet end linjen `@AGENTS.md`, eller hvor kun
-den ene af de to filer findes.
+Blokerer commits af `CLAUDE.md`, `.claude/CLAUDE.md` og `CLAUDE.local.md`, uanset indhold.
 
-`AGENTS.md` er den eneste instruktionsfil og er uafhængig af AI-model. Codex læser den direkte;
-Claude Code læser `CLAUDE.md`, som derfor kun indeholder importlinjen `@AGENTS.md`. Så ser begge
-værktøjer præcis samme regler, og ingen regel kan drive mellem dem. Skrives der regler i
-`CLAUDE.md` igen, ser Codex dem aldrig.
-
-Ret det frem for at omgå spærringen: flyt teksten til `AGENTS.md`, og skriv pegefilerne på
+Codex og Claude Code (fra v2.1.277) læser begge `AGENTS.md` direkte. Claude Code springer
+`AGENTS.md` over, så snart der ligger en `CLAUDE.md`-variant i mappen eller over den — en sådan fil
+slukker altså stille for reglerne. Flyt teksten til `AGENTS.md`, og fjern gamle pegefiler på
 tværs af alle mapper på én gang:
 
 ```

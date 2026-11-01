@@ -20,7 +20,7 @@
   hardkoder derfor ingen projektnavne mere: det opregner de mapper der faktisk findes.
 
 .PARAMETER Fuld
-  Kontrollér ogsaa hvert projekt-repos faste filer. Uden flaget koeres kun pegefil- og
+  Kontrollér ogsaa hvert projekt-repos faste filer. Uden flaget koeres kun instruktionsfil- og
   rodkontrollen - det hurtige, der faktisk driver.
 #>
 param([switch]$Fuld)
@@ -30,7 +30,7 @@ $AIOS = Split-Path -Parent $PSScriptRoot
 $SOSU = Join-Path (Split-Path -Parent $AIOS) 'AI SOSU'
 $fejl = New-Object System.Collections.Generic.List[string]
 
-# 1) AGENTS.md er instruktionsfilen og CLAUDE.md pegefilen @AGENTS.md i alle mapper med mindst en af dem
+# 1) AGENTS.md er eneste instruktionsfil - ingen CLAUDE.md-varianter i AI OS, projekterne eller over dem
 $sync = Join-Path $AIOS 'tools\sync-agents-md.ps1'
 # *>&1 - ikke 2>&1: sync-scriptet skriver med Write-Host, og den gaar til informations-
 # stroemmen. Fanges den ikke, skriver hooken sync-scriptets "OK"-linje ved HVER sessionsstart,
@@ -38,7 +38,7 @@ $sync = Join-Path $AIOS 'tools\sync-agents-md.ps1'
 $ud = & $sync -Check *>&1
 if ($LASTEXITCODE -ne 0) {
   $linjer = @($ud | Where-Object { "$_" -match '\S' } | ForEach-Object { "$_".Trim() })
-  $fejl.Add("Instruktionsfil-drift (CLAUDE.md skal kun vaere pegefilen @AGENTS.md): $($linjer -join ' | ')")
+  $fejl.Add("Instruktionsfil-drift (ingen CLAUDE.md-varianter - AGENTS.md er eneste instruktionsfil): $($linjer -join ' | ')")
 }
 
 # 1b) .agents\skills\ er eneste kilde til skills, .claude\skills\ et genereret spejl (samme princip)
@@ -50,7 +50,7 @@ if ($LASTEXITCODE -ne 0) {
 
 # 2) AI OS-roden indeholder kun infrastruktur - ingen loese noter, ingen projektmapper
 $tilladt = @('agents','agents-inaktive','tools','vault','.githooks','.claude','.agents','.codex',
-             '.codex-tmp','.obsidian','.vscode','.git','CLAUDE.md','AGENTS.md','INDEX.md',
+             '.codex-tmp','.obsidian','.vscode','.git','AGENTS.md','INDEX.md',
              '.gitattributes','.gitignore')
 $fremmede = @(Get-ChildItem -LiteralPath $AIOS -Force | Where-Object { $tilladt -notcontains $_.Name })
 if ($fremmede.Count -gt 0) {
@@ -75,7 +75,7 @@ elseif ($Fuld) {
   })
   if ($repos.Count -eq 0) { $fejl.Add("Ingen gyldige git-repos fundet under $SOSU") }
   foreach ($r in $repos) {
-    foreach ($f in @('CLAUDE.md', 'AGENTS.md', '.githooks', '.codex')) {
+    foreach ($f in @('AGENTS.md', '.githooks', '.codex')) {
       if (-not (Test-Path -LiteralPath (Join-Path $r.FullName $f))) {
         $fejl.Add("$($r.Name): mangler $f")
       }

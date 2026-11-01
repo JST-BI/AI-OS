@@ -91,12 +91,13 @@ den.
 
 ## Instruktionsfiler — én fil, uafhængig af AI-model
 
-`AGENTS.md` er den eneste instruktionsfil i hver mappe hvor den findes. `CLAUDE.md` samme sted er
-kun en pegefil med linjen `@AGENTS.md`, som Claude Code indlæser som import; Codex læser
-`AGENTS.md` direkte. Redigér altid `AGENTS.md` — aldrig pegefilen. `& "AI OS\tools\sync-agents-md.ps1"`
-skriver pegefilerne og melder drift (`-Check`); pre-commit-hooken `.githooks/check_md_mirror.py`
-blokerer en `CLAUDE.md` der er andet end pegefilen. Reglerne må aldrig afhænge af hvilken model
-der kører (JST 2026-10-12) — før den dato var `CLAUDE.md` kilden og `AGENTS.md` en byte-kopi.
+`AGENTS.md` er den eneste instruktionsfil i hver mappe hvor den findes; Codex og Claude Code
+(≥ v2.1.277) læser den direkte. Der må ingen `CLAUDE.md`, `CLAUDE.local.md` eller
+`.claude/CLAUDE.md` findes — i mappen eller over den får de Claude Code til at ignorere
+`AGENTS.md`. `& "AI OS\tools\sync-agents-md.ps1" -Check` melder dem (sessionsstartkontrollen kører
+den); uden `-Check` sletter den rene pegefiler. Pre-commit-hooken `.githooks/check_kun_agents_md.py`
+blokerer dem ved commit. Reglerne må aldrig afhænge af hvilken model der kører (JST 2026-10-12);
+pegefilen `CLAUDE.md` → `@AGENTS.md` blev fjernet overalt 2026-11-01.
 
 **Skills følger samme princip:** `.agents/skills/<navn>/` er eneste kilde (Codex læser den);
 `.claude/skills/` er et byte-identisk spejl, som kun `tools/sync-skills.ps1` skriver — Claude Code

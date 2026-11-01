@@ -3,7 +3,7 @@
 .SYNOPSIS
   Sikrer at .agents\skills\ er den eneste kilde til skills, og at .claude\skills\ kun er et genereret spejl.
 .DESCRIPTION
-  Samme princip som AGENTS.md/CLAUDE.md: reglerne maa aldrig afhaenge af AI-model (JST 2026-10-12).
+  Samme princip som AGENTS.md (een neutral kilde): reglerne maa aldrig afhaenge af AI-model (JST 2026-10-12).
   Codex laeser skills i .agents\skills\, Claude Code i .claude\skills\. Claude Code har ingen
   import-mekanisme for skills, og symlinks/junctions afvises af filserveren og overlever ikke Udgiv
   - derfor er .claude\skills\ en byte-identisk kopi, der KUN skrives af dette script.

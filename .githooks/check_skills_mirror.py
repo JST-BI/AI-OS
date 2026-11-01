@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Pre-commit check: .agents/skills/ er eneste kilde, .claude/skills/ et byte-identisk spejl.
 
-Samme princip som AGENTS.md/CLAUDE.md: Codex laeser .agents/skills/, Claude Code
+Samme princip som AGENTS.md (een neutral kilde): Codex laeser .agents/skills/, Claude Code
 .claude/skills/. Spejlet skrives KUN af tools/sync-skills.ps1, saa ingen skill kan
 drive mellem vaerktoejerne.
 

@@ -1,6 +1,6 @@
 # Obsidian-vault — noteregler
 
-Gælder **kun** filer under `vault/`. De gælder ikke `CLAUDE.md`, `AGENTS.md`, `INDEX.md` eller
+Gælder **kun** filer under `vault/`. De gælder ikke `AGENTS.md`, `INDEX.md` eller
 `agents/*.md` — de læses som instruktion og har ingen note-frontmatter. Skriv aldrig `tags`,
 `created` eller `status` i en agentfil; det brækker agent-indlæsningen.
 

@@ -36,6 +36,7 @@ Alle arbejdsprojekter ligger i `<OneDrive>\AI SOSU\<PROJEKT>`, ét git-repo pr. 
 | `ADM-BLANKET` | Blanketter og formularer |
 | `ADM-RETTIGHEDSSTYRING` | Rettighedsstyring på Y:-drevet: ACL- og gruppemedlemsudtræk → adgangsoversigter |
 | `ADM-BESPARELSER` | Afskedigelser ved besparelser: procesplaner og varslinger om påtænkt opsigelse |
+| `ADM-INSTITUTIONSLANDSKAB` | Epx-reformen: skolens tilkendegivelse til STUK (frist 20-01-2027) og egne aktivitetsskøn mod STUKs |
 
 Hvert projekt har sin egen `AGENTS.md` med projektets regler — den er facit for arbejde der.
 Er opgaven ikke dækket af en række herover, så spørg hvilket projekt den hører til frem for at
@@ -45,8 +46,8 @@ gætte.
 `.git`). Bliver en af dem til et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken
 her.
 
-`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER`
-har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden
+`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER` og
+`ADM-INSTITUTIONSLANDSKAB` har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden
 JSTs ord. `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER` har
 `Input/` i `.gitignore`, fordi materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING` og
 `ADM-BESPARELSER` gitignorer også `Output/` af samme grund (oversigter og varslinger med
@@ -92,12 +93,18 @@ den.
 
 ## Instruktionsfiler — én fil, uafhængig af AI-model
 
-`AGENTS.md` er den eneste instruktionsfil i hver mappe hvor den findes. `CLAUDE.md` samme sted er
-kun en pegefil med linjen `@AGENTS.md`, som Claude Code indlæser som import; Codex læser
-`AGENTS.md` direkte. Redigér altid `AGENTS.md` — aldrig pegefilen. `& "AI OS\tools\sync-agents-md.ps1"`
-skriver pegefilerne og melder drift (`-Check`); pre-commit-hooken `.githooks/check_md_mirror.py`
-blokerer en `CLAUDE.md` der er andet end pegefilen. Reglerne må aldrig afhænge af hvilken model
-der kører (JST 2026-10-12) — før den dato var `CLAUDE.md` kilden og `AGENTS.md` en byte-kopi.
+`AGENTS.md` er den eneste instruktionsfil i hver mappe hvor den findes; Codex og Claude Code
+(≥ v2.1.277) læser den direkte. Der må ingen `CLAUDE.md`, `CLAUDE.local.md` eller
+`.claude/CLAUDE.md` findes — i mappen eller over den får de Claude Code til at ignorere
+`AGENTS.md`. `& "AI OS\tools\sync-agents-md.ps1" -Check` melder dem (sessionsstartkontrollen kører
+den); uden `-Check` sletter den rene pegefiler. Pre-commit-hooken `.githooks/check_kun_agents_md.py`
+blokerer dem ved commit. Reglerne må aldrig afhænge af hvilken model der kører (JST 2026-10-12);
+pegefilen `CLAUDE.md` → `@AGENTS.md` blev fjernet overalt 2026-11-01.
+
+**Skills følger samme princip:** `.agents/skills/<navn>/` er eneste kilde (Codex læser den);
+`.claude/skills/` er et byte-identisk spejl, som kun `tools/sync-skills.ps1` skriver — Claude Code
+har ingen import for skills, og filserveren afviser symlinks. Redigér aldrig i `.claude/skills/`;
+`.githooks/check_skills_mirror.py` blokerer drift, og sessionsstartkontrollen melder den.
 
 Codex finder `AGENTS.md` ved at gå opad mod nærmeste `.git` — aldrig på tværs. En regel der skal
 gælde i et projekt, skal stå i det projekts egen fil.
@@ -235,9 +242,11 @@ tool-output sendes til Anthropics servere. For kilder med persondata (Z8050/`cpr
 INNOMATE-eksporter, elevlister m.fl.) gælder fortsat: skriv et lokalt script der kun udskriver
 antal, summer, distinkte tællinger, deltaer og ikke-personhenførbare nøgler; læs aldrig kilden ind
 i konteksten. Det gælder også sub-agenter.
-Kør ad hoc-DAX, hvis output lander i samtalen, med `dax-query.ps1 -Persondatavagt`: TypeSafe/Jev
-vurderer queryen før kørsel (kun querytekst med maskerede literaler + kolonnenavne forlader maskinen).
-Nøgleordsregler duer ikke her: de fanger `DISTINCTCOUNT([cprnr])` og overser `TOPN(20, 'Løn')`.
+`dax-query.ps1` lader altid TypeSafe/Jev vurdere queryen før kørsel (kun querytekst med maskerede
+literaler + kolonnenavne forlader maskinen). Nøgleordsregler duer ikke her: de fanger
+`DISTINCTCOUNT([cprnr])` og overser `TOPN(20, 'Løn')`. Kun et committet script, der aggregerer
+resultatet lokalt og aldrig viser rækkerne, må erklære `-LokalBehandling` — aldrig en ad hoc-query
+hvis output lander i samtalen.
 Er vagten utilgængelig, stopper den; `-VedVagtNede Noegleord|Koer` er JSTs valg — spørg, vælg aldrig selv.
 
 **Afgrænset undtagelse — ADM-KANTINE-bestillingsmails.** Når JST beder om at behandle en uge, må
@@ -265,3 +274,17 @@ maskine — kald scriptet med `&`.
 **Før første commit**: tilføj `*.pdf binary` (+ `*.png`, `*.jpg`, `*.xlsx`) i `.gitattributes`. Små
 ukomprimerede PDF'er fejldetekteres som tekst → CRLF-konvertering → korrupt fil. Verificér med
 `git check-attr text -- <fil>` (skal give `text: unset`).
+
+## Agent skills
+
+### Issue tracker
+
+Issues ligger i GitHub Issues for `JST-BI/AI-OS` (gh-CLI). Persondata må aldrig i et issue. Se `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Standardnavnene: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Se `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` og `docs/adr/` i roden — oprettes først når de bruges. Se `docs/agents/domain.md`.

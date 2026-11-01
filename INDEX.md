@@ -4,7 +4,7 @@
 
 > **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 13 projekter.
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `AGENTS.md`).
-> **Instruktionsfil**: I alle repos er `AGENTS.md` den eneste instruktionsfil (uafhængig af AI-model); `CLAUDE.md` er kun pegefilen `@AGENTS.md`, som Claude Code indlæser som import. `tools/sync-agents-md.ps1` skriver pegefilerne; `.githooks/check_md_mirror.py` håndhæver det ved commit.
+> **Instruktionsfil**: I alle repos er `AGENTS.md` den eneste instruktionsfil (uafhængig af AI-model); Codex og Claude Code (≥ v2.1.277) læser den direkte, og der må ingen `CLAUDE.md`, `CLAUDE.local.md` eller `.claude/CLAUDE.md` findes (de får Claude Code til at ignorere `AGENTS.md`). `tools/sync-agents-md.ps1` melder og fjerner dem; `.githooks/check_kun_agents_md.py` håndhæver det ved commit. **Skills** samme princip: `.agents/skills/` er eneste kilde, `.claude/skills/` et spejl skrevet af `tools/sync-skills.ps1`; `.githooks/check_skills_mirror.py` håndhæver det.
 > **Obsidian**: Vault-roden er `<OneDrive>\AI OS\`. De fysiske projektfiler ligger separat og kanonisk i `<OneDrive>\AI SOSU\`; der findes ingen junction eller særskilte Obsidian-kopier af projektfilerne.
 > **Stier**: AI OS ligger i `<OneDrive>\AI OS\`, og alle arbejdsprojekter ligger i den separate kanoniske projektrod `<OneDrive>\AI SOSU\`.
 > Rådata i projekternes `Input/`-mapper (xlsx/pdf m.m.) er gitignored og indekseres ikke enkeltvis — **undtagen `ADM-KANTINE`**, hvor de små, persondatafrie menu-PDF'er committes.
@@ -17,17 +17,19 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 
 | Fil | Beskrivelse |
 |---|---|
-| `AI OS/AGENTS.md` (+ `CLAUDE.md`-pegefil) | Overordnede agentregler: startkontrol, routing, sikkerhedsregler, datagovernance, TMDL/PBIR-gotchas |
+| `AI OS/AGENTS.md` | Overordnede agentregler: startkontrol, routing, sikkerhedsregler, datagovernance, TMDL/PBIR-gotchas |
 | `AI OS/INDEX.md` | Dette indeks |
+| `AI OS/docs/agents/` | Konfiguration for Matt Pococks engineering-skills: `issue-tracker.md` (GitHub Issues, persondataforbud), `triage-labels.md` (fem standardlabels), `domain.md` (single-context: `GLOSSARY.md` + `docs/adr/` oprettes ved brug) |
 | `AI OS/tools/setup-new-repo.ps1` | Opsætning af nyt repo: begge pre-commit hooks, `.gitattributes`, `.codex/config.toml`, `core.hooksPath` |
-| `AI OS/tools/session-start-kontrol.ps1` | Deterministisk session-startkontrol (SessionStart-hook): pegefil, rodrenhed, INDEX.md, projektfiler. Tavs ved succes |
+| `AI OS/tools/session-start-kontrol.ps1` | Deterministisk session-startkontrol (SessionStart-hook): instruktionsfiler, rodrenhed, INDEX.md, projektfiler. Tavs ved succes |
 | `AI OS/tools/codex-opsaetning.md` | Codex på en ny maskine: trust, `project_doc_max_bytes`, hooks, `.codex/rules/`. Flyttet ud af AGENTS.md 2026-09-05 |
-| `AI OS/tools/sync-agents-md.ps1` | Skriver `CLAUDE.md`-pegefilen (`@AGENTS.md`) i alle mapper; `-Check` rapporterer drift (exit 1) |
+| `AI OS/tools/sync-agents-md.ps1` | Sikrer at `AGENTS.md` er eneste instruktionsfil: sletter gamle `CLAUDE.md`-pegefiler; `-Check` melder enhver CLAUDE-variant, også over projekterne (exit 1) |
+| `AI OS/tools/sync-skills.ps1` | Spejler `.agents/skills/` (kilden) til `.claude/skills/`; `-Check` rapporterer drift (exit 1, kaldes af sessionsstartkontrollen) |
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
-| `AI OS/.claude/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" |
-| `AI OS/.claude/skills/pause/SKILL.md` | Fælles kommando "pause": lokal gemning, hashverificeret backup, genoptagelsesnotat og stop; henvises fra alle 13 projekters AGENTS.md |
+| `AI OS/.agents/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" (spejl i `.claude/skills/`) |
+| `AI OS/.agents/skills/pause/SKILL.md` | Fælles kommando "pause": lokal gemning, hashverificeret backup, genoptagelsesnotat og stop (spejl i `.claude/skills/`); henvises fra alle 13 projekters AGENTS.md |
 | `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
-| `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv; `-Persondatavagt` (opt-in) vurderer queryen før kørsel |
+| `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv; persondatavagten vurderer altid queryen før kørsel; `-LokalBehandling` slår den fra for scripts der aggregerer lokalt |
 | `AI OS/tools/dax-persondata-vagt.py` | Persondatavagt (TypeSafe/Jev, fastlåst `jev-1.13.0`): pass/review/block for en DAX-query ud fra modellens personkolonner; `--selftest` |
 | `AI OS/tools/dax-persondata-vagt.cases.json` | Regressionssæt til `--selftest`: 40 queries + 59 kolonnenavne med facit (kun kode/navne, ingen data) |
 | `AI OS/tools/jev-undersoegelse-2026-10-17.md` | Arbejdsnote: hvor Jev kan erstatte skrøbelig parsing i AI OS — eksperimenter, tal og afviste kandidater |
@@ -38,14 +40,16 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/pbi-screenshot.ps1` | Vælger rapportfane via UIA, lukker backstage, søger fejltekster og gemmer PrintWindow-screenshot |
 | `AI OS/.githooks/pre-commit` | Versioneret pre-commit hook; kalder begge checks nedenfor (findes i alle 12 repos) |
 | `AI OS/.githooks/check_excel_pii.py` | Blokerer commit af Excel med persondata (CPR/e-mail/navnekolonner) |
-| `AI OS/.githooks/check_md_mirror.py` | Blokerer commit hvor CLAUDE.md er andet end pegefilen `@AGENTS.md` |
+| `AI OS/.githooks/check_kun_agents_md.py` | Blokerer commit af `CLAUDE.md`, `CLAUDE.local.md` og `.claude/CLAUDE.md` |
+| `AI OS/.githooks/check_skills_mirror.py` | Blokerer commit hvor `.claude/skills/` afviger fra kilden `.agents/skills/` (git-index, blob-hash) |
 | `AI OS/.githooks/README.md` | Aktivering af hooks efter clone (findes i alle 12 repos) |
 | `AI OS/.claude/` | Claude Code-indstillinger |
-| `AI OS/.claude/skills/pbi-live-maaling/SKILL.md` | Skill (kun Claude Code): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
+| `AI OS/.agents/skills/pbi-live-maaling/SKILL.md` | Skill (spejl i `.claude/skills/`): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
+| `AI OS/.agents/skills/reverse-engineering-tal/SKILL.md` | Skill (spejl i `.claude/skills/`): reverse engineering af vedtagne/rapporterede tal — frys facit, proveniens og beslutningshistorik før rettelse, konkurrerende hypoteser testet mod ejerens facit, bevist vs. konsistent, forlæns verifikation |
 | `AI OS/.codex/config.toml` | Codex-konfiguration (TOML). Hæver `project_doc_max_bytes`, sætter sandkasse og AGENTS.md-fallback. Erstattede 2026-08-20 en virkningsløs `.Codex/settings.json` i Claude Codes JSON-format |
 | `AI OS/.obsidian/` | Stabil Obsidian-konfiguration for vaulten med `AI OS/` som rod; maskinspecifik `workspace*.json` og cache er gitignored. `app.json`/`daily-notes.json`/`templates.json` dirigerer nye noter til `vault/` — uden dem skrev daily-notes-pluginet i roden |
 | `AI OS/vault/` | De frie Obsidian-noter (`inbox/`, `journal/`, `notes/{,people,decisions}/`, `meetings/`, `resources/`, `_templates/`, `_attachments/`). Adskilt fra de styrede filer — se AGENTS.md → *Obsidian-vaultregler* |
-| `AI OS/vault/AGENTS.md` (+ `CLAUDE.md`-pegefil) | Obsidian-notereglerne (frontmatter, routing, index-vedligehold, AI_ACTION_METADATA). Flyttet ud af AI OS-roden 2026-09-05 — de gælder kun filer under `vault/` (spejle) |
+| `AI OS/vault/AGENTS.md` | Obsidian-notereglerne (frontmatter, routing, index-vedligehold, AI_ACTION_METADATA). Flyttet ud af AI OS-roden 2026-09-05 — de gælder kun filer under `vault/` (spejle) |
 | `AI OS/vault/Index - Vault.md` | Vaultens MOC: mappeoversigt, routing og noteliste. Ikke det samme som dette indeks, der dækker **styrede** filer |
 | `AI OS/vault/_templates/*.md` | Note-skabeloner med obligatorisk frontmatter: `Daily`, `Note`, `Meeting`, `Decision` |
 | `<OneDrive>\AI SOSU\` | Separat fysisk og kanonisk projektrod på netværksdrevet; må ikke kopieres eller linkes ind under `<OneDrive>\AI OS\` |
@@ -91,7 +95,8 @@ Power BI-rapport og semantisk model for HR/økonomi.
 |---|---|
 | `tools/typesafe-research/` | Syntetiske Jev-forsøg: API-runner, offline genberegning, forslagspolitik med tests og M-regex-diagnose |
 | `Output/reviews/typesafe-2026-10-17/` | Resultatrapport, 36 syntetiske cases, 72 API-svar, optællinger, kildeinventar og SHA-256-manifest |
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: modelarkitektur, DAX/M-konventioner, workflow, gotchas |
+| `AGENTS.md` | Projektregler: modelarkitektur, DAX/M-konventioner, workflow, gotchas |
+| `docs/agents/` | Konfiguration for Matt Pococks engineering-skills: `issue-tracker.md` (GitHub Issues, persondataforbud), `triage-labels.md` (fem standardlabels), `domain.md` (single-context: `GLOSSARY.md` + `docs/adr/` oprettes ved brug) |
 | `.claude/rules/pbi-workflows.md` | Agent-workflow-mønstre for PBI-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20: dén mappe er til Starlark-`.rules`, ikke Markdown) |
 | `Rapporter/HR_OEKONOMI/` | Selve rapporten som `.pbip`: `HR_OEKONOMI.SemanticModel/` (TMDL) + `HR_OEKONOMI.Report/` (PBIR), inkl. årsværkskort/periodeetiket og gyldige Drift-bookmarks pr. kaldeside (15-10-2026) |
 | `Input/standards/tmdl-syntaks.md` | TMDL-syntaks og fejlmønstre. Flyttet ud af AGENTS.md 2026-09-05 — læs FØR enhver TMDL-redigering |
@@ -109,7 +114,11 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/kalender-ansoegere-konceptafklaring.md` | Konceptafklaring for kalender-visual og ansøger-subtotal + de flyttede undersøgelseslogs (L3/Z8005, lokalafdeling, optags-matrix, frakoblet dim) |
 | `tools/README-regnskabsforklaring.md` | Dokumentation af regnskabsforklarings-snapshotkæden |
 | `tools/snapshot-regnskabsforklaring.ps1` + `snapshot_excel_merge.py` | Scripts til per-konto Forventet-snapshot (Spor 1) |
-| `tools/sync-datakilder.ps1` | Spejler modellens datakilder fra Y: til `C:\BI-Data` (robocopy `/MIR`). Læser stierne i DATAKONTROLCENTER + parameteren `$Ekstra` med de fem mapper der kun har eksplicit sti i M-koden |
+| `tools/sync-datakilder.ps1` | Spejler modellens datakilder fra Y: til `C:\BI-Data` (robocopy `/MIR`). Læser stierne i DATAKONTROLCENTER + parameteren `$Ekstra` med de fem mapper der kun har eksplicit sti i M-koden. Gemmer forrige version af mapperne i `$GemForrige` (Z8050, Z8050V, Z8312) i `C:\BI-Data-forrige` og arkiverer `$Arkiver` (Z8050, Z8050V, Z8112, Z8312) dateret i `C:\BI-Data-arkiv` |
+| `tools/gem-forrige-version.ps1` | Kaldes af sync: spejler det nuværende spejl til `C:\BI-Data-forrige\<sti>`, når `robocopy /L` melder en ændring (én generation). Bruges til at måle registreringsforsinkelse; udtræk på Y: overskrives uændret |
+| `tools/test-gem-forrige-version.ps1` | Test af `gem-forrige-version.ps1` på midlertidige mapper (6 tilfælde) |
+| `tools/arkiver-udtraek.ps1` | Kaldes af sync efter spejlingen: gemmer en dateret kopi (`C:\BI-Data-arkiv\<sti>\<udtræksdato>`) når indholdet har ændret sig (manifest med sha256; intet slettes). Grundlag for scenariemotorens backtest "som på D" (JST 27-10-2026) |
+| `tools/test-arkiver-udtraek.ps1` | Test af `arkiver-udtraek.ps1` på midlertidige mapper (9 tilfælde) |
 | `tools/refresh-hr-oekonomi.ps1` | Refresh-rutinen: synkroniserer spejlet, **friskhedskontrollerer** at ingen kilde er nyere på Y: end i spejlet (`-KunKontrol` svarer uden at refreshe), og kører TMSL-refresh i én transaktion med fallback til tabel-for-tabel. `-Only` refresher præcis de navngivne tabeller |
 | `tools/afstem-kilde.ps1` | **Kontrollerer modellen op mod kildefilerne** (JSTs regel 2b, 08-09-2026). Tre kontroller, kun aggregater i output: er spejlet bagud i forhold til Y:, ligger der TEMP-ark i datakilderne, og er Z8050's raadata-ark identisk med modellen (distinkte cpr + sum af `bidrag_i_maaned`). Kontrol 1 overlapper `refresh-hr-oekonomi.ps1 -KunKontrol`; det nye er 2 og 3 |
 | `tools/tjek-datakilde-afhaengigheder.py` | **Kontrol af afhængighedslisterne bag kontrolcenterets tilstand `Ingen`** (13-10-2026): beregner for hver afledt import-tabel den transitive lukning af datakilde-numre (uden DIM-kilder) fra TMDL/M og sammenligner med `fxDatakildeRaekkerAfhaengig({…}, …)` i partitionen; exit 1 ved afvigelse, `--skriv` retter. Kontrol 2 fanger et genopstået `Folder.Files(fxDatakildeSti(n))`, som omgår `Ingen`. Kør efter enhver ændring i en partition/expression der læser en kilde |
@@ -178,7 +187,7 @@ Mailskabeloner og procesplaner for onboarding/offboarding via INNOMATE.
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: orkestrator-rolle, CPR-regel, merge-felter, workflow |
+| `AGENTS.md` | Projektregler: orkestrator-rolle, CPR-regel, merge-felter, workflow |
 | `.claude/rules/inno-workflows.md` | Agent-workflow-mønstre for INNOMATE-arbejde. Læses eksplicit af begge værktøjer — indlæses ikke automatisk. (Fjernet fra `.codex/rules/` 2026-08-20, se ovenfor) |
 | `generate-procesplan-v3.js` (+ `package.json`) | Procesplan-generator (Node.js) |
 | `Input/Oprettelse af medarbejder/`, `Input/Nedlæggelse af medarbejder/`, `Input/Generelle skabeloner/` | Kildefiler: procesplaner, INNOMATE-skabeloner, korrespondance |
@@ -192,7 +201,7 @@ Personalehåndbog og Lederhåndbog — afspejler hinandens emner.
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: håndbogs-parallelitet, workflow |
+| `AGENTS.md` | Projektregler: håndbogs-parallelitet, workflow |
 | `Personalehåndbog/` | Indhold målrettet medarbejdere |
 | `Lederhåndbog/` | Samme emner, ledervinkel |
 | `Input/` / `Output/` | Kildemateriale hhv. færdige/godkendte versioner |
@@ -205,7 +214,7 @@ Personalehåndbog og Lederhåndbog — afspejler hinandens emner.
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: dokumentrelationer, workflow |
+| `AGENTS.md` | Projektregler: dokumentrelationer, workflow |
 | `Regnskabsinstruks/` | Regler for bogføring, godkendelse, regnskabsaflæggelse |
 | `Indkøbspolitik/` | Rammer for indkøb, leverandørstyring, udbudspligt |
 | `Strategi for finansiel risiko/` | Risikovurdering, likviditetsstyring, finansielle principper |
@@ -219,7 +228,7 @@ BI governance og styringsdokumenter.
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: governance-scope, relation til BI-OEKONOMI |
+| `AGENTS.md` | Projektregler: governance-scope, relation til BI-OEKONOMI |
 | `Input/` / `Output/` | Kildemateriale hhv. godkendte standarder (normgivende for BI-OEKONOMI) |
 
 ---
@@ -230,9 +239,14 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: datakilder, formålskoder, fin-agent-routing |
+| `AGENTS.md` | Projektregler: datakilder, formålskoder, fin-agent-routing |
 | `Input/` | Rådata: Navision-finansposter, budget, prognose, finanslov, årsrapporter (gitignored) |
 | `Output/` | .xlsx-leverancer med danske formater (rene leverancer må committes) |
+| `tools/budget2027/byg_budget_2027_2028.py` | Bestyrelsens 4.2 til 2035 (l30–l40, byg_drill, byg_aarsvaerk, byg_bro_stuk, byg_bro_balance). `--motormappe` = scenariemotorens kørsel; `--kontrolversion` = fortrolig version med skoleforløb og løn/årsværk pr. medarbejder (gitignoreret) |
+| `tools/budget2027/l42_q4_2026.py` | Kvartalsrater i forventet 2026: AMU 101121/101126, 227020, 265025/265020, 228066 og FVU. Rettelserne er betinget af posteringerne ved ankeret og stopper ved delvis bogføring; `--fra-snapshot` genbruger udtrækkets kontosummer (#10, #11) |
+| `tools/budget2027/ankerdato.py` | Én ankerdato for l33, l42 og generatoren (`<grundlag>\ankerdato.json`); stopper, hvis udtræk, argument og kildefiler ikke hører til samme dag (#11) |
+| `tools/budget2027/pbi-udtraek/` | Power BI-udtrækket bag 4.2: `oko-linjer/konti/niv3.dax`, `parse-oko.py` og `udtraek.ps1`, der danner `oko-grundlag.json` og skriver ankerdatoen (#12) |
+| `Output/Budget/Budget 2027-2035 - beregning <dato>.xlsx` | 4.2 med broer, STUK-ark (6.1.1/6.2) og bæredygtighed; gitignoreret, ligger i OneDrive og på Y: |
 
 ---
 
@@ -244,7 +258,7 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: kilder, filnavngivning, ugentlig arbejdsgang |
+| `AGENTS.md` | Projektregler: kilder, filnavngivning, ugentlig arbejdsgang |
 | `tools/hent-portionsanretning.py` | Henter kilde-PDF'en fra torvekoekken.dk når den ikke allerede ligger i `Input/` — regex på knappens `onClick`-attribut i den rå HTML, ingen browser nødvendig; vælger altid den danske "Uge `<N>`"-knap, ikke den engelske |
 | `tools/byg-ugekort.py` | Generator: bygger `Output/Kantine Ugekort <uge>.pdf` (kun FAVORIT + stående Bowl+Sandwich-tilbud). Auto-skalerer dagsblokkene så de aldrig løber ned over allergen-footeren — kræver `reportlab` |
 | `tools/test-layout.py` | Layout-værn: tjekker ugens indhold + et værre tilfælde, med negativ kontrol der kræver at et fast layout faktisk overlapper |
@@ -276,7 +290,7 @@ Power BI-rapport: medarbejderes opgaveoversigt mod arbejdstidsnorm. Kilde: Budge
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: datamodel, ShowRow-grain, normvarianter, rapportfiltre, PBI-/refresh-arbejdsgang |
+| `AGENTS.md` | Projektregler: datamodel, ShowRow-grain, normvarianter, rapportfiltre, PBI-/refresh-arbejdsgang |
 | `Power BI - Opgaveoversigt - Ledere.pbip` | PBIP-projektfil |
 | `…SemanticModel/definition/tables/` | `DB Budget underviser og SPS medarbejder.tmdl` (fakta + alle målere), `Arbejdstidsnorm.tmdl`, `L-Kalender.tmdl` |
 | `…SemanticModel/definition/expressions.tmdl` | M-queries, bl.a. `UV Medarbejder` og `Støtte Medarbejder` (normvarianterne) |
@@ -290,7 +304,7 @@ Power BI-rapport: elevoptag og skoleforløbsfravær. Kilde: Studie+-udtræk `Z83
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: datagrundlag, målergrupper, agentbrug, skærpet persondata-opmærksomhed |
+| `AGENTS.md` | Projektregler: datagrundlag, målergrupper, agentbrug, skærpet persondata-opmærksomhed |
 | `SOSU BI OPTAG FRAVÆR.pbip` | PBIP-projektfil |
 | `…SemanticModel/definition/tables/` | Målergrupper (`#Measures - ELEV/HRLØN/KPI/TEMATIK/ØKONOMI`), `L-Kalender`, `L-STU Dim…`-dimensioner, `L-STU Fact Z8224S…` |
 | `.codex/config.toml` | Codex-projektkonfiguration |
@@ -303,7 +317,7 @@ Samarbejds- og samhandelsaftaler med eksterne parter. Bragt under AI-styring 202
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: versionssammenligning af aftaletekst, juridisk forbehold, persondata |
+| `AGENTS.md` | Projektregler: versionssammenligning af aftaletekst, juridisk forbehold, persondata |
 | `.codex/config.toml` | Codex-projektkonfiguration |
 
 ---
@@ -314,7 +328,7 @@ Administrative blanketter og formularer (i dag kørselsbemyndigelser). Bragt und
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: blanketstruktur, skærpet persondata-advarsel mod `--no-verify` |
+| `AGENTS.md` | Projektregler: blanketstruktur, skærpet persondata-advarsel mod `--no-verify` |
 | `.codex/config.toml` | Codex-projektkonfiguration |
 
 ---
@@ -329,7 +343,7 @@ gruppemedlemsudtræk → adgangsoversigter ("hvem har adgang til hvilken mappe",
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: datamodel (ACL-join, indlejrede grupper), persondataregler, workflow |
+| `AGENTS.md` | Projektregler: datamodel (ACL-join, indlejrede grupper), persondataregler, workflow |
 | `Input/Fællesdrev/udtræk sikkerhedsgrupper.xlsx` | ACL-udtræk: mappe → sikkerhedsgruppe → rettighed (gitignored) |
 | `Input/Fællesdrev/Udtræk medlemmer.xlsx` | Gruppemedlemskab: gruppe → medlem (navn, e-mail m.m.) — persondata (gitignored) |
 | `tools/byg-rettighedsoversigt.py` | Genbygger Output-oversigten fra de to udtræk; udleder snapshot-dato fra ACL-arkets titel |
@@ -346,7 +360,7 @@ om påtænkt opsigelse (partshøring) efter funktionærlovens § 2. Bragt under 
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` (+ `CLAUDE.md`-pegefil) | Projektregler: skærpet persondata, funktionærlovens varselstabel, SD-anciennitet ≠ lønanciennitet |
+| `AGENTS.md` | Projektregler: skærpet persondata, funktionærlovens varselstabel, SD-anciennitet ≠ lønanciennitet |
 | `tools/generer-varslinger.py` | Udfylder én varsling pr. medarbejder i opsigelsesrunden fra procesplan + skabelon + SD-udtræk; kontrollerer varsler mod § 2 og skriver kontrolrapport |
 | `tools/test-ful-varsel.py` | Grænsetilfælde for varselsberegningen (6 mdr., 3/6/9 år, prøvetid) |
 | `tools/verificer-varslinger.py` | Tilbagelæsning af genererede varslinger: navn, CPR, rest-pladsholdere, gul markering |
@@ -356,13 +370,25 @@ om påtænkt opsigelse (partshøring) efter funktionærlovens § 2. Bragt under 
 
 ---
 
-## Fælles på tværs af alle 14 repos
+## ADM-INSTITUTIONSLANDSKAB — `<OneDrive>\AI SOSU\ADM-INSTITUTIONSLANDSKAB\` (lokalt repo, intet GitHub-remote)
+
+Epx-reformen: skolens tilkendegivelse til STUK (frist 20-01-2027). `Input/` og `Output/` gitignored. Bragt under AI-styring 2026-10-27.
+
+| Fil | Beskrivelse |
+|---|---|
+| `AGENTS.md` | Projektregler: felter, STUK's aktivitetsdefinition, udfyldning uden at bryde indholdskontrollerne |
+| `tools/udfyld_tilkendegivelse.py` | Udfylder en KOPI af skabelonen fra en svar-JSON med gul markering; afviser for lange tekster og verificerer at kun felterne er ændret |
+| `docs/felter.md` | Alle indholdskontrollers `w:tag` med felt og type |
+
+---
+
+## Fælles på tværs af alle 15 repos
 
 | Fil | Beskrivelse |
 |---|---|
 | `.githooks/pre-commit` | Kalder begge checks nedenfor (aktivér pr. klon: `git config core.hooksPath .githooks`) |
 | `.githooks/check_excel_pii.py` | Persondata-scan af staged Excel (CPR, e-mail, navnekolonner) |
-| `.githooks/check_md_mirror.py` | Blokerer commit hvor CLAUDE.md er andet end pegefilen `@AGENTS.md` |
+| `.githooks/check_kun_agents_md.py` | Blokerer commit af `CLAUDE.md`, `CLAUDE.local.md` og `.claude/CLAUDE.md` |
 | `.githooks/README.md` | Aktiveringsvejledning efter clone |
 | `.codex/config.toml` | Codex-projektkonfiguration fra `AI OS/tools/codex-config.template.toml` |
 | `.gitattributes` | `eol=lf` på hook-filerne, ellers `* text=auto` |

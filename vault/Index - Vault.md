@@ -10,7 +10,7 @@ aliases: [MOC - Vault]
 # Index - Vault
 
 Indgangen til de frie noter i AI OS-vaulten. Alt her er **noter** — ikke styrede filer.
-De styrede filer (`CLAUDE.md`, `AGENTS.md`, `INDEX.md`, `agents/`, `tools/`) og
+De styrede filer (`AGENTS.md`, `INDEX.md`, `agents/`, `tools/`) og
 projektfilerne under `Y:\AI SOSU\` følger deres egne regler og hører ikke i denne mappe.
 Se `AGENTS.md` → *Obsidian-vaultregler* for scope og routing.
 

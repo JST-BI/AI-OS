@@ -61,12 +61,15 @@ Lovende som rådgivende tjek (fx i md-optimizer eller en `-Check` i `sync-agents
    CPR-rækker gennem `dax-query.ps1` til lokal aggregering; den skal ikke brydes.
    - **B (gjort):** `-Persondatavagt` står i `pbi-live-maaling`-skillens standardkommando, så den
      normale agent-arbejdsgang får vagten uden at huske et flag.
-   - **C (opfølgning, kræver JSTs frigivelse af BI-OEKONOMI):** vend standarden — vagten altid på,
-     og de 8 committede kaldere (`afstem-aarsvaerk.py`, `afstem-kilde.ps1`,
-     `kalenderprofil/build-calendar-empirical-profile.py`, `kalenderprofil/pa-physical-candidate/
-     financial/audit-actual-input-boundary.py`, `pptx/byg-dataflow.py`, `pptx/byg-foedekaeder.py`,
-     `rapport-krydsreferencer.py`, `regneark-elevaktivitet/run.ps1`) erklærer `-LokalBehandling`.
-     Opt-in er kun et værn så længe agenten husker det; C gør det til et værn der kan fejle højlydt.
+   - **C (gjort 2026-10-18):** standarden er vendt — vagten altid på, `-LokalBehandling` slår den
+     fra, `-Persondatavagt` accepteres som no-op. Opt-in var kun et værn så længe agenten huskede
+     flaget; nu fejler en glemt erklæring højlydt. Listen på "8 kaldere" var talt med grep og for
+     bred: kun 5 starter scriptet — på BI-OEKONOMI `main` `afstem-kilde.ps1`,
+     `rapport-krydsreferencer.py`, `regneark-elevaktivitet/run.ps1`; på audit-grenen (PR #103)
+     `afstem-aarsvaerk.py` og `kalenderprofil/build-calendar-empirical-profile.py`. De tre andre
+     nævner det kun i tekst. Målt mod kørende HR_OEKONOMI: `TOPN(5, '<elevtabel>')` uden flag kørte
+     på den gamle `main` (5 rækker) og blokeres nu; aggregat kører; `-LokalBehandling` kører uden
+     vagt; flagene sammen afvises; API nede stopper.
 2. **API nede → brugeren vælger.** Vagten stopper og viser valgene; `-VedVagtNede Noegleord`
    (lokal nøgleordsregel, hit kræver `-BekraeftAggregat`) eller `-VedVagtNede Koer`. Agenten
    spørger JST og vælger aldrig selv. Alle seks spor er afprøvet mod kørende HR_OEKONOMI med

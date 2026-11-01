@@ -15,6 +15,9 @@
   distinkte taellinger eller ikke-personhenfoerbare noegler - aldrig raa personraekker, CPR,
   navne eller mail. Tool-output sendes til Anthropics servere.
 
+  Persondatavagten (TypeSafe/Jev) vurderer ALTID queryen foer koersel. Kun et script der selv
+  behandler resultatet lokalt og aldrig viser raekkerne, maa slaa den fra med -LokalBehandling.
+
 .PARAMETER Query
   DAX-udtrykket som streng. Kan ikke kombineres med -QueryFile.
   Taber ae/oe/aa i maal- og tabelnavne - brug -QueryFile naar query'en indeholder danske tegn.
@@ -32,12 +35,16 @@
   Katalog-GUID (ADOMD "Initial Catalog"). Udelades den, findes den automatisk.
   Alias: -Catalog (det gamle navn; begge virker).
 
+.PARAMETER LokalBehandling
+  Kalderens erklaering: resultatet behandles i et script og vises aldrig i samtalen (fx en pipeline
+  der henter personraekker til lokal aggregering). Slaar persondatavagten fra. Kun til committede
+  scripts - aldrig til en ad hoc-query hvis output laeses i samtalen.
+
 .PARAMETER Persondatavagt
-  Lader tools/dax-persondata-vagt.py (TypeSafe/Jev) vurdere queryen FOER den koeres:
+  Foraeldet - vagten er standard (JST 2026-10-18). Accepteres stadig, saa aeldre kald virker.
+  Vagten (tools/dax-persondata-vagt.py) vurderer queryen FOER den koeres:
   pass -> koerer; review -> stopper, medmindre -BekraeftAggregat er givet; block -> stopper altid.
   Sender kun queryteksten (med literaler maskeret) og modellens tabel-/kolonnenavne - aldrig data.
-  Opt-in, fordi lokale pipelines (fx BI-OEKONOMI/tools/kalenderprofil) bevidst henter personraekker
-  til lokal aggregering via dette script.
 
 .PARAMETER BekraeftAggregat
   Agentens erklaering efter at have laest queryen: resultatet er kun aggregater. Laeser kun ved review.
@@ -51,11 +58,11 @@
 
 .EXAMPLE
   & "AI OS\tools\dax-query.ps1" -QueryFile "$env:TEMP\q.dax"
-  Port og katalog findes selv. Den normale form.
+  Port og katalog findes selv; persondatavagten vurderer queryen foerst. Den normale form.
 
 .EXAMPLE
-  & "AI OS\tools\dax-query.ps1" -QueryFile "$env:TEMP\q.dax" -Persondatavagt
-  Samme, men queryen vurderes af persondatavagten foerst.
+  & "AI OS\tools\dax-query.ps1" -QueryFile $q -OutputFormat Csv -LokalBehandling
+  Fra et script der aggregerer resultatet lokalt. Ingen vagt.
 
 .EXAMPLE
   & "AI OS\tools\dax-query.ps1" -Query "EVALUATE ROW(""n"", COUNTROWS('L-Kalender'))"
@@ -84,6 +91,8 @@ param(
   [ValidateSet('Table', 'Csv', 'Json')]
   [string]$OutputFormat = 'Table',
 
+  [switch]$LokalBehandling,
+
   [switch]$Persondatavagt,
 
   [switch]$BekraeftAggregat,
@@ -93,6 +102,10 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+if ($LokalBehandling -and $Persondatavagt) {
+  throw "-LokalBehandling og -Persondatavagt udelukker hinanden: vises resultatet i samtalen, skal vagten koere - fjern -LokalBehandling."
+}
 
 # --- ADOMD-klienten ------------------------------------------------------
 $dll = 'C:\Program Files\DAX Studio\bin\Microsoft.AnalysisServices.AdomdClient.dll'
@@ -172,8 +185,11 @@ if ($PSCmdlet.ParameterSetName -eq 'File') {
 
 $connStr = "Data Source=localhost:$Port;Initial Catalog=$Database"
 
-# --- Persondatavagt (opt-in) ---------------------------------------------
-if ($Persondatavagt) {
+# --- Persondatavagt (standard; -LokalBehandling slaar den fra) -----------
+if ($LokalBehandling) {
+  Write-Verbose "Persondatavagt: sprunget over (-LokalBehandling - resultatet behandles lokalt)."
+}
+else {
   $vagtDir = Join-Path $env:TEMP 'ai-os-persondatavagt'
   New-Item -ItemType Directory -Force -Path $vagtDir | Out-Null
   $utf8NoBom = New-Object System.Text.UTF8Encoding $false

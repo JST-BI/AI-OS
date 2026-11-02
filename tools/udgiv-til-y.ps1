@@ -50,10 +50,25 @@ L "UDGIV start"
 # Y:-klonerne ejes af filserveren, saa git afviser dem som "dubious ownership".
 # Uden undtagelsen melder scriptet hvert repo som "kan ikke fast-forwardes" og
 # springer dem over, ogsaa naar klonen er ren. Kun denne proces — ikke --global.
-$env:GIT_CONFIG_COUNT = "1"
+# Automatisk oprydning (gc/maintenance -> repack) er slaaet fra UNDER udgivelsen (JST 02-11-2026: "repack skal ikke
+# slaas permanent fra, men kun under selve processen"): efter hver pull paa Y: startede git en repack paa filserveren,
+# der trak udgivelsen ud. Repo-konfigurationen roeres ikke; vaerdierne saettes tilbage ved alle udgange (Slut, trap).
+$GitGl = @{}
+foreach ($v in 'GIT_CONFIG_COUNT', 'GIT_CONFIG_KEY_0', 'GIT_CONFIG_VALUE_0', 'GIT_CONFIG_KEY_1', 'GIT_CONFIG_VALUE_1',
+               'GIT_CONFIG_KEY_2', 'GIT_CONFIG_VALUE_2') { $GitGl[$v] = [Environment]::GetEnvironmentVariable($v, 'Process') }
+function Slut($kode) {
+  foreach ($k in $GitGl.Keys) { [Environment]::SetEnvironmentVariable($k, $GitGl[$k], 'Process') }
+  exit $kode
+}
+trap { foreach ($k in $GitGl.Keys) { [Environment]::SetEnvironmentVariable($k, $GitGl[$k], 'Process') }; break }
+$env:GIT_CONFIG_COUNT = "3"
 $env:GIT_CONFIG_KEY_0 = "safe.directory"
 $env:GIT_CONFIG_VALUE_0 = "*"
-if (-not (Test-Path $YAIOS)) { L "FEJL: $YAIOS findes ikke (VPN/Y: ikke tilsluttet?)"; exit 1 }
+$env:GIT_CONFIG_KEY_1 = "gc.auto"
+$env:GIT_CONFIG_VALUE_1 = "0"
+$env:GIT_CONFIG_KEY_2 = "maintenance.auto"
+$env:GIT_CONFIG_VALUE_2 = "false"
+if (-not (Test-Path $YAIOS)) { L "FEJL: $YAIOS findes ikke (VPN/Y: ikke tilsluttet?)"; Slut 1 }
 
 # 1) AI OS -> Y:\AI OS (filkopi)
 $src = Join-Path $OneDrive "AI OS"
@@ -86,7 +101,7 @@ else {
   L "Foraeldede filer paa Y:\AI OS: $($foraeldede.Count) - koer med -RyddForaeldede for at fjerne dem"
 }
 
-if ($KunAIOS) { L "UDGIV slut (kun AI OS)"; exit 0 }
+if ($KunAIOS) { L "UDGIV slut (kun AI OS)"; Slut 0 }
 
 # En fil der ligger UNTRACKED paa Y: og nu kommer ind via git, faar merge til at afvise hele
 # opdateringen ("untracked working tree files would be overwritten"). Det sker hver gang en fil
@@ -181,7 +196,7 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
 #    forbliver de usynlige for arbejdskopien (set 2026-09-15: infoskaermenes PowerPoints, en
 #    pbip og Codex' arbejdsmappe laa kun paa Y:). Kun "New File" taeller: "Newer" er
 #    checkout-tidsstempler fra git pull og siger intet om indholdet.
-if (-not (Test-Path $YAISOSU)) { L "FEJL: $YAISOSU forsvandt undervejs (Y:-mapping faldet) - koer igen mod UNC"; exit 1 }
+if (-not (Test-Path $YAISOSU)) { L "FEJL: $YAISOSU forsvandt undervejs (Y:-mapping faldet) - koer igen mod UNC"; Slut 1 }
 $par = @(@{ Y = $YAIOS; O = (Join-Path $OneDrive "AI OS") })
 Get-ChildItem -Directory $YAISOSU | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object { $par += @{ Y = $_.FullName; O = (Join-Path $OneDrive "AI SOSU\$($_.Name)") } }
 $kunY = 0
@@ -202,4 +217,4 @@ foreach ($p in $par) {
 L ("Filer der kun findes paa Y: $kunY" + $(if ($kunY) { " - kopiér dem til OneDrive (se AI OS\\AGENTS.md, Placering)" } else { "" }))
 L "UDGIV slut"
 # robocopy returnerer 1 for "filer kopieret", og den kode slap ellers ud som scriptets exit-kode.
-exit $(if ($kunY) { 2 } else { 0 })
+Slut $(if ($kunY) { 2 } else { 0 })

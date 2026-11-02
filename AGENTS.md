@@ -135,6 +135,10 @@ Det forhindrer, at ikke-gemte ændringer eller opgavekontekst mistes ved afbryde
    faldgruber.
 6. Giv en kort statusrapport: det leverede (med PR-links) og næste skridt.
 
+Under bogfør og udgiv køres git uden automatisk oprydning: `git -c gc.auto=0 -c maintenance.auto=false …` pr. kald
+(udgiv-scriptet sætter det selv for sin proces og sætter det tilbage ved afslutning). Slå det aldrig fra i repo- eller
+global konfiguration (JST 2026-11-02). Det forhindrer, at en repack på filserveren trækker udgivelsen ud i mange minutter.
+
 ## Arbejdsform
 
 Du udfører selv alt du har værktøjer til — filsøgning, kopiering, git, PowerShell, PBI-refresh og

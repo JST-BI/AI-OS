@@ -209,6 +209,9 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `Input/` | Rådata: Navision-finansposter, budget, prognose, finanslov, årsrapporter (gitignored) |
 | `Output/` | .xlsx-leverancer med danske formater (rene leverancer må committes) |
 | `tools/budget2027/byg_budget_2027_2028.py` | Bestyrelsens 4.2 til 2035 (l30–l40, byg_drill, byg_aarsvaerk, byg_bro_stuk, byg_bro_balance). `--motormappe` = scenariemotorens kørsel; `--kontrolversion` = fortrolig version med skoleforløb og løn/årsværk pr. medarbejder (gitignoreret) |
+| `tools/budget2027/l46_optagsark.py` | Fanerne Optag 2026 og Optag 2027–2035 (input) i 4.2 fra fil 1 og inputarket; stopper, hvis inputarket er ændret siden motorkørslen (#13) |
+| `tools/budget2027/l47_aktivitet_optag.py` | `AKTIVITET-OPTAG.json` i motormappen: plads pr. hold, distinkt optag 2024–2026 (kontrolleret mod fil 1), fastholdelsesprofil og lånt fra pr. optag, realiseret FÆRTA pr. optag. Køres efter hver motorkørsel (#13, #14, #15) |
+| `tools/budget2027/byg_aktivitet_optag.py` | Fanerne Aktivitet pr. optag (drill uddannelse → optagtype → optag → kilde, 2024–2035, takstopdeling) og Fastholdelsesprofil pr. optag; kædekontroller mod Optag-fanerne og Scenariemotor (#13, #14, #15) |
 | `tools/budget2027/l42_q4_2026.py` | Kvartalsrater i forventet 2026: AMU 101121/101126, 227020, 265025/265020, 228066 og FVU. Rettelserne er betinget af posteringerne ved ankeret og stopper ved delvis bogføring; `--fra-snapshot` genbruger udtrækkets kontosummer (#10, #11) |
 | `tools/budget2027/ankerdato.py` | Én ankerdato for l33, l42 og generatoren (`<grundlag>\ankerdato.json`); stopper, hvis udtræk, argument og kildefiler ikke hører til samme dag (#11) |
 | `tools/budget2027/pbi-udtraek/` | Power BI-udtrækket bag 4.2: `oko-linjer/konti/niv3.dax`, `parse-oko.py` og `udtraek.ps1`, der danner `oko-grundlag.json` og skriver ankerdatoen (#12) |

@@ -251,6 +251,9 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | `Input/floej_c_uge38.pptx` | JSTs skabelon for menuslidet (topbanner + ugekort som billede) |
 | `Input/Kantine Ugekort 38.pdf` | JSTs kopi af ugekortet, lagt sammen med skabelonen |
 | `Output/<skaerm>_uge<uge>.pptx` | Ugens PowerPoint til de tre infoskærme |
+| `tools/lav-finanskladde.py` | Finanskladde for en JTK-faktura: hver fakturalinje får Type, Anledning/bemærkning, Leverandør og Rekvirent ved match mod ugemodulerne; ark for bestilt vs. faktureret, sammentælling (formler + kontrol mod fakturaen) og fund. Kræver `pdfplumber`, `openpyxl` |
+| `Input/Fakturaer/<leverandør>/` | Leverandørfakturaer (PDF) — gitignored (navngiven reference) |
+| `Output/Finanskladder/` | Finanskladder pr. faktura — gitignored (rekvirentnavne) |
 
 ---
 

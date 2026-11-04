@@ -217,7 +217,15 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `tools/budget2027/l42_q4_2026.py` | Kvartalsrater i forventet 2026: AMU 101121/101126, 227020, 265025/265020, 228066 og FVU. Rettelserne er betinget af posteringerne ved ankeret og stopper ved delvis bogføring; `--fra-snapshot` genbruger udtrækkets kontosummer (#10, #11) |
 | `tools/budget2027/ankerdato.py` | Én ankerdato for l33, l42 og generatoren (`<grundlag>\ankerdato.json`); stopper, hvis udtræk, argument og kildefiler ikke hører til samme dag (#11) |
 | `tools/budget2027/pbi-udtraek/` | Power BI-udtrækket bag 4.2: `oko-linjer/konti/niv3.dax`, `parse-oko.py` og `udtraek.ps1`, der danner `oko-grundlag.json` og skriver ankerdatoen (#12). Kontoudtrækket til 2 Økonomi: `oko-konti-alle.dax` + `parse-konti.py` + `udtraek-konti.ps1` → `oko-konti-alle.json` (samme refresh; stopper ved afvigelse mod linjerne; #18) |
+| `tools/budget2027/pbi-udtraek/udtraek-hist.ps1` | Regnskab 2023–2024 pr. konto (`oko-konti-hist.dax` + `parse-hist.py` → `oko-konti-hist.json`; værn: R2025 = Regnskab 2025 pr. konto) til 2023 og frem i de fire tabeller (#20/#21) |
+| `tools/budget2027/l48_kildefarver.py` | Kildefarver på alle talceller uden formel + fanen **0 Signaturforklaring**; sidste trin før den sidste genberegning (#20) |
+| `tools/budget2027/l49_optag_historik.py` | `Optag 2023-2025 - Studie+.xlsx` (faktisk optag, samme mål som fil 1; låst til motorkørslens udtræk) → fanen Optag 2023–2025 (historik) i 4.2 (#21) |
+| `tools/budget2027/scenarie_inputark.py` + `byg_scenarie.py` | Scenarie-4.2: kopi af inputarket med nedlagte optag/EUX/PAU-forudsætninger og fanen **0 Sammenligning** mod den udgivne 4.2 (#20) |
+| `tools/budget2027/aarsvaerk_kr.py` + `test_aarsvaerk_kr.py` | Kontrol: årsværk som talt − årsværk efter kronerne for personer med fradrag i supplementet (i l37; mutationstest) (#21) |
+| `tools/budget2027/orkestrering/` | Byggescripts (byg_fire, byg_scenarie, koer_scenarie, byg_v7) som reference; README med rækkefølgen (#21) |
 | `Output/Budget/Budget 2027-2035 - beregning <dato>.xlsx` | 4.2 med broer, STUK-ark (6.1.1/6.2) og bæredygtighed; gitignoreret, ligger i OneDrive og på Y: |
+| `Output/Budget/Budget 2027-2035 - scenarie nedlagte optag (04-11-2026).xlsx` + `BRUGER - Optag 2027-2035 - scenarie nedlagte (04-11-2026).xlsx` | Scenariet og dets inputark (kopi; produktionsarket er uændret) |
+| `Output/Budget/Optag 2023-2025 - Studie+.xlsx` | Faktisk optag 2023–2025 (l49), input til 3 Elevoptag |
 
 ---
 

@@ -45,6 +45,10 @@ $ErrorActionPreference = 'Continue'
 # kopieret derud. Undtagelse fra "Y: og OneDrive skal vaere identiske" (JST 2026-10-16:
 # ADM-BESPARELSER rummer afskedigelsesvarslinger med navn og CPR). Bevidst ikke en parameter.
 $IkkePaaY = @('ADM-BESPARELSER')
+# Undermapper der ikke kopieres i trin 2b, selv om repoet ellers udgives (sti fra AI SOSU, med /).
+# DATA-BUDGET's 4.2-grundlag rummer loen\jst-valg.json - hvem sparerunden omfatter, samme foelsomhed
+# som ADM-BESPARELSER. Om det maa paa Y:, er JSTs afgoerelse (aaben 05-11-2026); indtil da springes det over.
+$IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/')
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
 L "UDGIV start"
 # Y:-klonerne ejes af filserveren, saa git afviser dem som "dubious ownership".
@@ -171,11 +175,15 @@ Get-ChildItem -Directory $YAISOSU | ForEach-Object {
 Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-Path (Join-Path $_.FullName ".git\HEAD") } | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object {
   $od = $_.FullName; $y = Join-Path $YAISOSU $_.Name
   if (-not (Test-Path $y)) { return }
+  $repo = $_.Name
+  $udeladt = @($IkkePaaYStier | Where-Object { $_.StartsWith("$repo/") } | ForEach-Object { $_.Substring($repo.Length + 1) })
+  foreach ($u in $udeladt) { if (Test-Path -LiteralPath (Join-Path $y $u)) { L "ADVARSEL $repo/$u : ligger paa Y: men maa ikke kopieres derud - roeres ikke" } }
   $yTracked = @{}
   if (Test-Path (Join-Path $y ".git\HEAD")) { & git -C $y -c core.quotepath=off ls-files 2>$null | ForEach-Object { $yTracked[$_] = 1 } }
   $kopieret = 0
   & git -C $od -c core.quotepath=off ls-files --others 2>$null |
     Where-Object { $_ -notmatch '(^|/)(__pycache__|node_modules|\.claude/worktrees)/' -and $_ -notmatch '(^|/)(~\$[^/]*|desktop\.ini|Thumbs\.db)$' -and -not $yTracked[$_] } |
+    Where-Object { $f = $_; -not ($udeladt | Where-Object { $f.StartsWith($_) }) } |
     ForEach-Object {
       $src = Join-Path $od $_; $dst = Join-Path $y $_
       if (-not (Test-Path -LiteralPath $src -PathType Leaf)) { return }

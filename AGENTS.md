@@ -83,7 +83,7 @@ remote** (JST 2026-09-15). Udgiv sørger for det; Y:-klonerne står dog altid p�
 `$IkkePaaY` i `tools/udgiv-til-y.ps1`; et nyt fortroligt projekt føjes til den liste.
 Samme følsomhed i en undermappe af et udgivet repo → `$IkkePaaYStier`: i dag
 `DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/` (4.2-grundlaget med `jst-valg.json` – hvem sparerunden omfatter;
-om det må på Y:, er JSTs afgørelse, åben fra 2026-11-05).
+JST 2026-11-05: "Grundlaget bliver lokalt – indtil videre"; fjern stien fra listen kun på JSTs ord).
 
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.

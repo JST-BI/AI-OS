@@ -21,6 +21,8 @@ Hvad det gør:
 7. **`ADM-BESPARELSER` kopieres ALDRIG til Y:** (listen `$IkkePaaY` i scriptet; JST 2026-10-16 —
    afskedigelsesvarslinger med navn og CPR). Melder loggen `ADVARSEL ADM-BESPARELSER : ligger paa Y:`,
    så stop og sig det til JST — mappen skal fjernes, men slet ikke selv uden JSTs ord.
+   Undermapper med samme følsomhed står i `$IkkePaaYStier` (i dag DATA-BUDGET's
+   `Output/Grundlag/budget2027/`) og springes over i trin 4; `ADVARSEL <repo>/<sti> : ligger paa Y:` = samme fremgang.
 
 Forudsætninger: alt der skal ud, er merget til `main` og pushet til GitHub FØRST (Udgiv henter fra GitHub, ikke fra OneDrive-klonerne). VPN skal være tilsluttet.
 

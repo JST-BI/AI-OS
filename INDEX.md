@@ -223,7 +223,8 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `tools/budget2027/l49_optag_historik.py` | `Optag 2023-2025 - Studie+.xlsx` (faktisk optag, samme mål som fil 1; låst til motorkørslens udtræk) → fanen Optag 2023–2025 (historik) i 4.2 (#21) |
 | `tools/budget2027/scenarie_inputark.py` + `byg_scenarie.py` | Scenarie-4.2: kopi af inputarket med nedlagte optag/EUX/PAU-forudsætninger og fanen **0 Sammenligning** mod den udgivne 4.2 (#20) |
 | `tools/budget2027/aarsvaerk_kr.py` + `test_aarsvaerk_kr.py` | Kontrol: årsværk som talt − årsværk efter kronerne for personer med fradrag i supplementet (i l37; mutationstest) (#21) |
-| `tools/budget2027/orkestrering/` | Byggescripts (byg_fire, byg_scenarie, koer_scenarie, byg_v7) som reference; README med rækkefølgen (#21); et fejlet trin stopper kæden (#22) |
+| `tools/budget2027/orkestrering/` | Byggescripts (byg_fire, byg_scenarie, koer_scenarie, byg_v7) som reference; README med rækkefølgen (#21); et fejlet trin stopper kæden (#22); `recalc.ps1` (Excel-genberegning, sporet fra #24); standarder: værk = egen gren, motor `…-1103-tilskud`, output i `%TEMP%\budget42` (#24) |
+| `Output/Grundlag/budget2027/` | 4.2-grundlaget (SD/løn med `loen\jst-valg.json`, motorkørsler, `bro-42`, `arkiv\`); gitignoreret persondata, **ikke på Y:** (JST 05-11-2026, Udgiv `$IkkePaaYStier`); før 05-11 i en Claude-jobmappe (#24) |
 | `Output/Budget/Budget 2027-2035 - beregning <dato>.xlsx` | 4.2 med broer, STUK-ark (6.1.1/6.2) og bæredygtighed; gitignoreret, ligger i OneDrive og på Y: |
 | `Output/Budget/Budget 2027-2035 - scenarie nedlagte optag (04-11-2026).xlsx` + `BRUGER - Optag 2027-2035 - scenarie nedlagte (04-11-2026).xlsx` | Scenariet og dets inputark (kopi; produktionsarket er uændret) |
 | `Output/Budget/Optag 2023-2025 - Studie+.xlsx` | Faktisk optag 2023–2025 (l49), input til 3 Elevoptag |

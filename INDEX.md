@@ -219,10 +219,11 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `tools/budget2027/pbi-udtraek/` | Power BI-udtrækket bag 4.2: `oko-linjer/konti/niv3.dax`, `parse-oko.py` og `udtraek.ps1`, der danner `oko-grundlag.json` og skriver ankerdatoen (#12). Kontoudtrækket til 2 Økonomi: `oko-konti-alle.dax` + `parse-konti.py` + `udtraek-konti.ps1` → `oko-konti-alle.json` (samme refresh; stopper ved afvigelse mod linjerne; #18) |
 | `tools/budget2027/pbi-udtraek/udtraek-hist.ps1` | Regnskab 2023–2024 pr. konto (`oko-konti-hist.dax` + `parse-hist.py` → `oko-konti-hist.json`; værn: R2025 = Regnskab 2025 pr. konto) til 2023 og frem i de fire tabeller (#20/#21) |
 | `tools/budget2027/l48_kildefarver.py` | Kildefarver på alle talceller uden formel + fanen **0 Signaturforklaring**; sidste trin før den sidste genberegning (#20) |
+| `tools/budget2027/l50_fire_flad.py` + `l50_pivot.ps1` | De fire tabeller som flad datafil ("Budget 2027-2035 - fire tabeller som data …xlsx", læses af BI_SOSU) + datafane, levende kontrol og fire pivotfaner inde i 4.2 via Excel COM; sidste trin i bygget (#23) |
 | `tools/budget2027/l49_optag_historik.py` | `Optag 2023-2025 - Studie+.xlsx` (faktisk optag, samme mål som fil 1; låst til motorkørslens udtræk) → fanen Optag 2023–2025 (historik) i 4.2 (#21) |
 | `tools/budget2027/scenarie_inputark.py` + `byg_scenarie.py` | Scenarie-4.2: kopi af inputarket med nedlagte optag/EUX/PAU-forudsætninger og fanen **0 Sammenligning** mod den udgivne 4.2 (#20) |
 | `tools/budget2027/aarsvaerk_kr.py` + `test_aarsvaerk_kr.py` | Kontrol: årsværk som talt − årsværk efter kronerne for personer med fradrag i supplementet (i l37; mutationstest) (#21) |
-| `tools/budget2027/orkestrering/` | Byggescripts (byg_fire, byg_scenarie, koer_scenarie, byg_v7) som reference; README med rækkefølgen (#21) |
+| `tools/budget2027/orkestrering/` | Byggescripts (byg_fire, byg_scenarie, koer_scenarie, byg_v7) som reference; README med rækkefølgen (#21); et fejlet trin stopper kæden (#22) |
 | `Output/Budget/Budget 2027-2035 - beregning <dato>.xlsx` | 4.2 med broer, STUK-ark (6.1.1/6.2) og bæredygtighed; gitignoreret, ligger i OneDrive og på Y: |
 | `Output/Budget/Budget 2027-2035 - scenarie nedlagte optag (04-11-2026).xlsx` + `BRUGER - Optag 2027-2035 - scenarie nedlagte (04-11-2026).xlsx` | Scenariet og dets inputark (kopi; produktionsarket er uændret) |
 | `Output/Budget/Optag 2023-2025 - Studie+.xlsx` | Faktisk optag 2023–2025 (l49), input til 3 Elevoptag |
@@ -380,6 +381,9 @@ Power BI-rapporten BI_SOSU: de fire 4.2-tabeller fra DATA-BUDGET_PROGNOSE som ma
 |---|---|
 | `AGENTS.md` | Projektregler: datakilden (4.2's flade datatabel, ingen egne beregninger), identitet med 4.2, persondata |
 | `REVIEW.md` | Review-instruktioner (skabelon); importeret i `AGENTS.md` med `@REVIEW.md` |
+| `BI_SOSU.pbip` + `BI_SOSU.SemanticModel/` | Model: forespørgslen `Fire tabeller` (to navngivne datafiler fra DATA-BUDGET Output\Budget, OneDrive → Y:), tabellerne Elevaktivitet/Økonomi/Elevoptag/Årsværk, én måler pr. måling (Version uden valg = Basis) |
+| `BI_SOSU.Report/` | Fire sider (én pr. tabel) med matricer og drill; Version- og År-slicere |
+| `tools/valider-rapport.ps1` | Validerer PBIR: JSON, felter mod TMDL, queryRef/selectorer (selvtest først) |
 
 ---
 

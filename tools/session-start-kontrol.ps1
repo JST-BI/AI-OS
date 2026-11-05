@@ -67,9 +67,10 @@ if (-not (Test-Path -LiteralPath $SOSU)) {
 elseif ($Fuld) {
   # 5) Hvert repo under projektroden har de faste filer. Ingen navne hardkodes -
   #    et nyt projekt er automatisk daekket, og danske mappenavne kan ikke mismatche.
-  #    Kravet er et GYLDIGT repo: BI-SOSU har en .git der kun rummer en 'gk'-mappe - ingen
-  #    HEAD, ingen objects - og er ikke et projekt. "Mappen har .git" alene ville melde fire
-  #    falske fejl i hver session. Testen er filbaseret, saa den koster ingen subprocesser.
+  #    Kravet er et GYLDIGT repo: en mappe hvis .git kun rummer en GitKraken-rest ('gk') - ingen
+  #    HEAD, ingen objects - er ikke et projekt (saadan var BI-SOSU indtil 05-11-2026). "Mappen har
+  #    .git" alene ville melde falske fejl i hver session. Testen er filbaseret, saa den koster
+  #    ingen subprocesser.
   $repos = @(Get-ChildItem -LiteralPath $SOSU -Directory | Where-Object {
     Test-Path -LiteralPath (Join-Path $_.FullName '.git\HEAD')
   })

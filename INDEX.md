@@ -372,7 +372,18 @@ Epx-reformen: skolens tilkendegivelse til STUK (frist 20-01-2027). `Input/` og `
 
 ---
 
-## Fælles på tværs af alle 15 repos
+## BI-SOSU — `<OneDrive>\AI SOSU\BI-SOSU\` (lokalt repo, intet GitHub-remote)
+
+Power BI-rapporten BI_SOSU: de fire 4.2-tabeller fra DATA-BUDGET_PROGNOSE som matricer med drill. `Input/` og `Output/` gitignored (navne i tabel 2 og 4). Oprettet 2026-11-05.
+
+| Fil | Beskrivelse |
+|---|---|
+| `AGENTS.md` | Projektregler: datakilden (4.2's flade datatabel, ingen egne beregninger), identitet med 4.2, persondata |
+| `REVIEW.md` | Review-instruktioner (skabelon); importeret i `AGENTS.md` med `@REVIEW.md` |
+
+---
+
+## Fælles på tværs af alle 16 repos
 
 | Fil | Beskrivelse |
 |---|---|
@@ -385,6 +396,6 @@ Epx-reformen: skolens tilkendegivelse til STUK (frist 20-01-2027). `Input/` og `
 | `.gitignore` | Bl.a. Excel-/rådata-ignorering hvor relevant |
 | `_Arkiv/` | Udgåede versioner (projekt-repos) |
 
-**14 repos** = AI OS + 13 projekter. Fem af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
+**16 repos** = AI OS + 15 projekter. Syv af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`, `ADM-INSTITUTIONSLANDSKAB`, `BI-SOSU`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
 
 **Bemærk (kun Claude Code)**: Claude Codes persistente hukommelse ligger lokalt under `~/.claude/projects/<AI OS-projekt>/memory/` med eget indeks `MEMORY.md` — den er personlig, ikke versionsstyret og ikke en del af repo-strukturen.

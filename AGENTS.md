@@ -26,6 +26,7 @@ Alle arbejdsprojekter ligger i `<OneDrive>\AI SOSU\<PROJEKT>`, ét git-repo pr. 
 | `BI-OEKONOMI` | Power BI: HR/økonomi-rapporten og den semantiske model (HR_OEKONOMI) |
 | `BI-OPTAG FRAVÆR` | Power BI: elevoptag og skoleforløbsfravær (Studie+ Z8312 + Z8224S) |
 | `BI-OPGAVEOVERSIGT` | Power BI: opgaveoversigt mod arbejdstidsnorm |
+| `BI-SOSU` | Power BI: rapporten BI_SOSU — de fire 4.2-tabeller (elevaktivitet, økonomi, elevoptag, årsværk) som matricer med drill |
 | `DATA-BUDGET_PROGNOSE` | Finansiel analyse, budget og prognose (Navision + BRUGER-budget → .xlsx) |
 | `SYS-INNOMATE` | Mailskabeloner og procesplaner for on-/offboarding |
 | `ADM-HÅNDBØGER` | Personalehåndbog og Lederhåndbog |
@@ -42,16 +43,15 @@ Hvert projekt har sin egen `AGENTS.md` med projektets regler — den er facit fo
 Er opgaven ikke dækket af en række herover, så spørg hvilket projekt den hører til frem for at
 gætte.
 
-`ADM-MØDER/`, `ADM-REVISION/` og `BI-SOSU/` er **ikke** projekter (løse filer / tom / ugyldig
-`.git`). Bliver en af dem til et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken
-her.
+`ADM-MØDER/` og `ADM-REVISION/` er **ikke** projekter (løse filer / tom). Bliver en af dem til
+et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken her.
 
-`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER` og
-`ADM-INSTITUTIONSLANDSKAB` har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden
+`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`,
+`ADM-INSTITUTIONSLANDSKAB` og `BI-SOSU` har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden
 JSTs ord. `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER` har
-`Input/` i `.gitignore`, fordi materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING` og
-`ADM-BESPARELSER` gitignorer også `Output/` af samme grund (oversigter og varslinger med
-navngivne medarbejdere).
+`Input/` i `.gitignore`, fordi materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING`,
+`ADM-BESPARELSER` og `BI-SOSU` gitignorer også `Output/` af samme grund (oversigter, varslinger
+og 4.2-tabeller med navngivne medarbejdere).
 
 ## Placering — én arbejdskopi, delte kopier på Y:
 

@@ -233,7 +233,7 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 
 ## ADM-KANTINE — `<OneDrive>\AI SOSU\ADM-KANTINE\` (repo: [JST-BI/ADM-KANTINE](https://github.com/JST-BI/ADM-KANTINE))
 
-Kantinens menukort (tilrettede udgaver af leverandørens ugemenu) og de ugentlige bestillingssedler til Jespers Torvekøkken og Bilkas bageri.
+Kantinens menukort (tilrettede udgaver af leverandørens ugemenu) og bestillingerne til Jespers Torvekøkken — til og med uge 46 også Bilkas bageri; fra uge 47 laver kantinen selv bagværket (bake-off). Kører dagligt kl. 07.00 (`tools/dagskoersel.ps1`).
 **Bemærk**: `Input/`s PDF'er committes her (små, persondatafrie = dokumentation for hvert ugekort). `.gitattributes` sætter `*.pdf binary`.
 Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — de indeholder navne, mobilnumre og e-mailadresser.
 
@@ -251,18 +251,22 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | `tools/lav-bestillingsseddel.py` | Generator: bestillingssedler med én side pr. afhentnings-/leveringsdag ud fra en JSON-liste — vedhæftes bestillingsmailen. Kræver `python-docx` |
 | `tools/lav-afstemning-xlsx.py` | Bygger ugens afstemningsregneark (8 ark: dag for dag, ugetotaler, kilder, beslutninger, fakturering, pedellens tilbehør) — JSTs kontrolgrundlag. Kaldes med ugenummeret. Kræver `openpyxl` |
 | `tools/lav-kantineoversigt.py` | Dagsoversigt til kantinemedarbejderen: ét ark pr. dag med kiosksalget og hvert arrangement i sin helhed (Jespers, Bilka, kantinen selv/pedellen, kontakt, fakturering) fra ugemodulets `ARRANGEMENTER` |
-| `tools/fredagskoersel.ps1` | Fredagskørslen: starter Outlook, kører `claude -p` med `fredagsprompt.md`, logger til `Output/Bestillinger/_log/`; `-Registrer` opretter opgaven i Opgavestyring (fredag kl. 10.00) |
-| `tools/fredagsprompt.md` | Opgaveteksten til den uovervågede fredagskørsel: næste uges kladder, grænser (aldrig send, kun aggregater), afsluttende statuslinjer |
+| `tools/dagskoersel.ps1` | Dagskørslen kl. 07.00: starter Outlook, henter indbakke og formularer, kører `claude -p` med `dagsprompt.md` når der er grund (fredag, nye bestillinger, manglende ugekort/infoskærm), og udgiver ADM-KANTINE til Y:; `-Registrer` opretter opgaven og afregistrerer den gamle fredagsopgave |
+| `tools/dagsprompt.md` | Opgaveteksten til den uovervågede dagskørsel: kun JTK + bake-off, kladder i kantine@, ajourføringer, ugekort og infoskærm, grænser (aldrig send, kun aggregater) |
 | `tools/afstemningsdata/__init__.py` | Fælles konstanter til regnearket + opslag af kildemails på SHA-256-præfiks, så persondatabærende filnavne ikke står i et versioneret script |
 | `tools/afstemningsdata/uge<nr>.py` | Ét datamodul pr. uge: bestillinger, kilder, beslutninger, åbne punkter, fakturering og tilbehør — så en tidligere uge kan genskabes uændret |
 | `tools/mail-md-til-json.py` | Oversætter bestillingsmailene fra `.md` til `mails.json` (UTF-8, skrives direkte — aldrig med `>`) til kladdescriptet |
-| `tools/opret-kladder.ps1` | Lægger mailene som kladder i JSTs egen Outlook-postkasse OG gemmer dem som `.msg` i `Klar til afsendelse/`. Kalder aldrig `.Send()` |
+| `tools/opret-kladder.ps1` | Lægger mailene som kladder i kantine@sosuranders.dk's postkasse (`-EgenPostkasse`: JSTs egen) OG gemmer dem som `.msg` i `Klar til afsendelse/`. Kalder aldrig `.Send()` |
+| `tools/hent-indbakke.ps1` | Henter nye mails fra kantine@'s indbakke (kun læsning) som `.eml` i `Input/UBEHANDLEDE bestillinger/`; dublet = Message-ID findes allerede under `Input/` |
+| `tools/indbakke.py` | Samler `.eml` af hent-indbakkes Outlook-eksport (Exchange-headere byte for byte) og laver MS Forms-svar (JSON, skema `kantinebestilling-v1`) om til `.eml` |
+| `Input/Formularbestillinger/` | MS Forms-svar fra Power Automate (JSON); `Behandlet/`, `Fejl/` — gitignored (bestillernavne) |
+| `Input/Ikke bestillinger/` | Hentede mails der ikke er bestillinger — gitignored |
 | `Output/Kantine - Prisskilt.pdf` | Prisskilt klar til opslag |
-| `tools/byg-infoskaerme.py` | Generator: bygger ugens tre infoskærms-PowerPoints (floej_c, reception, showroom) — ét menuslide med ugekortet renderet fra PDF'en. Kræver `python-pptx`, `pypdfium2` |
+| `tools/byg-infoskaerme.py` | Generator: bygger ugens ÉNE infoskærms-PowerPoint `Output/Infoskaerm uge <uge>.pptx` — ét menuslide med ugekortet renderet fra PDF'en. Kræver `python-pptx`, `pypdfium2` |
 | `Input/<skaerm>_uge33.pptx` | Historik: uge 33-skærmene med etageplan + tekstmenu (planerne er nu fysiske A-skilte) |
 | `Input/floej_c_uge38.pptx` | JSTs skabelon for menuslidet (topbanner + ugekort som billede) |
 | `Input/Kantine Ugekort 38.pdf` | JSTs kopi af ugekortet, lagt sammen med skabelonen |
-| `Output/<skaerm>_uge<uge>.pptx` | Ugens PowerPoint til de tre infoskærme |
+| `Output/Infoskaerm uge <uge>.pptx` | Ugens PowerPoint til alle infoskærme (fra uge 46); `Output/<skaerm>_uge<uge>.pptx` = de tre ens filer til og med uge 46 (historik) |
 | `tools/lav-finanskladde.py` | Finanskladde for en JTK-faktura: hver fakturalinje får Type, Anledning/bemærkning, Leverandør og Rekvirent ved match mod ugemodulerne; ark for bestilt vs. faktureret, sammentælling (formler + kontrol mod fakturaen) og fund. Kræver `pdfplumber`, `openpyxl` |
 | `Input/Fakturaer/<leverandør>/` | Leverandørfakturaer (PDF) — gitignored (navngiven reference) |
 | `Output/Finanskladder/` | Finanskladder pr. faktura — gitignored (rekvirentnavne) |

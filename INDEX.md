@@ -30,6 +30,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/sync-skills.ps1` | Spejler `.agents/skills/` (kilden) til `.claude/skills/`; `-Check` rapporterer drift (exit 1, kaldes af sessionsstartkontrollen) |
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
 | `AI OS/.agents/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" (spejl i `.claude/skills/`) |
+| `AI OS/.agents/skills/aflever/SKILL.md` | Skill bag kodeordet "Aflever": sikr, bogfør, merge (JST vælger), ff kloner + INDEX, udgiv, ryd op, rapport (spejl i `.claude/skills/`) |
 | `AI OS/.agents/skills/pause/SKILL.md` | Fælles kommando "pause": lokal gemning, hashverificeret backup, genoptagelsesnotat og stop (spejl i `.claude/skills/`); henvises fra alle 13 projekters AGENTS.md |
 | `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
 | `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv; persondatavagten vurderer altid queryen før kørsel; `-LokalBehandling` slår den fra for scripts der aggregerer lokalt |

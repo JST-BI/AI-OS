@@ -1,7 +1,7 @@
 #!/bin/sh
 # Versioneret pre-commit hook (aktiveres med: git config core.hooksPath .githooks)
 # 1) Blokerer commit af Excel-filer med persondata (navn/CPR/mail).
-# 2) Blokerer commit hvor CLAUDE.md er andet end pegefilen @AGENTS.md (AGENTS.md er instruktionsfilen).
+# 2) Blokerer commit af CLAUDE.md/CLAUDE.local.md/.claude/CLAUDE.md (AGENTS.md er eneste instruktionsfil).
 dir="$(dirname "$0")"
 if command -v python >/dev/null 2>&1; then PY=python
 elif command -v py >/dev/null 2>&1; then PY=py
@@ -9,4 +9,5 @@ else echo "pre-commit: python ikke fundet - kan ikke scanne Excel for persondata
 fi
 
 "$PY" "$dir/check_excel_pii.py" || exit 1
-"$PY" "$dir/check_md_mirror.py" || exit 1
+"$PY" "$dir/check_kun_agents_md.py" || exit 1
+"$PY" "$dir/check_skills_mirror.py" || exit 1

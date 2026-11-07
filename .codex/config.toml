@@ -11,14 +11,14 @@
 # afsnittet "Codex-opsaetning paa en ny maskine" i AGENTS.md.
 
 # --- AGENTS.md-indlaesning ------------------------------------------------
-# AGENTS.md er den eneste instruktionsfil (CLAUDE.md er kun en pegefil) og vokser hver gang en ny
+# AGENTS.md er den eneste instruktionsfil (ingen CLAUDE.md) og vokser hver gang en ny
 # laering skrives ind. Standardloftet er 65536 bytes, og filen ligger allerede
 # omkring 43 KB - naar den passerer graensen, afkortes den UDEN varsel, og Codex
 # mister de nederste afsnit (PowerShell-, TMDL- og PBIR-faelderne staar der).
 project_doc_max_bytes = 262144
 
-# Ingen fallback til CLAUDE.md: den er en pegefil med "@AGENTS.md" og rummer ingen
-# regler. Mangler AGENTS.md, skal den genskabes - ikke erstattes af en tom fil.
+# Ingen fallback: der findes ingen CLAUDE.md, og ingen anden fil rummer
+# reglerne. Mangler AGENTS.md, skal den genskabes - ikke erstattes af en tom fil.
 project_doc_fallback_filenames = []
 
 # --- Sandkasse og godkendelser -------------------------------------------

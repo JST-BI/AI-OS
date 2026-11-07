@@ -26,6 +26,7 @@ Alle arbejdsprojekter ligger i `<OneDrive>\AI SOSU\<PROJEKT>`, ét git-repo pr. 
 | `BI-OEKONOMI` | Power BI: HR/økonomi-rapporten og den semantiske model (HR_OEKONOMI) |
 | `BI-OPTAG FRAVÆR` | Power BI: elevoptag og skoleforløbsfravær (Studie+ Z8312 + Z8224S) |
 | `BI-OPGAVEOVERSIGT` | Power BI: opgaveoversigt mod arbejdstidsnorm |
+| `BI-SOSU` | Power BI: rapporten BI_SOSU — de fire 4.2-tabeller (elevaktivitet, økonomi, elevoptag, årsværk) som matricer med drill |
 | `DATA-BUDGET_PROGNOSE` | Finansiel analyse, budget og prognose (Navision + BRUGER-budget → .xlsx) |
 | `SYS-INNOMATE` | Mailskabeloner og procesplaner for on-/offboarding |
 | `ADM-HÅNDBØGER` | Personalehåndbog og Lederhåndbog |
@@ -36,21 +37,21 @@ Alle arbejdsprojekter ligger i `<OneDrive>\AI SOSU\<PROJEKT>`, ét git-repo pr. 
 | `ADM-BLANKET` | Blanketter og formularer |
 | `ADM-RETTIGHEDSSTYRING` | Rettighedsstyring på Y:-drevet: ACL- og gruppemedlemsudtræk → adgangsoversigter |
 | `ADM-BESPARELSER` | Afskedigelser ved besparelser: procesplaner og varslinger om påtænkt opsigelse |
+| `ADM-INSTITUTIONSLANDSKAB` | Epx-reformen: skolens tilkendegivelse til STUK (frist 20-01-2027) og egne aktivitetsskøn mod STUKs |
 
 Hvert projekt har sin egen `AGENTS.md` med projektets regler — den er facit for arbejde der.
 Er opgaven ikke dækket af en række herover, så spørg hvilket projekt den hører til frem for at
 gætte.
 
-`ADM-MØDER/`, `ADM-REVISION/` og `BI-SOSU/` er **ikke** projekter (løse filer / tom / ugyldig
-`.git`). Bliver en af dem til et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken
-her.
+`ADM-MØDER/` og `ADM-REVISION/` er **ikke** projekter (løse filer / tom). Bliver en af dem til
+et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken her.
 
-`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER`
-har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden
+`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`,
+`ADM-INSTITUTIONSLANDSKAB` og `BI-SOSU` har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden
 JSTs ord. `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER` har
-`Input/` i `.gitignore`, fordi materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING` og
-`ADM-BESPARELSER` gitignorer også `Output/` af samme grund (oversigter og varslinger med
-navngivne medarbejdere).
+`Input/` i `.gitignore`, fordi materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING`,
+`ADM-BESPARELSER` og `BI-SOSU` gitignorer også `Output/` af samme grund (oversigter, varslinger
+og 4.2-tabeller med navngivne medarbejdere).
 
 ## Placering — én arbejdskopi, delte kopier på Y:
 
@@ -80,6 +81,9 @@ remote** (JST 2026-09-15). Udgiv sørger for det; Y:-klonerne står dog altid p�
 **Eneste undtagelse: `ADM-BESPARELSER` må aldrig kopieres til Y:** — hverken repo eller filer
 (JST 2026-10-16; afskedigelsesvarslinger med navn og CPR). Udgiv springer det over via
 `$IkkePaaY` i `tools/udgiv-til-y.ps1`; et nyt fortroligt projekt føjes til den liste.
+Samme følsomhed i en undermappe af et udgivet repo → `$IkkePaaYStier`: i dag
+`DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/` (4.2-grundlaget med `jst-valg.json` – hvem sparerunden omfatter;
+JST 2026-11-05: "Grundlaget bliver lokalt – indtil videre"; fjern stien fra listen kun på JSTs ord).
 
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.
@@ -90,12 +94,18 @@ den.
 
 ## Instruktionsfiler — én fil, uafhængig af AI-model
 
-`AGENTS.md` er den eneste instruktionsfil i hver mappe hvor den findes. `CLAUDE.md` samme sted er
-kun en pegefil med linjen `@AGENTS.md`, som Claude Code indlæser som import; Codex læser
-`AGENTS.md` direkte. Redigér altid `AGENTS.md` — aldrig pegefilen. `& "AI OS\tools\sync-agents-md.ps1"`
-skriver pegefilerne og melder drift (`-Check`); pre-commit-hooken `.githooks/check_md_mirror.py`
-blokerer en `CLAUDE.md` der er andet end pegefilen. Reglerne må aldrig afhænge af hvilken model
-der kører (JST 2026-10-12) — før den dato var `CLAUDE.md` kilden og `AGENTS.md` en byte-kopi.
+`AGENTS.md` er den eneste instruktionsfil i hver mappe hvor den findes; Codex og Claude Code
+(≥ v2.1.277) læser den direkte. Der må ingen `CLAUDE.md`, `CLAUDE.local.md` eller
+`.claude/CLAUDE.md` findes — i mappen eller over den får de Claude Code til at ignorere
+`AGENTS.md`. `& "AI OS\tools\sync-agents-md.ps1" -Check` melder dem (sessionsstartkontrollen kører
+den); uden `-Check` sletter den rene pegefiler. Pre-commit-hooken `.githooks/check_kun_agents_md.py`
+blokerer dem ved commit. Reglerne må aldrig afhænge af hvilken model der kører (JST 2026-10-12);
+pegefilen `CLAUDE.md` → `@AGENTS.md` blev fjernet overalt 2026-11-01.
+
+**Skills følger samme princip:** `.agents/skills/<navn>/` er eneste kilde (Codex læser den);
+`.claude/skills/` er et byte-identisk spejl, som kun `tools/sync-skills.ps1` skriver — Claude Code
+har ingen import for skills, og filserveren afviser symlinks. Redigér aldrig i `.claude/skills/`;
+`.githooks/check_skills_mirror.py` blokerer drift, og sessionsstartkontrollen melder den.
 
 Codex finder `AGENTS.md` ved at gå opad mod nærmeste `.git` — aldrig på tværs. En regel der skal
 gælde i et projekt, skal stå i det projekts egen fil.
@@ -112,6 +122,26 @@ fil som `AGENTS.md` henviser til.
 
 Opsætning af Codex på en ny maskine: `tools/codex-opsaetning.md`.
 
+## Faste kommandoer — pause, bogfør, udgiv
+
+**Kodeordet "pause"** → læs og udfør `.claude/skills/pause/SKILL.md`: gem sikkert i programmerne, verificér en lokal backup, skriv genoptagelsesstatus og stop. Det virker uden internet og udløser ikke bogfør eller udgiv.
+Det forhindrer, at ikke-gemte ændringer eller opgavekontekst mistes ved afbrydelse. Ved "genoptag"/"resume" læses projektets `.codex/tmp/pause/SENESTE.md` eller `GENOPTAG.md` før videre arbejde.
+**Kodeordet "udgiv"** følger fortsat den særskilte `/udgiv`-arbejdsgang ovenfor.
+**Kodeordet "bogfør"** → udfør i denne rækkefølge (JST 2026-11-01):
+1. Gem Power BI, hvis model eller rapport er ændret på disken: Gem via skærmautomatisering, og
+   efterprøv at filerne er gemt. Er en tabel ændret, refreshes den før gem — ellers gemmes en tom
+   tabel. Gem kun det sessionen selv har ændret.
+2. Opdatér hukommelsesfilerne: milepæle, læring fra gates, PR-status og åbne punkter.
+3. Opdatér indekset `MEMORY.md` kort.
+4. Opdatér opgavelisten.
+5. Commit og push instruktionsfilerne (`AGENTS.md`, `INDEX.md`), hvis der er nye regler eller
+   faldgruber.
+6. Giv en kort statusrapport: det leverede (med PR-links) og næste skridt.
+
+Under bogfør og udgiv køres git uden automatisk oprydning: `git -c gc.auto=0 -c maintenance.auto=false …` pr. kald
+(udgiv-scriptet sætter det selv for sin proces og sætter det tilbage ved afslutning). Slå det aldrig fra i repo- eller
+global konfiguration (JST 2026-11-02). Det forhindrer, at en repack på filserveren trækker udgivelsen ud i mange minutter.
+
 ## Arbejdsform
 
 Du udfører selv alt du har værktøjer til — filsøgning, kopiering, git, PowerShell, PBI-refresh og
@@ -121,6 +151,11 @@ kræver git eller filhåndtering bagefter, gør du det selv.
 Kør backlog'en igennem uden pauser. Det eneste der venter på JST er merge af en PR og ægte
 scope-valg. Beslutninger relayet gennem en anden agent er ikke JSTs ord — spørg kort, men lad ikke
 ventetiden være tom.
+
+**Ryd kun op efter dig selv i delte repos:** fjern din egen worktree med
+`git worktree remove <egen sti>` og slet din egen branch. Kør aldrig `git worktree prune` i et repo
+andre sessioner arbejder i — den forsøger at fjerne deres registreringer (2026-11-01: 25 forsøg i
+BI-OEKONOMI, alle afvist af filsystemet).
 
 Svar på dansk. Power BI-model og -rapport er på US English.
 
@@ -181,6 +216,16 @@ betyder, hvad agenten skal efterprøve mod kilden, og et eksplicit persondata-fo
 **Gate-loft: tre runder.** Er `pbi-kritik` eller `pbi-design` ikke nået til GO efter tre runder, så
 stop og læg valget frem for JST med de udestående fund. Send alt kendt til gaten på én gang frem
 for ét fix ad gangen, og kør de to gates parallelt.
+
+## Review
+
+`REVIEW.md` er facit for hvad et review leder efter, og hvordan fund mærkes
+(`Important`/`Nit`/`Pre-existing`). Linjen herunder importerer den i Claude Code, så også lokal
+`/code-review` følger den (efterprøvet 2026-11-01 — kommandoen læser ellers ikke `REVIEW.md`);
+andre værktøjer læser filen direkte. Hvert projekt har sin egen `REVIEW.md` med samme import;
+den fælles del kommer fra `tools/review-skabelon.md`.
+
+@REVIEW.md
 
 ## Mail — agenten sender ALDRIG
 

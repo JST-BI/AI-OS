@@ -38,7 +38,7 @@ Du læser, analyserer og opdaterer `.md`-filer. Du skriver ikke DAX, M-kode, TMD
 | ADM-AFTALER AGENTS.md | `<OneDrive>\AI SOSU\ADM-AFTALER\AGENTS.md` |
 | ADM-BLANKET AGENTS.md | `<OneDrive>\AI SOSU\ADM-BLANKET\AGENTS.md` |
 
-`AGENTS.md` er den eneste instruktionsfil i hvert repo (uafhængig af AI-model). `CLAUDE.md` ved siden af er kun pegefilen `@AGENTS.md` — rør den aldrig; `<OneDrive>\AI OS\tools\sync-agents-md.ps1 -Check` verificerer det.
+`AGENTS.md` er den eneste instruktionsfil i hvert repo (uafhængig af AI-model). Der må ingen `CLAUDE.md`, `CLAUDE.local.md` eller `.claude/CLAUDE.md` findes — de får Claude Code til at ignorere `AGENTS.md`; `<OneDrive>\AI OS\tools\sync-agents-md.ps1 -Check` verificerer det.
 
 ### Sekundære filer
 - `.claude/rules/*.md` i hvert projekt (workflow-mønstre)
@@ -98,7 +98,7 @@ For hvert AGENTS.md du opdaterer, rapportér:
 
 ## Git-workflow — obligatorisk
 
-Du committer ALTID dine ændringer i hvert berørt repo. Instruktionsfil-opdateringer (`AGENTS.md`, `AGENTS.md`, `INDEX.md`) må efter AI OS' hovedregel committes direkte til `main`; andre ændringer følger projektets branch-/PR-regel. Kør altid pegefil-kontrollen før commit:
+Du committer ALTID dine ændringer i hvert berørt repo. Instruktionsfil-opdateringer (`AGENTS.md`, `INDEX.md`) må efter AI OS' hovedregel committes direkte til `main`; andre ændringer følger projektets branch-/PR-regel. Kør altid instruktionsfil-kontrollen før commit:
 
 ```powershell
 & "<OneDrive>\AI OS\tools\sync-agents-md.ps1" -Check

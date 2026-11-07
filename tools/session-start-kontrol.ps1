@@ -20,7 +20,7 @@
   hardkoder derfor ingen projektnavne mere: det opregner de mapper der faktisk findes.
 
 .PARAMETER Fuld
-  Kontrollér ogsaa hvert projekt-repos faste filer. Uden flaget koeres kun pegefil- og
+  Kontrollér ogsaa hvert projekt-repos faste filer. Uden flaget koeres kun instruktionsfil- og
   rodkontrollen - det hurtige, der faktisk driver.
 #>
 param([switch]$Fuld)
@@ -30,7 +30,7 @@ $AIOS = Split-Path -Parent $PSScriptRoot
 $SOSU = Join-Path (Split-Path -Parent $AIOS) 'AI SOSU'
 $fejl = New-Object System.Collections.Generic.List[string]
 
-# 1) AGENTS.md er instruktionsfilen og CLAUDE.md pegefilen @AGENTS.md i alle mapper med mindst en af dem
+# 1) AGENTS.md er eneste instruktionsfil - ingen CLAUDE.md-varianter i AI OS, projekterne eller over dem
 $sync = Join-Path $AIOS 'tools\sync-agents-md.ps1'
 # *>&1 - ikke 2>&1: sync-scriptet skriver med Write-Host, og den gaar til informations-
 # stroemmen. Fanges den ikke, skriver hooken sync-scriptets "OK"-linje ved HVER sessionsstart,
@@ -38,14 +38,20 @@ $sync = Join-Path $AIOS 'tools\sync-agents-md.ps1'
 $ud = & $sync -Check *>&1
 if ($LASTEXITCODE -ne 0) {
   $linjer = @($ud | Where-Object { "$_" -match '\S' } | ForEach-Object { "$_".Trim() })
-  $fejl.Add("Instruktionsfil-drift (CLAUDE.md skal kun vaere pegefilen @AGENTS.md): $($linjer -join ' | ')")
+  $fejl.Add("Instruktionsfil-drift (ingen CLAUDE.md-varianter - AGENTS.md er eneste instruktionsfil): $($linjer -join ' | ')")
+}
+
+# 1b) .agents\skills\ er eneste kilde til skills, .claude\skills\ et genereret spejl (samme princip)
+$ud = & (Join-Path $AIOS 'tools\sync-skills.ps1') -Check *>&1
+if ($LASTEXITCODE -ne 0) {
+  $linjer = @($ud | Where-Object { "$_" -match '\S' } | ForEach-Object { "$_".Trim() })
+  $fejl.Add("Skill-drift (.claude\skills\ skal vaere et spejl af .agents\skills\): $($linjer -join ' | ')")
 }
 
 # 2) AI OS-roden indeholder kun infrastruktur - ingen loese noter, ingen projektmapper
-$tilladt = @('agents','agents-inaktive','tools','vault','.githooks','.claude','.agents','.codex',
-             '.codex-tmp','.obsidian','.vscode','.git','CLAUDE.md','AGENTS.md','INDEX.md',
-             '.gitattributes','.gitignore',
-             'docs','skills-lock.json')  # docs\agents = Agent skills-konfig (21-10); skills-lock.json = npx skills (obsidian-skills)
+$tilladt = @('agents','agents-inaktive','tools','vault','docs','.githooks','.claude','.agents','.codex',
+             '.codex-tmp','.obsidian','.vscode','.git','AGENTS.md','REVIEW.md','INDEX.md',
+             '.gitattributes','.gitignore','skills-lock.json')  # skills-lock.json = npx skills (obsidian-skills)
 $fremmede = @(Get-ChildItem -LiteralPath $AIOS -Force | Where-Object { $tilladt -notcontains $_.Name })
 if ($fremmede.Count -gt 0) {
   $fejl.Add("AI OS-roden indeholder fremmede elementer: $(($fremmede.Name) -join ', ') - loese .md hoerer i vault\")
@@ -61,15 +67,16 @@ if (-not (Test-Path -LiteralPath $SOSU)) {
 elseif ($Fuld) {
   # 5) Hvert repo under projektroden har de faste filer. Ingen navne hardkodes -
   #    et nyt projekt er automatisk daekket, og danske mappenavne kan ikke mismatche.
-  #    Kravet er et GYLDIGT repo: BI-SOSU har en .git der kun rummer en 'gk'-mappe - ingen
-  #    HEAD, ingen objects - og er ikke et projekt. "Mappen har .git" alene ville melde fire
-  #    falske fejl i hver session. Testen er filbaseret, saa den koster ingen subprocesser.
+  #    Kravet er et GYLDIGT repo: en mappe hvis .git kun rummer en GitKraken-rest ('gk') - ingen
+  #    HEAD, ingen objects - er ikke et projekt (saadan var BI-SOSU indtil 05-11-2026). "Mappen har
+  #    .git" alene ville melde falske fejl i hver session. Testen er filbaseret, saa den koster
+  #    ingen subprocesser.
   $repos = @(Get-ChildItem -LiteralPath $SOSU -Directory | Where-Object {
     Test-Path -LiteralPath (Join-Path $_.FullName '.git\HEAD')
   })
   if ($repos.Count -eq 0) { $fejl.Add("Ingen gyldige git-repos fundet under $SOSU") }
   foreach ($r in $repos) {
-    foreach ($f in @('CLAUDE.md', 'AGENTS.md', '.githooks', '.codex')) {
+    foreach ($f in @('AGENTS.md', 'REVIEW.md', '.githooks', '.codex')) {
       if (-not (Test-Path -LiteralPath (Join-Path $r.FullName $f))) {
         $fejl.Add("$($r.Name): mangler $f")
       }

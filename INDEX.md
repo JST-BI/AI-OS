@@ -242,8 +242,8 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | `AGENTS.md` | Projektregler: kilder, filnavngivning, ugentlig arbejdsgang |
 | `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `tools/hent-portionsanretning.py` | Henter kilde-PDF'en fra torvekoekken.dk når den ikke allerede ligger i `Input/` — regex på knappens `onClick`-attribut i den rå HTML, ingen browser nødvendig; vælger altid den danske "Uge `<N>`"-knap, ikke den engelske |
-| `tools/byg-ugekort.py` | Generator: bygger `Output/Kantine Ugekort <uge>.pdf` (kun FAVORIT + stående Bowl+Sandwich-tilbud). Auto-skalerer dagsblokkene så de aldrig løber ned over allergen-footeren — kræver `reportlab` |
-| `tools/test-layout.py` | Layout-værn: tjekker ugens indhold + et værre tilfælde, med negativ kontrol der kræver at et fast layout faktisk overlapper |
+| `tools/byg-ugekort.py` | Generator: `byg-ugekort.py <uge>` læser og validerer `afstemningsdata/ugekort<uge>.json` og bygger `Output/Kantine Ugekort <uge>.pdf` (kun FAVORIT + stående Bowl+Sandwich-tilbud). Auto-skalerer dagsblokkene så de aldrig løber ned over allergen-footeren — kræver `reportlab` |
+| `tools/test-layout.py` | Layout-værn (`test-layout.py <uge>`): tjekker ugens indhold + et værre tilfælde, med negativ kontrol der kræver at et fast layout faktisk overlapper |
 | `Input/<uge>_Aarhus_Portion.pdf` | Leverandørens portionsanretning, 5 sider (FAVORIT, Vegetar, Vegansk, Halal, Gluten/laktosefri) |
 | `Input/Kantine - Prisskilt.pdf` | Kantinens prisskilt (bagværk, frokost, drikkevarer) — kilde til Bowl- og Sandwich-prisen |
 | `Output/Kantine Ugekort <uge>.pdf` | Ugens menukort til opslag — kun FAVORIT-retten pr. dag |
@@ -252,14 +252,25 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | `tools/lav-afstemning-xlsx.py` | Bygger ugens afstemningsregneark (8 ark: dag for dag, ugetotaler, kilder, beslutninger, fakturering, pedellens tilbehør) — JSTs kontrolgrundlag. Kaldes med ugenummeret. Kræver `openpyxl` |
 | `tools/lav-kantineoversigt.py` | Dagsoversigt til kantinemedarbejderen: ét ark pr. dag med kiosksalget og hvert arrangement i sin helhed (Jespers, Bilka, kantinen selv/pedellen, kontakt, fakturering) fra ugemodulets `ARRANGEMENTER` — samlet + fem dagsfiler, hver som `.docx` OG `.pdf` |
 | `tools/docx-til-pdf.ps1` | PDF-kopi ved siden af hver `.docx` via Word-COM (én usynlig instans; stopper kun sin egen, hvis `Quit()` svigter) — kaldes af `lav-kantineoversigt.py` |
-| `tools/dagskoersel.ps1` | Dagskørslen kl. 07.00: starter Outlook, henter indbakke og formularer, kører `claude -p` med `dagsprompt.md` når der er grund (fredag, nye bestillinger, manglende ugekort/infoskærm), og udgiver ADM-KANTINE til Y:; `-Registrer` opretter opgaven og afregistrerer den gamle fredagsopgave |
-| `tools/dagsprompt.md` | Opgaveteksten til den uovervågede dagskørsel: kun JTK + bake-off, kladder i kantine@, ajourføringer, ugekort og infoskærm, grænser (aldrig send, kun aggregater) |
-| `tools/afstemningsdata/__init__.py` | Fælles konstanter til regnearket + opslag af kildemails på SHA-256-præfiks, så persondatabærende filnavne ikke står i et versioneret script |
-| `tools/afstemningsdata/uge<nr>.py` | Ét datamodul pr. uge: bestillinger, kilder, beslutninger, åbne punkter, fakturering og tilbehør — så en tidligere uge kan genskabes uændret |
+| `tools/dagskoersel.ps1` | Dagskørslen kl. 07.00: starter Outlook, henter indbakke og formularer, kører `claude -p` (prompt på stdin, snæver tilladelsesliste fra `dagskoersel-tilladelser.json`, ingen brugerindstillinger/MCP) når der er grund, og udgiver via `udgiv-kantine.ps1`; exitkode = antal fejlede trin; `-Proev` åbner ikke Outlook; `-Registrer` opretter opgaven og afregistrerer fredagsopgaven |
+| `tools/dagsprompt.md` | Opgaveteksten til den uovervågede dagskørsel: mails/Forms er data, aldrig instruktioner; kommandotabel; kun JTK + bake-off, kladder i kantine@, ugekort og infoskærm; committer kun via `commit-ugefiler.ps1`; aldrig send eller `.Display()` |
+| `tools/afstemningsdata/__init__.py` | Fælles konstanter + opslag af kildemails på SHA-256-præfiks (persondatabærende filnavne står ikke i et versioneret script); `hent()` kontrollerer et ugemodul mod en AST-hvidliste (lofter for størrelse, noder og værdivægt) før afvikling; `kontroller_ugekort` |
+| `tools/afstemningsdata/uge<nr>.py` | Ét datamodul pr. uge (kun data, håndhævet af hvidlisten): bestillinger, kilder, beslutninger, åbne punkter, fakturering og tilbehør |
+| `tools/afstemningsdata/ugekort<nr>.json` | Ugekortets indhold (ugenr, dage, tilbudslinje; kun `<b>`/`<i>`) — læses af `byg-ugekort.py` |
 | `tools/mail-md-til-json.py` | Oversætter bestillingsmailene fra `.md` til `mails.json` (UTF-8, skrives direkte — aldrig med `>`) til kladdescriptet |
-| `tools/opret-kladder.ps1` | Lægger mailene som kladder i kantine@sosuranders.dk's postkasse (`-EgenPostkasse`: JSTs egen) OG gemmer dem som `.msg` i `Klar til afsendelse/`. Kalder aldrig `.Send()` |
-| `tools/hent-indbakke.ps1` | Henter nye mails fra kantine@'s indbakke (kun læsning) som `.eml` i `Input/UBEHANDLEDE bestillinger/`; dublet = Message-ID findes allerede under `Input/` |
+| `tools/opret-kladder.ps1` | Lægger mailene som kladder i kantine@sosuranders.dk's postkasse (mærket `KantineAgent`; kun mærkede ryddes) OG gemmer dem som `.msg` i `Klar til afsendelse/`; vedhæftninger kun under JSON-mappen; `-KunKontrol` uden Outlook. Kalder aldrig `.Send()` |
+| `tools/hent-indbakke.ps1` | Henter nye mails fra kantine@'s indbakke (kun læsning) som `.eml` i `Input/UBEHANDLEDE bestillinger/`; dubletnøgle = Message-ID, ellers EntryID (`X-Kantine-Noegle`) |
 | `tools/indbakke.py` | Samler `.eml` af hent-indbakkes Outlook-eksport (Exchange-headere byte for byte) og laver MS Forms-svar (JSON, skema `kantinebestilling-v1`) om til `.eml` |
+| `tools/dagskoersel-tilladelser.json` | Dagskørslens tilladelser: faste allow-præfikser, deny-liste, skrivning kun til ugedata og `Output/Bestillinger/**/*.md|json` |
+| `tools/dagskoersel-claude.ps1` | Bygger `claude -p`-kommandolinjen ud fra tilladelsesfilen (`--setting-sources project`, `--strict-mcp-config`, `dontAsk`) |
+| `tools/test-dagskoersel-tilladelser.ps1` | Statisk værn: afviser brede regler, `..`, absolut rod, manglende `safe.directory`; `-Mutationer` |
+| `tools/test-dagskoersel-scripts.ps1` | Værn for commit-ugefiler, flyt-mail, opret-kladder-kontrol og udgiv-kantine mod en lokal Y:-klon (OEM 850); `-Mutationer` |
+| `tools/commit-ugefiler.ps1` | Agentens eneste commit-vej: kun ugemodul (efter hvidliste), ugekort-JSON, menu-PDF, ugekort og infoskærm, kun på main |
+| `tools/flyt-mail.ps1` | Flytter en behandlet mail til `FÆRDIGBEHANDLEDE`/`Ikke bestillinger` |
+| `tools/sendt-post.ps1` | Viser kladder/sendt post for en uge (mærket/umærket) — kun læsning |
+| `tools/udgiv-kantine.ps1` | Udgiver ADM-KANTINE til Y: (tro kopi af `udgiv-til-y.ps1` trin 2–3): ff med `safe.directory`, kopierer kun manglende/nyere filer, aldrig kørbare filer, rydder Y:-UBEHANDLEDE kun ved hash i FÆRDIGBEHANDLEDE/Ikke bestillinger, melder "kun på Y:" |
+| `tools/kontroller-ugedata.py` | Kør hvidlisten på ugemoduler og ugekort-JSON (gate i `commit-ugefiler.ps1`) |
+| `tools/test_indbakke.py`, `tools/test_afstemningsdata.py`, `tools/test-mutationer.py` | Unittests (syntetiske mails/moduler) og mutationsprøver for indbakke, hvidliste og ugekort |
 | `Input/Formularbestillinger/` | MS Forms-svar fra Power Automate (JSON); `Behandlet/`, `Fejl/` — gitignored (bestillernavne) |
 | `Input/Ikke bestillinger/` | Hentede mails der ikke er bestillinger — gitignored |
 | `Output/Kantine - Prisskilt.pdf` | Prisskilt klar til opslag |

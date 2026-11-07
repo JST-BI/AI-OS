@@ -122,7 +122,11 @@ fil som `AGENTS.md` henviser til.
 
 Opsætning af Codex på en ny maskine: `tools/codex-opsaetning.md`.
 
-## Faste kommandoer — pause, bogfør, udgiv
+## Faste kommandoer — pause, bogfør, udgiv, aflever
+
+**Kodeordet "aflever"** (eller "bogfør, merge og udgiv") → skill `/aflever`: sikr egne grene, bogfør, ét
+merge-valg til JST over de klare PR'er, ff OneDrive-klonerne + INDEX, udgiv, ryd egne worktrees op, samlet
+rapport (JST 2026-11-07). Bogfør og udgiv alene dækker ikke push af grene, klonernes ff eller oprydning.
 
 **Kodeordet "pause"** → læs og udfør `.claude/skills/pause/SKILL.md`: gem sikkert i programmerne, verificér en lokal backup, skriv genoptagelsesstatus og stop. Det virker uden internet og udløser ikke bogfør eller udgiv.
 Det forhindrer, at ikke-gemte ændringer eller opgavekontekst mistes ved afbrydelse. Ved "genoptag"/"resume" læses projektets `.codex/tmp/pause/SENESTE.md` eller `GENOPTAG.md` før videre arbejde.

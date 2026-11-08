@@ -18,7 +18,8 @@ filerne – ikke husket).
 1. **Find emnet og læs kilden.** Læs de filer, emnet består af (kode, konfiguration, README,
    AGENTS.md). Navne på filer, kolonner, målere, trin og knapper skrives præcis som i kilden. Et
    opfundet navn sender læseren efter noget, der ikke findes. Er noget uklart i kilden, så skriv det
-   som uklart frem for at gætte.
+   som uklart frem for at gætte. **Notér den fulde sti til hver fil, du læser** (fx
+   `C:\Users\…\tools\budget2027\slutkontrol.py`, skrevet helt ud) – den skal stå i "Hvor ligger det".
 2. **Svar på læserens fem spørgsmål**, i denne rækkefølge, før du skriver noget andet:
    - Hvad er det? (én sætning + en hverdagssammenligning)
    - Hvorfor findes det? (hvilket problem løser det)
@@ -35,6 +36,9 @@ filerne – ikke husket).
 6. **Tjek teksten maskinelt:** `python -I -B -X utf8 <denne skill>/scripts/ste_tjek.py <side.html>`.
    Scriptet melder for lange sætninger, passiv form, "man", forkortelser uden forklaring og ord fra
    fy-listen. Ret hvert fund, eller lad det stå med god grund (fx et navn fra kilden).
+   Linjen `"Hvor ligger det"` skal sige **OK**: mindst én fuld sti, ingen relative stier
+   (`AI SOSU\…`, `tools\…`) og intet filnavn uden sti i det afsnit. En relativ sti kan læseren ikke
+   sætte ind i Stifinder, og et løst filnavn kan ligge mange steder.
 7. **Udgiv** med Artifact-værktøjet og giv JST linket.
 
 ## Sidens opbygning (skabelon)
@@ -51,7 +55,7 @@ Brug denne rækkefølge. Den følger læserens spørgsmål, så hun aldrig skal 
 | **Det skal du gøre** | Procedure: ét trin = én handling | Nummererede trin-kort; advarsler før trinnet |
 | **Hvis noget går galt** | Tabel: Det ser du · Det betyder det · Gør dette | Statusikoner (✔ / ⚠ / ✖) med tekst – aldrig farve alene |
 | **Ord du møder** | Fagord → forklaring i én sætning | – |
-| **Hvor ligger det** | Den fulde sti til hver kildefil som én tekst, der kan kopieres (ikke mappe og filnavn hver for sig – læseren skal kunne sætte stien direkte ind i Stifinder), samt links | – |
+| **Hvor ligger det** | Én linje pr. fil: hvad filen er + den fulde sti som én tekst, der kan kopieres (`C:\…`, `Y:\…` eller `\\server\…` – aldrig mappe og filnavn hver for sig, aldrig en relativ sti). Mapper med fuld sti er også tilladt. Links | – |
 | **For teknikere** (valgfri, sammenfoldet) | Kode, kommandoer, detaljer | – |
 
 Kode og kommandoer hører kun til i "For teknikere" eller i "Det skal du gøre", når læseren selv skal
@@ -85,7 +89,8 @@ Pynt uden information hjælper ikke en lægmand – den forsinker hende.
 
 ## Grænser
 
-- **Persondata:** ingen navne, CPR-numre eller e-mailadresser på siden – heller ikke som eksempel.
+- **Persondata:** ingen navne, initialer, CPR-numre eller e-mailadresser på siden – heller ikke som
+  eksempel. Skriv rollen ("den ansvarlige for budgettet", "økonomichefen") frem for initialer.
   Brug aggregater (antal, summer) og opdigtede, tydeligt fiktive eksempler ("Medarbejder A").
   Artefakter ligger på claude.ai; det er data, der forlader maskinen.
 - **Ingen gætværk:** står noget ikke i kilden, så skriv "ikke beskrevet i kilden".

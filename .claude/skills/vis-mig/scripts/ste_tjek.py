@@ -10,9 +10,11 @@ Læser den synlige tekst (ikke <script>, <style>, <pre>, <code>, <svg>-kode elle
   - ord med mere end 20 bogstaver uden tegn som _ . / \\ (lange sammensætninger, STE 2.1)
   - forkortelser med store bogstaver og om de står i <abbr title> eller i "Ord du møder" (STE 8.1)
   - figurer (<svg>, <pre class="mermaid">, <img>) uden <figcaption> (SKILL.md "Grafik")
+  - afsnittet "Hvor ligger det": OK kun med mindst én fuld sti (C:\\, Y:\\, \\\\server) og uden relative stier
+    og løse filnavne (SKILL.md "Sidens opbygning")
 Exit 0 altid – fundene er råd, ikke stop. Navne fra kilden må gerne stå.
 """
-import argparse, re, sys
+import argparse, os, re, sys
 from html.parser import HTMLParser
 
 FY = ['man', 'evt.', 'mv.', 'm.m.', 'osv.', 'bl.a.', 'ift.', 'ifm.', 'jf.', 'dvs.', 'pga.', 'vha.', 'hhv.',
@@ -22,7 +24,9 @@ SKJUL = {'script', 'style', 'pre', 'code', 'svg', 'kbd', 'samp'}
 BLOK = {'p', 'li', 'td', 'th', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'figcaption', 'dd', 'dt', 'blockquote', 'caption', 'summary', 'div', 'section'}
 PASSIV = re.compile(r'\b\w{3,}(?:eres|es)\b', re.I)
 IKKE_PASSIV = {'findes', 'synes', 'mindes', 'lykkes', 'skyldes', 'trives', 'kendes', 'ses', 'des', 'disses', 'hinandens',
-               'ordres', 'filens', 'lines', 'tabellens', 'gruppes', 'måles'}
+               'ordres', 'filens', 'lines', 'tabellens', 'gruppes', 'måles', 'parentes', 'proces'}
+# ikke forkortelser: STE-advarselsordene (references/ste-dansk.md 7.2), statusord og måleenheder
+IKKE_FORKORTELSE = {'ADVARSEL', 'FORSIGTIG', 'BEMÆRK', 'OK', 'KB', 'MB', 'GB', 'TB'}
 
 
 class Laeser(HTMLParser):
@@ -103,6 +107,38 @@ class Laeser(HTMLParser):
         self.buf.append(data)
 
 
+EXT = r'(?:ps1|py|tmdl|pbip|pbix|xlsx|xlsm|json|md|csv|dax|txt|html|pdf|docx|pptx)'
+FULD = re.compile(r'(?:\b[A-Za-z]:\\|\\\\[\w.$-]+\\)[^<>"\n]*?(?=\s*(?:$|[,;)]\s|\si\s|\s\(|\.\s))')   # drev- eller UNC-sti (" - " hører til OneDrive-stien)
+RELATIV = re.compile(r'(?<![:\\\w])[\w][\w .+()-]*(?:[\\/][\w .+()-]+)+\.' + EXT + r'\b', re.I)   # mappe\fil.ext uden drev
+FILNAVN = re.compile(r'(?<![\\/\w.-])[\w.+-]+\.' + EXT + r'\b', re.I)
+
+
+def tjek_stier(html):
+    """SKILL.md 'Hvor ligger det': den fulde sti til hver kildefil som én tekst, der kan sættes ind i Stifinder. Læser
+    afsnittets rå tekst (også <code>) stykke for stykke og melder: fulde stier (C:\\..., Y:\\..., \\\\server\\...),
+    relative stier (mappe\\fil.ext uden drev) og filnavne uden sti. OK = mindst én fuld sti og ingen af de to andre."""
+    import html as h
+    m = re.search(r'(?is)<h[23][^>]*>[^<]*hvor ligger[^<]*</h[23]>(.*?)(?=<h[23][\s>]|</body>|$)', html)
+    if not m:
+        return '"Hvor ligger det": AFSNIT MANGLER'
+    stykker = [h.unescape(s).strip() for s in re.split(r'<[^>]+>', m.group(1))]
+    fulde, relative, uden = [], [], []
+    for s in filter(None, stykker):
+        fs = FULD.findall(s)
+        fulde += fs
+        rest = FULD.sub(' ', s)
+        rs = RELATIV.findall(rest)
+        relative += [x.strip() for x in rs]
+        uden += FILNAVN.findall(RELATIV.sub(' ', rest))
+    kendte = {os.path.basename(x.replace('\\', '/')).lower() for x in fulde}
+    uden = sorted({f for f in uden if f.lower() not in kendte})
+    relative = sorted(set(relative))
+    status = 'OK' if fulde and not relative and not uden else 'RET'
+    return ('"Hvor ligger det": %s - fulde stier %d, relative stier %d%s, filnavne uden sti %d%s' % (
+        status, len(fulde), len(relative), (' (' + '; '.join(relative[:5]) + ')') if relative else '',
+        len(uden), (' (' + ', '.join(uden[:8]) + ')') if uden else ''))
+
+
 def saetninger(t):
     # punktum efter forkortelse/tal splitter ikke; ét ord = token med mindst ét bogstav eller ciffer
     dele = re.split(r'(?<=[.!?])\s+(?=[A-ZÆØÅ0-9"«(])', t)
@@ -119,7 +155,8 @@ def main(argv=None):
     ap.add_argument('fil'); ap.add_argument('--maks-trin', type=int, default=20); ap.add_argument('--maks-tekst', type=int, default=25)
     a = ap.parse_args(argv)
     p = Laeser()
-    p.feed(open(a.fil, encoding='utf-8').read()); p._skyl()
+    html = open(a.fil, encoding='utf-8').read()
+    p.feed(html); p._skyl()
     lange, fy, passiv, langeord, forkort = [], {}, [], {}, {}
     n_s = n_ord = 0
     for slags, t in p.tekster:
@@ -136,7 +173,7 @@ def main(argv=None):
                         fy[f] = fy.get(f, 0) + 1
                 if len(xl) > 20 and not re.search(r'[_./\\0-9-]', x):
                     langeord[xl] = langeord.get(xl, 0) + 1
-                if re.fullmatch(r'[A-ZÆØÅ]{2,6}\d*', x.strip('.,;:()"')):
+                if re.fullmatch(r'[A-ZÆØÅ]{2,6}\d*', x.strip('.,;:()"')) and x.strip('.,;:()"') not in IKKE_FORKORTELSE:
                     forkort[x.strip('.,;:()"')] = forkort.get(x.strip('.,;:()"'), 0) + 1
             if slags == 'trin':
                 for m in PASSIV.finditer(s):
@@ -153,6 +190,7 @@ def main(argv=None):
     for o, s in passiv[:15]:
         print(f'    "{o}": {s}')
     print(f'  lange ord (> 20 bogstaver): {len(langeord)}' + (' – ' + ', '.join(sorted(langeord)[:15]) if langeord else ''))
+    print('  ' + tjek_stier(html))
     uforklaret = [k for k in sorted(forkort) if k not in p.abbr and k not in ordliste]
     print(f'  forkortelser: {len(forkort)}, heraf uden <abbr title> og uden for "Ord du møder": {len(uforklaret)}'
           + (' – ' + ', '.join(uforklaret[:20]) if uforklaret else ''))

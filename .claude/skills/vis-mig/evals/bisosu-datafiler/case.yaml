@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: bisosu-datafiler
+expected_outcome: |
+  En artefakt-side på dansk efter STE-principperne, der forklarer en lægmand hvordan rapporten leder i tre mapper (OneDrive, Y:, netværksstien) efter de to datafiler, hvorfor begge skal ligge i samme mappe og have den rigtige version, og hvad kollegerne gør ved hver fejlbesked. Med diagram over søgningen.

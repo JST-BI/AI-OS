@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: slutkontrol-stopper
+expected_outcome: |
+  En artefakt-side på dansk efter STE-principperne, der forklarer slutkontrollen for en lægmand (hvad den tjekker, hvorfor et tal skal være 0, at bygget stopper), med grafik og en tabel over hvad man ser, hvad det betyder og hvad man gør. Ingen kode i hovedteksten.

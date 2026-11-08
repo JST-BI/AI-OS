@@ -31,6 +31,10 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
 | `AI OS/.agents/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" (spejl i `.claude/skills/`) |
 | `AI OS/.agents/skills/aflever/SKILL.md` | Skill bag kodeordet "Aflever": sikr, bogfør, merge (JST vælger), ff kloner + INDEX, udgiv, ryd op, rapport (spejl i `.claude/skills/`) |
+| `AI OS/.agents/skills/vis-mig/SKILL.md` | Skill bag kodeordet "Vis mig": teknisk dokumentation som artefakt-side på dansk efter ASD-STE100-principperne, for lægfolk, tekst + grafik (spejl i `.claude/skills/`) |
+| `AI OS/.agents/skills/vis-mig/references/ste-dansk.md` | STE100-reglerne oversat til dansk skrivepraksis: ord, sætningslængde, aktiv form, trin, advarsler, foretrukne ord, fy-liste |
+| `AI OS/.agents/skills/vis-mig/scripts/ste_tjek.py` | Tjek af en færdig side: for lange sætninger, fy-ord, s-passiv i trin, lange ord, uforklarede forkortelser, figurer uden billedtekst |
+| `AI OS/.agents/skills/vis-mig/evals/` | Tre testcases (byggekæden, slutkontrollen, BI_SOSU-datafilerne) med 7 kriterier hver |
 | `AI OS/.agents/skills/pause/SKILL.md` | Fælles kommando "pause": lokal gemning, hashverificeret backup, genoptagelsesnotat og stop (spejl i `.claude/skills/`); henvises fra alle 13 projekters AGENTS.md |
 | `AI OS/tools/codex-config.template.toml` | Kanonisk skabelon for projekternes `.codex/config.toml` |
 | `AI OS/tools/dax-query.ps1` | Genbrugeligt live-DAX-query-værktøj mod PBI Desktops indlejrede msmdsrv; persondatavagten vurderer altid queryen før kørsel; `-LokalBehandling` slår den fra for scripts der aggregerer lokalt |

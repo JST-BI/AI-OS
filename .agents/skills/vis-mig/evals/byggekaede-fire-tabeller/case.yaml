@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: byggekaede-fire-tabeller
+expected_outcome: |
+  En artefakt-side på dansk efter STE-principperne, der for en lægmand forklarer hvad byggekæden er, hvorfor den findes, de store trin fra udtræk til færdige filer med et oversigtsdiagram, og hvad man gør, når et trin stopper. Navne på trin og filer er læst i byg_fire.ps1/README.md.

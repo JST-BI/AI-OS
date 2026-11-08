@@ -45,8 +45,12 @@ PR-nummeret i JSTs egen tekst. Derfor:
 2. Løs konflikter på egne klare PR'er først (merge `origin/main` ind, verificér, push).
 3. Stil **ét** `AskUserQuestion` med `multiSelect` over de klare PR'er (repo + nummer + titel +
    gate-status i beskrivelsen). Ikke-klare nævnes i spørgsmålsteksten med grunden.
+   Tjek basen før spørgsmålet: `gh pr view <n> --repo JST-BI/<repo> --json baseRefName` skal være
+   `main`. En stablet PR, hvis base allerede er squash-merget, lander i den gamle gren og aldrig i
+   main (BI-OEKONOMI #127, 08-11-2026) – flyt basen til `main` (eller lav en ny PR fra `main`) først.
 4. Merge de valgte i afhængighedsrækkefølge (stablede PR'er nedefra; AI OS-INDEX-PR'en efter den
-   PR den indekserer). Efterprøv hver: `gh api repos/JST-BI/<repo>/pulls/<n> --jq .merged`.
+   PR den indekserer). Efterprøv hver: `gh api repos/JST-BI/<repo>/pulls/<n> --jq '[.merged, .base.ref]'`
+   skal give `[true, "main"]`.
    En UI-svarknap er ikke en merge.
 5. PR'ens egne "Efter merge"-trin (fx `dagskoersel.ps1 -Registrer`) udføres nu — et trin der
    registrerer noget udadtil eller sender noget, bekræftes først.

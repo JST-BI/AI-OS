@@ -45,6 +45,17 @@ Forvent "0-ren" ($cs -match '%USERPROFILE%' -and $cs -match 'Y:\\\\AI OS' -and $
 $ct = [IO.File]::ReadAllText((Join-Path $r.Pakke "Indstillinger\Codex\config.toml"))
 Forvent "0-ren" ($ct -notmatch 'hemmeligt-emne' -and $ct -match '\[features\]') "[projects.*] fjernet, [features] beholdt"
 Forvent "0-ren" (Test-Path (Join-Path $r.Pakke "Skills\Personlige\claude\ren-skill\SKILL.md")) "personlig skill med"
+# 0b) Claude Code-mod i dev-mods\<id>\<mod> kommer med, og id-mappen flades ud; en mappe uden plugin.json er ikke et mod
+$h = Byg-Hjem "0b-mod"
+Skriv "$($h.Hjem)\.claude\dev-mods\abc123-id\minmod\.claude-plugin\plugin.json" "{ `"name`": `"minmod`" }"
+Skriv "$($h.Hjem)\.claude\dev-mods\abc123-id\minmod\hooks\hooks.json" "{}"
+Skriv "$($h.Hjem)\.claude\dev-mods\abc123-id\ikke-mod\x.txt" "x"
+Skriv "$($h.Hjem)\.claude\themes\mit-tema.json" "{ `"name`": `"mit-tema`" }"
+$r = Koer "0b-mod" $h
+$m = Join-Path $r.Pakke "Indstillinger\ClaudeCode\mods"
+Forvent "0b-mod" ($r.Kode -eq 0 -and (Test-Path (Join-Path $m "minmod\hooks\hooks.json")) -and -not (Test-Path (Join-Path $m "ikke-mod")) -and -not (Test-Path (Join-Path $m "abc123-id"))) "mod med, fladet ud, ikke-mod udeladt"
+Forvent "0b-mod" (Test-Path (Join-Path $r.Pakke "Indstillinger\ClaudeCode\themes\mit-tema.json")) "tema med"
+Forvent "0b-mod" (([IO.File]::ReadAllText((Join-Path $r.Pakke "LAESMIG.md"))) -match '`minmod`' -and ([IO.File]::ReadAllText((Join-Path $r.Pakke "LAESMIG.md"))) -notmatch '\{\{') "mod listet i LAESMIG, ingen pladsholdere tilbage"
 
 # 1-4) Hver scanning skal stoppe pakken
 # Vaerdi = det hemmelige; det plantes i en saetning og maa aldrig staa i loggen.

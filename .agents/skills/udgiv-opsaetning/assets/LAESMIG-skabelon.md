@@ -43,6 +43,8 @@ Overskriv ikke dine egne filer. Åbn begge filer, og kopiér kun de linjer, du v
 | `Indstillinger\VSCode\extensions.txt` | Listen over udvidelser ({{UDVIDELSER}} stk.). Installér en udvidelse med `code --install-extension <navn>` |
 | `Indstillinger\ClaudeCode\settings.json` | `%USERPROFILE%\.claude\settings.json` |
 | `Indstillinger\ClaudeCode\statusline-command.ps1` | `%USERPROFILE%\.claude\statusline-command.ps1` |
+| `Indstillinger\ClaudeCode\themes\*.json` | `%USERPROFILE%\.claude\themes\` ({{TEMAER}} farvetemaer). Vælg et i `settings.json` med `"theme": "custom:<filnavn uden .json>"` |
+| `Indstillinger\ClaudeCode\mods\<navn>` | Tilføjelser til Claude Code ({{MODS}}). Hos JST ligger de i `%USERPROFILE%\.claude\dev-mods\<mappe>\<navn>`. Bed Claude Code om at installere mappen som mod |
 | `Indstillinger\Codex\config.toml` | `%USERPROFILE%\.codex\config.toml` |
 
 Stierne til JSTs OneDrive er skiftet ud med `Y:\AI OS` og `Y:\AI SOSU`. Stierne til JSTs profil er

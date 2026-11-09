@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   "Udgiv": ajourfoer kollegernes delte kopier paa Y: fra JSTs arbejdskopier (OneDrive) og GitHub.
 .DESCRIPTION
@@ -46,7 +46,7 @@ $ErrorActionPreference = 'Continue'
 # ADM-BESPARELSER rummer afskedigelsesvarslinger med navn og CPR). Bevidst ikke en parameter.
 $IkkePaaY = @('ADM-BESPARELSER')
 # Undermapper der ikke kopieres i trin 2b, selv om repoet ellers udgives (sti fra AI SOSU, med /).
-# DATA-BUDGET's 4.2-grundlag rummer loen\jst-valg.json - hvem sparerunden omfatter, samme foelsomhed
+# DATA-BUDGET's FB-grundlag rummer loen\jst-valg.json - hvem sparerunden omfatter, samme foelsomhed
 # som ADM-BESPARELSER. Om det maa paa Y:, er JSTs afgoerelse (aaben 05-11-2026); indtil da springes det over.
 $IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/')
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }

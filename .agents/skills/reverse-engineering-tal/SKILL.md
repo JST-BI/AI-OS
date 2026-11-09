@@ -1,6 +1,6 @@
 ---
 name: reverse-engineering-tal
-description: Brug når et vedtaget, rapporteret eller tidligere beregnet tal (budget, 4.2, regnskab, PBI-måler, regnearkscelle) skal genskabes, forklares eller oversættes til de forudsætninger der gav det – fx "hvad svarer budgettets årselever til i optag", "hvorfor rammer PBI ikke det vedtagne", "hvilken version af filen er den rigtige", eller når to kilder til samme tal afviger og en fil skal rettes tilbage.
+description: Brug når et vedtaget, rapporteret eller tidligere beregnet tal (budget, FB (budgetforslag), regnskab, PBI-måler, regnearkscelle) skal genskabes, forklares eller oversættes til de forudsætninger der gav det – fx "hvad svarer budgettets årselever til i optag", "hvorfor rammer PBI ikke det vedtagne", "hvilken version af filen er den rigtige", eller når to kilder til samme tal afviger og en fil skal rettes tilbage.
 ---
 
 # Reverse engineering af tal

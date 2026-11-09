@@ -64,6 +64,14 @@ $r = Koer "0b-mod" $h
 $m = Join-Path $r.Pakke "Indstillinger\ClaudeCode\mods"
 Forvent "0b-mod" ($r.Kode -eq 0 -and (Test-Path (Join-Path $m "minmod\hooks\hooks.json")) -and -not (Test-Path (Join-Path $m "ikke-mod")) -and -not (Test-Path (Join-Path $m "abc123-id"))) "mod med, fladet ud, ikke-mod udeladt"
 Forvent "0b-mod" (Test-Path (Join-Path $r.Pakke "Indstillinger\ClaudeCode\themes\mit-tema.json")) "tema med"
+# 0c) Fast installeret mod i ~\.claude\mods vinder over en udviklingskopi med samme navn
+$h = Byg-Hjem "0c-fast"
+Skriv "$($h.Hjem)\.claude\mods\minmod\.claude-plugin\plugin.json" "{ `"name`": `"minmod`", `"version`": `"0.2.0`" }"
+Skriv "$($h.Hjem)\.claude\dev-mods\abc123-id\minmod\.claude-plugin\plugin.json" "{ `"name`": `"minmod`", `"version`": `"0.1.0`" }"
+$r = Koer "0c-fast" $h
+$pj = Join-Path $r.Pakke "Indstillinger\ClaudeCode\mods\minmod\.claude-plugin\plugin.json"
+Forvent "0c-fast" ($r.Kode -eq 0 -and (Test-Path $pj) -and ([IO.File]::ReadAllText($pj)) -match '0\.2\.0') "den faste kopi er med, ikke udviklingskopien"
+Forvent "0c-fast" (([IO.File]::ReadAllText((Join-Path $r.Pakke "LAESMIG.md"))) -match 'ClaudeCode\\mods\\minmod') "udviklingskopien listet som dublet"
 Forvent "0b-mod" (([IO.File]::ReadAllText((Join-Path $r.Pakke "LAESMIG.md"))) -match '`minmod`' -and ([IO.File]::ReadAllText((Join-Path $r.Pakke "LAESMIG.md"))) -notmatch '\{\{') "mod listet i LAESMIG, ingen pladsholdere tilbage"
 
 # 1-4) Hver scanning skal stoppe pakken

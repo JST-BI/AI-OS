@@ -169,10 +169,11 @@ foreach ($f in 'settings.json', 'statusline-command.ps1') {
 $tema = Join-Path $Hjem ".claude\themes"
 $temaer = @(Get-ChildItem -LiteralPath $tema -File -ErrorAction SilentlyContinue).Count
 if ($temaer) { Kopier-Mappe $tema (Join-Path $ind "ClaudeCode\themes") }
-# Claude Code-mods (fx statuspanel) ligger i ~\.claude\dev-mods\<id>\<mod> med .claude-plugin\plugin.json.
-# Id-mappen flades ud. Uden dette laa et mod kun i en loes kopi (AI SOSU\AI SETUP, ryddet 09-11-2026).
+# Claude Code-mods (fx statuspanel), mapper med .claude-plugin\plugin.json. Foerst de faste i ~\.claude\mods\<mod>
+# (lokal markedsplads jst-mods, installeret for brugeren 09-11-2026 - den kopi rettes i), saa udviklingskopier i
+# ~\.claude\dev-mods\<id>\<mod>; samme navn to gange er en dublet, og den faste vinder. Id-mappen flades ud.
 $mods = @()
-Get-ChildItem -LiteralPath (Join-Path $Hjem ".claude\dev-mods") -Directory -ErrorAction SilentlyContinue | ForEach-Object {
+@((Get-Item -LiteralPath (Join-Path $Hjem ".claude\mods") -ErrorAction SilentlyContinue)) + @(Get-ChildItem -LiteralPath (Join-Path $Hjem ".claude\dev-mods") -Directory -ErrorAction SilentlyContinue) | Where-Object { $_ } | ForEach-Object {
   Get-ChildItem -LiteralPath $_.FullName -Directory | Where-Object { Test-Path -LiteralPath (Join-Path $_.FullName ".claude-plugin\plugin.json") } | ForEach-Object {
     $dst = Join-Path $ind "ClaudeCode\mods\$($_.Name)"
     if (Test-Path -LiteralPath $dst) { $script:dubletter += "ClaudeCode\mods\$($_.Name)"; return }

@@ -30,6 +30,9 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/sync-skills.ps1` | Spejler `.agents/skills/` (kilden) til `.claude/skills/`; `-Check` rapporterer drift (exit 1, kaldes af sessionsstartkontrollen) |
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
 | `AI OS/.agents/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" (spejl i `.claude/skills/`) |
+| `AI OS/tools/udgiv-opsaetning.ps1` | "Udgiv opsætning": samler alle skills (AI OS, projekter, personlige) og JSTs indstillinger i VS Code, Claude Code og Codex i `<OneDrive>\AI OS\Opsaetning` (gitignoreret) → `Y:\AI OS\Opsaetning`; licensfilter, stiomskrivning, stop ved nøgle/CPR/e-mail; `-Proev` |
+| `AI OS/tools/test-udgiv-opsaetning.ps1` | Værn for `udgiv-opsaetning.ps1`: planter nøgle, CPR, e-mail, personlig sti, låst licens og junction én ad gangen og kræver stop/udeladelse |
+| `AI OS/.agents/skills/udgiv-opsaetning/SKILL.md` | Skill bag kodeordet "Udgiv opsætning" + `assets/LAESMIG-skabelon.md` (kollegernes vejledning; spejl i `.claude/skills/`) |
 | `AI OS/.agents/skills/aflever/SKILL.md` | Skill bag kodeordet "Aflever": sikr, bogfør, merge (JST vælger), ff kloner + INDEX, udgiv, ryd op, rapport (spejl i `.claude/skills/`) |
 | `AI OS/.agents/skills/vis-mig/SKILL.md` | Skill bag kodeordet "Vis mig": teknisk dokumentation som artefakt-side på dansk efter ASD-STE100-principperne, for lægfolk, tekst + grafik (spejl i `.claude/skills/`) |
 | `AI OS/.agents/skills/vis-mig/references/ste-dansk.md` | STE100-reglerne oversat til dansk skrivepraksis: ord, sætningslængde, aktiv form, trin, advarsler, foretrukne ord, fy-liste |

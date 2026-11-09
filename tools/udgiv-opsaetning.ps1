@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
   "Udgiv opsaetning": samler alle skills og JSTs indstillinger (VS Code, Claude Code, Codex) i en pakke
-  til kollegerne og laegger den paa Y:\AI OS\Opsaetning.
+  til kollegerne og laegger den paa Y:\AI OS\AI-SETUP.
 .DESCRIPTION
   1) Bygger pakken i en midlertidig mappe:
      Skills\AI-OS\<navn>            <- <OneDrive>\AI OS, .agents/skills paa main (git archive: kun det committede)
@@ -15,14 +15,14 @@
      fjernes; stier til JSTs OneDrive og profil skrives om til Y:\AI OS / Y:\AI SOSU / %USERPROFILE%.
   3) Scanner hver tekstfil i pakken for noegler/tokens, CPR-numre og e-mailadresser. Et fund STOPPER
      alt (exit 3): intet skrives til OneDrive eller Y:. Kun sti, type og antal udskrives - aldrig fundet.
-  4) Spejler pakken til <OneDrive>\AI OS\Opsaetning (genereret, gitignoreret). Derfra kopieres den til
-     Y:\AI OS\Opsaetning. Almindelig "Udgiv" baerer samme mappe videre, saa den hverken ses som
+  4) Spejler pakken til <OneDrive>\AI OS\AI-SETUP (genereret, gitignoreret). Derfra kopieres den til
+     Y:\AI OS\AI-SETUP. Almindelig "Udgiv" baerer samme mappe videre, saa den hverken ses som
      "kun paa Y:" eller "foraeldet".
   Y: slettes der aldrig i, medmindre -RyddForaeldede er givet (JSTs ord, som i udgiv-til-y.ps1).
 .PARAMETER Proev
   Byg og scan pakken, og vis hvad der ville aendre sig paa Y:. Skriver ikke til OneDrive eller Y:.
 .PARAMETER RyddForaeldede
-  Slet filer under Y:\AI OS\Opsaetning, som pakken ikke laengere har.
+  Slet filer under Y:\AI OS\AI-SETUP, som pakken ikke laengere har.
 .EXAMPLE
   & "<OneDrive>\AI OS\tools\udgiv-opsaetning.ps1" -Proev
   & "<OneDrive>\AI OS\tools\udgiv-opsaetning.ps1"
@@ -43,9 +43,8 @@ param(
 )
 $ErrorActionPreference = 'Continue'
 $AIOS = Join-Path $OneDrive "AI OS"
-# Mappen hedder "Ops<ae>tning" med ae (JST 09-11-2026). Scriptet er ren ASCII (PowerShell 5.1 laeser en fil uden
-# BOM som ANSI), saa ae skrives som tegnkode. Kommentarerne staver det "Opsaetning".
-$MappeNavn = "Ops" + [char]0x00E6 + "tning"
+# Mappen hedder AI-SETUP (JST 09-11-2026; foer: Opsaetning).
+$MappeNavn = "AI-SETUP"
 if (-not $Pakke) { $Pakke = Join-Path $AIOS $MappeNavn }
 $Maerke = ".opsaetning-pakke"
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
@@ -252,7 +251,7 @@ foreach ($f in $rest) { L ("  FUND personlig sti tilbage: " + $f.FullName.Substr
 if ($fund) { Stop 3 "$fund fund i pakken - intet er skrevet til OneDrive eller Y:. Pakken ligger til eftersyn i $ny" }
 L "Scanning: 0 fund"
 
-# 5) Pakken -> <OneDrive>\AI OS\Opsaetning (/MIR af en genereret mappe - kun hvis maerket bekraefter den)
+# 5) Pakken -> <OneDrive>\AI OS\AI-SETUP (/MIR af en genereret mappe - kun hvis maerket bekraefter den)
 $yOps = Join-Path $YAIOS $MappeNavn
 if ($Proev) {
   if (Test-Path $YAIOS) {
@@ -270,7 +269,7 @@ if ($LASTEXITCODE -ge 8) { Stop 1 "robocopy til $Pakke fejlede" }
 L "OneDrive: $Pakke ajour"
 Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
 
-# 6) -> Y:\AI OS\Opsaetning. Ingen sletning uden -RyddForaeldede.
+# 6) -> Y:\AI OS\AI-SETUP. Ingen sletning uden -RyddForaeldede.
 if (-not (Test-Path $YAIOS)) { L "Y: kan ikke naas ($YAIOS) - pakken er kun bygget i OneDrive; koer igen med VPN eller UNC"; exit 2 }
 & robocopy $Pakke $yOps /E /R:2 /W:5 /NFL /NDL /NJH /NP | Select-Object -Last 6 | ForEach-Object { L ("  " + $_.Trim()) }
 if ($LASTEXITCODE -ge 8) { Stop 1 "robocopy til $yOps fejlede" }

@@ -131,7 +131,7 @@ rapport (JST 2026-11-07). Bogfør og udgiv alene dækker ikke push af grene, klo
 **Kodeordet "pause"** → læs og udfør `.claude/skills/pause/SKILL.md`: gem sikkert i programmerne, verificér en lokal backup, skriv genoptagelsesstatus og stop. Det virker uden internet og udløser ikke bogfør eller udgiv.
 Det forhindrer, at ikke-gemte ændringer eller opgavekontekst mistes ved afbrydelse. Ved "genoptag"/"resume" læses projektets `.codex/tmp/pause/SENESTE.md` eller `GENOPTAG.md` før videre arbejde.
 **Kodeordet "udgiv"** følger fortsat den særskilte `/udgiv`-arbejdsgang ovenfor.
-**Kodeordet "Udgiv opsætning"** → skill `/udgiv-opsaetning`: alle skills og JSTs indstillinger (VS Code, Claude Code, Codex) til kollegerne i `Y:\AI OS\Opsætning`. Det er den eneste vej, skills kommer på Y: (Udgiv udelader `.agents`/`.claude`); et fund af nøgle, CPR eller e-mail stopper alt.
+**Kodeordet "Udgiv opsætning"** → skill `/udgiv-opsaetning`: alle skills og JSTs indstillinger (VS Code, Claude Code, Codex) til kollegerne i `Y:\AI OS\AI-SETUP`. Det er den eneste vej, skills kommer på Y: (Udgiv udelader `.agents`/`.claude`); et fund af nøgle, CPR eller e-mail stopper alt.
 **Kodeordet "bogfør"** → udfør i denne rækkefølge (JST 2026-11-01):
 1. Gem Power BI, hvis model eller rapport er ændret på disken: Gem via skærmautomatisering, og
    efterprøv at filerne er gemt. Er en tabel ændret, refreshes den før gem — ellers gemmes en tom

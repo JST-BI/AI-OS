@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
   "Udgiv opsaetning": samler alle skills og JSTs indstillinger (VS Code, Claude Code, Codex) i en pakke
-  til kollegerne og laegger den paa Y:\AI OS\Opsaetning.
+  til kollegerne og laegger den paa Y:\AI OS\AI-SETUP.
 .DESCRIPTION
   1) Bygger pakken i en midlertidig mappe:
      Skills\AI-OS\<navn>            <- <OneDrive>\AI OS, .agents/skills paa main (git archive: kun det committede)
@@ -15,14 +15,14 @@
      fjernes; stier til JSTs OneDrive og profil skrives om til Y:\AI OS / Y:\AI SOSU / %USERPROFILE%.
   3) Scanner hver tekstfil i pakken for noegler/tokens, CPR-numre og e-mailadresser. Et fund STOPPER
      alt (exit 3): intet skrives til OneDrive eller Y:. Kun sti, type og antal udskrives - aldrig fundet.
-  4) Spejler pakken til <OneDrive>\AI OS\Opsaetning (genereret, gitignoreret). Derfra kopieres den til
-     Y:\AI OS\Opsaetning. Almindelig "Udgiv" baerer samme mappe videre, saa den hverken ses som
+  4) Spejler pakken til <OneDrive>\AI OS\AI-SETUP (genereret, gitignoreret). Derfra kopieres den til
+     Y:\AI OS\AI-SETUP. Almindelig "Udgiv" baerer samme mappe videre, saa den hverken ses som
      "kun paa Y:" eller "foraeldet".
   Y: slettes der aldrig i, medmindre -RyddForaeldede er givet (JSTs ord, som i udgiv-til-y.ps1).
 .PARAMETER Proev
   Byg og scan pakken, og vis hvad der ville aendre sig paa Y:. Skriver ikke til OneDrive eller Y:.
 .PARAMETER RyddForaeldede
-  Slet filer under Y:\AI OS\Opsaetning, som pakken ikke laengere har.
+  Slet filer under Y:\AI OS\AI-SETUP, som pakken ikke laengere har.
 .EXAMPLE
   & "<OneDrive>\AI OS\tools\udgiv-opsaetning.ps1" -Proev
   & "<OneDrive>\AI OS\tools\udgiv-opsaetning.ps1"
@@ -43,7 +43,9 @@ param(
 )
 $ErrorActionPreference = 'Continue'
 $AIOS = Join-Path $OneDrive "AI OS"
-if (-not $Pakke) { $Pakke = Join-Path $AIOS "Opsaetning" }
+# Mappen hedder AI-SETUP (JST 09-11-2026; foer: Opsaetning).
+$MappeNavn = "AI-SETUP"
+if (-not $Pakke) { $Pakke = Join-Path $AIOS $MappeNavn }
 $Maerke = ".opsaetning-pakke"
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
 function Stop($kode, $m) { L "STOP: $m"; exit $kode }
@@ -160,7 +162,19 @@ foreach ($f in 'settings.json', 'statusline-command.ps1') {
   $s = Join-Path $Hjem ".claude\$f"; if (Test-Path -LiteralPath $s) { Skriv-Omskrevet $s (Join-Path $ind "ClaudeCode\$f") }
 }
 $tema = Join-Path $Hjem ".claude\themes"
-if (Get-ChildItem -LiteralPath $tema -File -ErrorAction SilentlyContinue) { Kopier-Mappe $tema (Join-Path $ind "ClaudeCode\themes") }
+$temaer = @(Get-ChildItem -LiteralPath $tema -File -ErrorAction SilentlyContinue).Count
+if ($temaer) { Kopier-Mappe $tema (Join-Path $ind "ClaudeCode\themes") }
+# Claude Code-mods (fx statuspanel) ligger i ~\.claude\dev-mods\<id>\<mod> med .claude-plugin\plugin.json.
+# Id-mappen flades ud. Uden dette laa et mod kun i en loes kopi (AI SOSU\AI SETUP, ryddet 09-11-2026).
+$mods = @()
+Get-ChildItem -LiteralPath (Join-Path $Hjem ".claude\dev-mods") -Directory -ErrorAction SilentlyContinue | ForEach-Object {
+  Get-ChildItem -LiteralPath $_.FullName -Directory | Where-Object { Test-Path -LiteralPath (Join-Path $_.FullName ".claude-plugin\plugin.json") } | ForEach-Object {
+    $dst = Join-Path $ind "ClaudeCode\mods\$($_.Name)"
+    if (Test-Path -LiteralPath $dst) { $script:dubletter += "ClaudeCode\mods\$($_.Name)"; return }
+    Kopier-Mappe $_.FullName $dst
+    $script:mods += $_.Name
+  }
+}
 
 # Codex: hvidliste af tabeller. [projects.*] har mappenavne afledt af samtalernes emner, og
 # mcp_servers/shell_environment_policy har maskinens stier og miljoe - de kommer aldrig med.
@@ -201,13 +215,15 @@ $t = $t.Replace('{{SKILLS_TABEL}}', $tabel)
 $t = $t.Replace('{{LAAST}}', $(if ($laast) { ($laast | ForEach-Object { "- ``$_``" }) -join "`n" } else { '- ingen' }))
 $t = $t.Replace('{{DUBLETTER}}', $(if ($dubletter) { ($dubletter | ForEach-Object { "- ``$_``" }) -join "`n" } else { '- ingen' }))
 $t = $t.Replace('{{CODEX_FJERNET}}', $(if ($fjernet.Count) { ($fjernet.Keys | ForEach-Object { "``[$_.*]`` ($($fjernet[$_]))" }) -join ', ' } else { 'intet' }))
-$t = $t.Replace('{{UDVIDELSER}}', "$udvidelser")
+$t = $t.Replace('{{UDVIDELSER}}', "$udvidelser").Replace('{{TEMAER}}', "$temaer")
+$t = $t.Replace('{{MODS}}', $(if ($mods) { ($mods | ForEach-Object { "``$_``" }) -join ', ' } else { 'ingen' }))
 [IO.File]::WriteAllText((Join-Path $ny "LAESMIG.md"), $t, $enc)
 [IO.File]::WriteAllText((Join-Path $ny $Maerke), "Genereret af AI OS\tools\udgiv-opsaetning.ps1 - rediger ikke her.`r`n", $enc)
 
 $antal = @(Get-ChildItem -LiteralPath $ny -Recurse -File -Force).Count
 L ("Pakke bygget: $antal filer; skills " + (($optalt.Keys | ForEach-Object { "$_ $($optalt[$_])" }) -join ', '))
 L "  ikke med (licens): $($laast.Count); dubletter: $($dubletter.Count); mapper uden SKILL.md: $udenSkill"
+L "  Claude Code: temaer $temaer; mods $($mods.Count) ($($mods -join ', '))"
 L ("  stier omskrevet: $omskrevet; Codex fjernet: " + (($fjernet.Keys | ForEach-Object { "$_ ($($fjernet[$_]))" }) -join ', ') + "; Codex-linjer med sti fjernet: $stiLinjer")
 
 # 4) Scan. Et fund stopper alt. Kun sti, type og antal - aldrig selve fundet (e-mail: kun domaenet).
@@ -218,7 +234,7 @@ $mail = '[A-Za-z0-9._%+\-]+@([A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)*\.[A-Za-z]{2,})'
 # Pladsholdere i dokumentation (Anthropics claude-api-skill: api_key="your-api-key", "xoxp-...") og
 # eksempeladresser er ikke fund. Tilfoej kun et moenster her med begrundelse i commitbeskeden.
 $pladsholder = '(?i)your[-_ ]|<[^>]*>|example|placeholder|x{4,}|\.\.\.|changeme|dummy|\*{3,}'
-$tilladt = '(?i)^(noreply|no-reply)@|@(example\.(com|org|net)|anthropic\.com|users\.noreply\.github\.com|co\.com)$'
+$tilladt = '(?i)^(noreply|no-reply)@|@(example\.(com|org|net)|anthropic\.com|users\.noreply\.github\.com|co\.com|workspacesamples\.dev)$'  # sidste: eksempler i Claude Codes MCP-typer (statuspanel)
 $fund = 0
 Get-ChildItem -LiteralPath $ny -Recurse -File -Force | Where-Object { $_.Name -match $tekst } | ForEach-Object {
   $rel = $_.FullName.Substring($ny.Length).TrimStart('\')
@@ -235,8 +251,8 @@ foreach ($f in $rest) { L ("  FUND personlig sti tilbage: " + $f.FullName.Substr
 if ($fund) { Stop 3 "$fund fund i pakken - intet er skrevet til OneDrive eller Y:. Pakken ligger til eftersyn i $ny" }
 L "Scanning: 0 fund"
 
-# 5) Pakken -> <OneDrive>\AI OS\Opsaetning (/MIR af en genereret mappe - kun hvis maerket bekraefter den)
-$yOps = Join-Path $YAIOS "Opsaetning"
+# 5) Pakken -> <OneDrive>\AI OS\AI-SETUP (/MIR af en genereret mappe - kun hvis maerket bekraefter den)
+$yOps = Join-Path $YAIOS $MappeNavn
 if ($Proev) {
   if (Test-Path $YAIOS) {
     $ae = @(& robocopy $ny $yOps /E /L /NJH /NJS /NDL /NP /FP /R:0 /W:0 | Where-Object { $_ -match 'New File|Newer|Older|Changed' }).Count
@@ -253,7 +269,7 @@ if ($LASTEXITCODE -ge 8) { Stop 1 "robocopy til $Pakke fejlede" }
 L "OneDrive: $Pakke ajour"
 Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
 
-# 6) -> Y:\AI OS\Opsaetning. Ingen sletning uden -RyddForaeldede.
+# 6) -> Y:\AI OS\AI-SETUP. Ingen sletning uden -RyddForaeldede.
 if (-not (Test-Path $YAIOS)) { L "Y: kan ikke naas ($YAIOS) - pakken er kun bygget i OneDrive; koer igen med VPN eller UNC"; exit 2 }
 & robocopy $Pakke $yOps /E /R:2 /W:5 /NFL /NDL /NJH /NP | Select-Object -Last 6 | ForEach-Object { L ("  " + $_.Trim()) }
 if ($LASTEXITCODE -ge 8) { Stop 1 "robocopy til $yOps fejlede" }

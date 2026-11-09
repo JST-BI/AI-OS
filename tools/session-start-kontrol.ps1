@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 <#
 .SYNOPSIS
   Deterministisk session-startkontrol for AI OS. Tavs naar alt er i orden.
@@ -52,7 +52,7 @@ if ($LASTEXITCODE -ne 0) {
 $tilladt = @('agents','agents-inaktive','tools','vault','docs','.githooks','.claude','.agents','.codex',
              '.codex-tmp','.obsidian','.vscode','.git','AGENTS.md','REVIEW.md','INDEX.md',
              '.gitattributes','.gitignore','skills-lock.json',  # skills-lock.json = npx skills (obsidian-skills)
-             'Opsaetning')  # genereret af tools/udgiv-opsaetning.ps1, gitignoreret
+             'AI-SETUP')  # genereret af tools/udgiv-opsaetning.ps1, gitignoreret
 $fremmede = @(Get-ChildItem -LiteralPath $AIOS -Force | Where-Object { $tilladt -notcontains $_.Name })
 if ($fremmede.Count -gt 0) {
   $fejl.Add("AI OS-roden indeholder fremmede elementer: $(($fremmede.Name) -join ', ') - loese .md hoerer i vault\")

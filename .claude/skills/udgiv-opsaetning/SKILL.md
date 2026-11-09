@@ -1,6 +1,6 @@
 ---
 name: udgiv-opsaetning
-description: "Udgiv opsætning" — samler alle skills (AI OS, projekterne og JSTs personlige) og JSTs indstillinger i VS Code, Claude Code og Codex i en pakke til kollegerne på Y:\AI OS\Opsaetning, med vejledning, licensfilter, stiomskrivning og stop ved nøgler, CPR eller e-mail. Kør ved JSTs kodeord "Udgiv opsætning", eller når JST vil dele sine skills eller indstillinger med kollegerne eller lægge dem på Y:.
+description: "Udgiv opsætning" — samler alle skills (AI OS, projekterne og JSTs personlige) og JSTs indstillinger i VS Code, Claude Code og Codex i en pakke til kollegerne på Y:\AI OS\AI-SETUP, med vejledning, licensfilter, stiomskrivning og stop ved nøgler, CPR eller e-mail. Kør ved JSTs kodeord "Udgiv opsætning", eller når JST vil dele sine skills eller indstillinger med kollegerne eller lægge dem på Y:.
 ---
 
 # Udgiv opsætning — skills og indstillinger til kollegerne
@@ -35,9 +35,9 @@ Kør det fra PowerShell, ikke Bash (stier og robocopy). `Y:` falder ud: brug UNC
 3. **Scanner** alle tekstfiler for nøgler og tokens, CPR-lignende tal, e-mailadresser og rester af
    personlige stier. **Et fund stopper alt (exit 3)**: der skrives intet til OneDrive eller Y:.
    Loggen viser kun sti, type og antal (for e-mail også domænet).
-4. **Spejler** pakken til `<OneDrive>\AI OS\Opsaetning`. Mappen er genereret og gitignoreret og har
+4. **Spejler** pakken til `<OneDrive>\AI OS\AI-SETUP`. Mappen er genereret og gitignoreret og har
    mærket `.opsaetning-pakke`. Uden mærket rører scriptet den ikke. Derfra kopieres pakken til
-   `Y:\AI OS\Opsaetning`.
+   `Y:\AI OS\AI-SETUP`.
 
 Exitkoder: 0 = OK · 1 = fejl · 2 = pakken er bygget i OneDrive, men Y: svarer ikke · 3 = fund i scanningen.
 
@@ -55,7 +55,7 @@ Gengiv aldrig selve fundet i samtalen.
 
 ## Sammenhæng med Udgiv
 
-`<OneDrive>\AI OS\Opsaetning` ligger i OneDrive. Derfor bærer almindelig "Udgiv" også mappen til
+`<OneDrive>\AI OS\AI-SETUP` ligger i OneDrive. Derfor bærer almindelig "Udgiv" også mappen til
 `Y:\AI OS`, og den bliver hverken meldt som "kun på Y:" eller som forældet. Det er den eneste vej,
 skills kommer på Y:\AI OS. Udgiv udelader stadig `.agents` og `.claude` i roden.
 

@@ -26,7 +26,7 @@ Alle arbejdsprojekter ligger i `<OneDrive>\AI SOSU\<PROJEKT>`, ét git-repo pr. 
 | `BI-OEKONOMI` | Power BI: HR/økonomi-rapporten og den semantiske model (HR_OEKONOMI) |
 | `BI-OPTAG FRAVÆR` | Power BI: elevoptag og skoleforløbsfravær (Studie+ Z8312 + Z8224S) |
 | `BI-OPGAVEOVERSIGT` | Power BI: opgaveoversigt mod arbejdstidsnorm |
-| `BI-SOSU` | Power BI: rapporten BI_SOSU — de fire 4.2-tabeller (elevaktivitet, økonomi, elevoptag, årsværk) som matricer med drill |
+| `BI-SOSU` | Power BI: rapporten BI_SOSU — de fire FB-tabeller (elevaktivitet, økonomi, elevoptag, årsværk) som matricer med drill |
 | `DATA-BUDGET_PROGNOSE` | Finansiel analyse, budget og prognose (Navision + BRUGER-budget → .xlsx) |
 | `SYS-INNOMATE` | Mailskabeloner og procesplaner for on-/offboarding |
 | `ADM-HÅNDBØGER` | Personalehåndbog og Lederhåndbog |
@@ -51,7 +51,7 @@ et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken her.
 JSTs ord. `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER` har
 `Input/` i `.gitignore`, fordi materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING`,
 `ADM-BESPARELSER` og `BI-SOSU` gitignorer også `Output/` af samme grund (oversigter, varslinger
-og 4.2-tabeller med navngivne medarbejdere).
+og FB-tabeller med navngivne medarbejdere).
 
 ## Placering — én arbejdskopi, delte kopier på Y:
 
@@ -82,7 +82,7 @@ remote** (JST 2026-09-15). Udgiv sørger for det; Y:-klonerne står dog altid p�
 (JST 2026-10-16; afskedigelsesvarslinger med navn og CPR). Udgiv springer det over via
 `$IkkePaaY` i `tools/udgiv-til-y.ps1`; et nyt fortroligt projekt føjes til den liste.
 Samme følsomhed i en undermappe af et udgivet repo → `$IkkePaaYStier`: i dag
-`DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/` (4.2-grundlaget med `jst-valg.json` – hvem sparerunden omfatter;
+`DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/` (FB-grundlaget med `jst-valg.json` – hvem sparerunden omfatter;
 JST 2026-11-05: "Grundlaget bliver lokalt – indtil videre"; fjern stien fra listen kun på JSTs ord).
 
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til
@@ -131,6 +131,7 @@ rapport (JST 2026-11-07). Bogfør og udgiv alene dækker ikke push af grene, klo
 **Kodeordet "pause"** → læs og udfør `.claude/skills/pause/SKILL.md`: gem sikkert i programmerne, verificér en lokal backup, skriv genoptagelsesstatus og stop. Det virker uden internet og udløser ikke bogfør eller udgiv.
 Det forhindrer, at ikke-gemte ændringer eller opgavekontekst mistes ved afbrydelse. Ved "genoptag"/"resume" læses projektets `.codex/tmp/pause/SENESTE.md` eller `GENOPTAG.md` før videre arbejde.
 **Kodeordet "udgiv"** følger fortsat den særskilte `/udgiv`-arbejdsgang ovenfor.
+**Navnet på budgetproduktet er FB <år>** (Forslag til Budget, skolens svar på FFL; i dag FB 2027), og sidste års vedtagne budget er **B<år>** (B2026). Skriv aldrig "4.2" om produktet (JST 09-11-2026); i kode kommer årstallet fra én konstant, så navnet følger året. "4.2" som afsnits- eller feltnummer (STUK-skema, STE, AMU-instruks) og PBIP's `"version": "4.2"` er noget andet og røres ikke.
 **Kodeordet "Udgiv opsætning"** → skill `/udgiv-opsaetning`: alle skills og JSTs indstillinger (VS Code, Claude Code, Codex) til kollegerne i `Y:\AI OS\AI-SETUP`. Det er den eneste vej, skills kommer på Y: (Udgiv udelader `.agents`/`.claude`); et fund af nøgle, CPR eller e-mail stopper alt.
 **Kodeordet "bogfør"** → udfør i denne rækkefølge (JST 2026-11-01):
 1. Gem Power BI, hvis model eller rapport er ændret på disken: Gem via skærmautomatisering, og

@@ -217,32 +217,33 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `Input/` | Rådata: Navision-finansposter, budget, prognose, finanslov, årsrapporter (gitignored) |
 | `Output/` | .xlsx-leverancer med danske formater (rene leverancer må committes) |
-| `tools/budget2027/byg_budget_2027_2028.py` | Bestyrelsens 4.2 til 2035 (l30–l40, byg_drill, byg_aarsvaerk, byg_bro_stuk, byg_bro_balance). `--motormappe` = scenariemotorens kørsel; `--kontrolversion` = fortrolig version med skoleforløb og løn/årsværk pr. medarbejder (gitignoreret) |
-| `tools/budget2027/l46_optagsark.py` | Fanerne Optag 2026 og Optag 2027–2035 (input) i 4.2 fra fil 1 og inputarket; stopper, hvis inputarket er ændret siden motorkørslen (#13). `byg_tabel3` = fanen **3 Elevoptag** (2026–2035 på én fane, bro til tabel 1; #18) |
-| `tools/budget2027/byg_oekonomi.py` | Fanen **2 Økonomi** i 4.2 (bygges af l37 i begge versioner): linje → konti alle år, 4.2-rettelser, løn afdeling → medarbejder; kontroller k1–k5 (#18) |
-| `tools/budget2027/vaern.py` | Værn før hvert `wb.save` i 4.2-bygget: tekst der begynder med "=" (gemmes som formel → #NAME?) stopper bygget (#18) |
+| `tools/budget2027/byg_budget_2027_2028.py` | Bestyrelsens budgetforslag (FB) til 2035 (l30–l40, byg_drill, byg_aarsvaerk, byg_bro_stuk, byg_bro_balance). `--motormappe` = scenariemotorens kørsel; `--kontrolversion` = fortrolig version med skoleforløb og løn/årsværk pr. medarbejder (gitignoreret) |
+| `tools/budget2027/l46_optagsark.py` | Fanerne Optag 2026 og Optag 2027–2035 (input) i FB fra fil 1 og inputarket; stopper, hvis inputarket er ændret siden motorkørslen (#13). `byg_tabel3` = fanen **3 Elevoptag** (2026–2035 på én fane, bro til tabel 1; #18) |
+| `tools/budget2027/byg_oekonomi.py` | Fanen **2 Økonomi** i FB (bygges af l37 i begge versioner): linje → konti alle år, FB-rettelser, løn afdeling → medarbejder; kontroller k1–k5 (#18) |
+| `tools/budget2027/vaern.py` | Værn før hvert `wb.save` i FB-bygget: tekst der begynder med "=" (gemmes som formel → #NAME?) stopper bygget (#18) |
 | `tools/budget2027/l47_aktivitet_optag.py` | `AKTIVITET-OPTAG.json` i motormappen: plads pr. hold, distinkt optag 2024–2026 (kontrolleret mod fil 1), fastholdelsesprofil og lånt fra pr. optag, realiseret FÆRTA pr. optag. Køres efter hver motorkørsel (#13, #14, #15) |
 | `tools/budget2027/byg_aktivitet_optag.py` | Fanerne Aktivitet pr. optag (drill uddannelse → optagtype → optag → kilde, 2024–2035, takstopdeling) og Fastholdelsesprofil pr. optag; kædekontroller mod Optag-fanerne og Scenariemotor (#13, #14, #15). `byg_tabel1` = fanen **1 Elevaktivitet** (… → hold, 2025 = regnskab, afstemningsrækker + kronegrænse 85.000 kr., midlertidig; #18, #19). l37 `fire_aarsvaerk` = fanen **4 Årsværk** (afdeling → personaletype → medarbejder, stillingskode og stilling; #18) |
 | `tools/budget2027/l42_q4_2026.py` | Kvartalsrater i forventet 2026: AMU 101121/101126, 227020, 265025/265020, 228066 og FVU. Rettelserne er betinget af posteringerne ved ankeret og stopper ved delvis bogføring; `--fra-snapshot` genbruger udtrækkets kontosummer (#10, #11) |
 | `tools/budget2027/ankerdato.py` | Én ankerdato for l33, l42 og generatoren (`<grundlag>\ankerdato.json`); stopper, hvis udtræk, argument og kildefiler ikke hører til samme dag (#11) |
-| `tools/budget2027/pbi-udtraek/` | Power BI-udtrækket bag 4.2: `oko-linjer/konti/niv3.dax`, `parse-oko.py` og `udtraek.ps1`, der danner `oko-grundlag.json` og skriver ankerdatoen (#12). Kontoudtrækket til 2 Økonomi: `oko-konti-alle.dax` + `parse-konti.py` + `udtraek-konti.ps1` → `oko-konti-alle.json` (samme refresh; stopper ved afvigelse mod linjerne; #18) |
+| `tools/budget2027/pbi-udtraek/` | Power BI-udtrækket bag FB: `oko-linjer/konti/niv3.dax`, `parse-oko.py` og `udtraek.ps1`, der danner `oko-grundlag.json` og skriver ankerdatoen (#12). Kontoudtrækket til 2 Økonomi: `oko-konti-alle.dax` + `parse-konti.py` + `udtraek-konti.ps1` → `oko-konti-alle.json` (samme refresh; stopper ved afvigelse mod linjerne; #18) |
 | `tools/budget2027/pbi-udtraek/udtraek-hist.ps1` | Regnskab 2023–2024 pr. konto (`oko-konti-hist.dax` + `parse-hist.py` → `oko-konti-hist.json`; værn: R2025 = Regnskab 2025 pr. konto) til 2023 og frem i de fire tabeller (#20/#21) |
 | `tools/budget2027/pbi-udtraek/udtraek-personale.ps1` | Personaleomkostninger forventet 2026 pr. konto × datakilde (SD faktisk/forventet, BRUGER-supplement, Navision m.m.; `oko-personale-kilde.dax` + `parse-personale.py` → `oko-personale-kilde.json`, samme refresh som oko-grundlag) – grundlaget for den uafhængige lønafstemning (JST 08-11) |
 | `tools/budget2027/l48_kildefarver.py` | Kildefarver på alle talceller uden formel + fanen **0 Signaturforklaring**; sidste trin før den sidste genberegning (#20) |
-| `tools/budget2027/l50_fire_flad.py` + `l50_pivot.ps1` | De fire tabeller som flad datafil ("Budget 2027-2035 - fire tabeller som data …xlsx", læses af BI_SOSU) + datafane, levende kontrol og fire pivotfaner inde i 4.2 via Excel COM; sidste trin i bygget (#23) |
+| `tools/budget2027/l50_fire_flad.py` + `l50_pivot.ps1` | De fire tabeller som flad datafil ("Budget 2027-2035 - fire tabeller som data …xlsx", læses af BI_SOSU) + datafane, levende kontrol og fire pivotfaner inde i FB via Excel COM; sidste trin i bygget (#23) |
 | `tools/budget2027/slutkontrol.py` + `test_slutkontrol.py` | Samlet slutkontrol efter sidste genberegning og efter pivot: forventede kontroller pr. variant (basis/kontrol/scenarie) + minima, numeriske formelceller, Excel-fejl/manglende cache i hele bogen, stempel mod Excel-tabellen `FireTabeller` (review 08-11) |
 | `tools/budget2027/loenafstemning.py` + `test_loenafstemning.py` | Uafhængig lønafstemning: Power BI SD + BRUGER pr. konto = lønfilernes F2026 (0 kr.), Navision-delen som dokumenterede beløb (JST 08-11) |
 | `tools/budget2027/loen_regler.py` | Fælles lønregler for l30/l36 (personbundne tillæg/refusioner ophører med ansættelsen; JST-afgørelser som aggregater) |
 | `tools/budget2027/test_l50_fire_flad.py`, `test_review_0811.py` | Tests og mutationer for l50 (entydige blade, 0-rækker, måle-/kolonnesæt, stempel) og review-rettelserne 08-11 |
+| `tools/budget2027/budgetaar.py` + `test_fb_navne.py` | Budgetårskonstanten (`BUDGETAAR`, `FB` = "FB <år>", `B_VEDT` = "B<år−1>"), som alle genererede tekster og fanenavne bruger; testen binder fanenavne og kontroltekster mellem producent og læsere (JST 09-11) |
 | `tools/budget2027/orkestrering/produktion_konst.ps1` + `bisosu_filer.ps1` | Produktionsmotor, udtræksdato og basisfilnavne ét sted; skriver/tjekker BI_SOSU's `Datafiler`-linje (kræver det nye M-skema) |
-| `tools/budget2027/l49_optag_historik.py` | `Optag 2023-2025 - Studie+.xlsx` (faktisk optag, samme mål som fil 1; låst til motorkørslens udtræk) → fanen Optag 2023–2025 (historik) i 4.2 (#21) |
-| `tools/budget2027/scenarie_inputark.py` + `byg_scenarie.py` | Scenarie-4.2: kopi af inputarket med nedlagte optag/EUX/PAU-forudsætninger og fanen **0 Sammenligning** mod den udgivne 4.2 (#20); 90/100 % absorption, HF-bortfald og målt GF2→HF-afløb, `- log.json` ved siden af arket (#28) |
+| `tools/budget2027/l49_optag_historik.py` | `Optag 2023-2025 - Studie+.xlsx` (faktisk optag, samme mål som fil 1; låst til motorkørslens udtræk) → fanen Optag 2023–2025 (historik) i FB (#21) |
+| `tools/budget2027/scenarie_inputark.py` + `byg_scenarie.py` | Scenarie-FB: kopi af inputarket med nedlagte optag/EUX/PAU-forudsætninger og fanen **0 Sammenligning** mod den udgivne FB (#20); 90/100 % absorption, HF-bortfald og målt GF2→HF-afløb, `- log.json` ved siden af arket (#28) |
 | `tools/budget2027/l51_overgang_gf2_hf.py` + `test_scenarie_nedlagte.py` | Målt GF2→HF-overgang langs fødekæderne (Z8050, startede hold 2022–2026; `--hf-andel foeder_aar|puljet`) → `Output/Grundlag/budget2027/elev/overgang-gf2-hf.json`; tests og mutationer for scenariets trin (#28) |
 | `tools/budget2027/orkestrering/scenarie_konst.ps1` | Scenariets dato og motormappe ét sted (læses af `koer_scenarie.ps1` og `byg_scenarie.ps1`) (#28) |
 | `tools/budget2027/aarsvaerk_kr.py` + `test_aarsvaerk_kr.py` | Kontrol: årsværk som talt − årsværk efter kronerne for personer med fradrag i supplementet (i l37; mutationstest) (#21) |
 | `tools/budget2027/orkestrering/` | Byggescripts (byg_fire, byg_scenarie, koer_scenarie, byg_v7) som reference; README med rækkefølgen (#21); et fejlet trin stopper kæden (#22); `recalc.ps1` (Excel-genberegning, sporet fra #24); standarder: værk = egen gren, motor `…-1103-tilskud`, output i `%TEMP%\budget42` (#24) |
-| `Output/Grundlag/budget2027/` | 4.2-grundlaget (SD/løn med `loen\jst-valg.json`, motorkørsler, `bro-42`, `arkiv\`); gitignoreret persondata, **ikke på Y:** (JST 05-11-2026, Udgiv `$IkkePaaYStier`); før 05-11 i en Claude-jobmappe (#24) |
-| `Output/Budget/Budget 2027-2035 - beregning <dato>.xlsx` | 4.2 med broer, STUK-ark (6.1.1/6.2) og bæredygtighed; gitignoreret, ligger i OneDrive og på Y: |
+| `Output/Grundlag/budget2027/` | FB-grundlaget (SD/løn med `loen\jst-valg.json`, motorkørsler, `bro-42`, `arkiv\`); gitignoreret persondata, **ikke på Y:** (JST 05-11-2026, Udgiv `$IkkePaaYStier`); før 05-11 i en Claude-jobmappe (#24) |
+| `Output/Budget/Budget 2027-2035 - beregning <dato>.xlsx` | FB 2027 med broer, STUK-ark (6.1.1/6.2) og bæredygtighed; gitignoreret, ligger i OneDrive og på Y: |
 | `Output/Budget/Budget 2027-2035 - scenarie nedlagte optag (04-11-2026).xlsx` + `BRUGER - Optag 2027-2035 - scenarie nedlagte (04-11-2026).xlsx` | Scenariet og dets inputark (kopi; produktionsarket er uændret) |
 | `Output/Budget/Optag 2023-2025 - Studie+.xlsx` | Faktisk optag 2023–2025 (l49), input til 3 Elevoptag |
 
@@ -409,11 +410,11 @@ Epx-reformen: skolens tilkendegivelse til STUK (frist 20-01-2027). `Input/` og `
 
 ## BI-SOSU — `<OneDrive>\AI SOSU\BI-SOSU\` (lokalt repo, intet GitHub-remote)
 
-Power BI-rapporten BI_SOSU: de fire 4.2-tabeller fra DATA-BUDGET_PROGNOSE som matricer med drill. `Input/` og `Output/` gitignored (navne i tabel 2 og 4). Oprettet 2026-11-05.
+Power BI-rapporten BI_SOSU: de fire FB-tabeller fra DATA-BUDGET_PROGNOSE som matricer med drill. `Input/` og `Output/` gitignored (navne i tabel 2 og 4). Oprettet 2026-11-05.
 
 | Fil | Beskrivelse |
 |---|---|
-| `AGENTS.md` | Projektregler: datakilden (4.2's flade datatabel, ingen egne beregninger), identitet med 4.2, persondata |
+| `AGENTS.md` | Projektregler: datakilden (FB's flade datatabel, ingen egne beregninger), identitet med FB, persondata |
 | `REVIEW.md` | Review-instruktioner (skabelon); importeret i `AGENTS.md` med `@REVIEW.md` |
 | `BI_SOSU.pbip` + `BI_SOSU.SemanticModel/` | Model: forespørgslen `Fire tabeller` (to navngivne datafiler fra DATA-BUDGET Output\Budget, OneDrive → Y:), tabellerne Elevaktivitet/Økonomi/Elevoptag/Årsværk, én måler pr. måling (Version uden valg = Basis) |
 | `BI_SOSU.Report/` | Fire sider (én pr. tabel) med matricer og drill; Version- og År-slicere |

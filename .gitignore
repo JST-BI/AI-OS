@@ -20,3 +20,6 @@ Thumbs.db
 
 # VS Code-arbejdsmappe: mcp.json peger paa lokale MCP-serverstier
 /.vscode/
+
+# Genereret af tools/udgiv-opsaetning.ps1 (skills + indstillinger til kollegerne). Kopieres til Y:\AI OS\Opsaetning.
+/Opsaetning/

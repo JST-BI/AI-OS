@@ -143,8 +143,13 @@ function Omskriv-Stier([string]$t) {
 }
 function Skriv-Omskrevet($fra, $til) {
   New-Item -ItemType Directory -Force (Split-Path -Parent $til) | Out-Null
+  # BOM bevares: PowerShell 5.1 laeser en .ps1 uden BOM som ANSI, saa aeoeaa i statuslinjen blev
+  # forkerte hos kollegerne (fundet 09-11-2026: kopien mistede BOM, teksten var ellers ens).
+  $b = [IO.File]::ReadAllBytes($fra)
+  $bom = $b.Length -ge 3 -and $b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq 0xBF
   $t = [IO.File]::ReadAllText($fra)
-  [IO.File]::WriteAllText($til, (Omskriv-Stier $t), (New-Object Text.UTF8Encoding $false))
+  if ($t.Contains([char]0xFFFD)) { Stop 1 "$fra kan ikke laeses som UTF-8 - omskrives ikke" }
+  [IO.File]::WriteAllText($til, (Omskriv-Stier $t), (New-Object Text.UTF8Encoding $bom))
 }
 $ind = Join-Path $ny "Indstillinger"
 foreach ($f in 'settings.json', 'keybindings.json') {

@@ -45,6 +45,15 @@ Forvent "0-ren" ($cs -match '%USERPROFILE%' -and $cs -match 'Y:\\\\AI OS' -and $
 $ct = [IO.File]::ReadAllText((Join-Path $r.Pakke "Indstillinger\Codex\config.toml"))
 Forvent "0-ren" ($ct -notmatch 'hemmeligt-emne' -and $ct -match '\[features\]') "[projects.*] fjernet, [features] beholdt"
 Forvent "0-ren" (Test-Path (Join-Path $r.Pakke "Skills\Personlige\claude\ren-skill\SKILL.md")) "personlig skill med"
+# 0a) Statuslinje med BOM og ae/oe/aa: BOM og tegn skal overleve omskrivningen (ellers laeser PS 5.1 den som ANSI)
+$h = Byg-Hjem "0a-bom"
+$tekst = "# Statuslinje: " + [char]0xE6 + [char]0xF8 + [char]0xE5 + "`n& '" + $h.Hjem + "\x.ps1'`n"
+[IO.File]::WriteAllText("$($h.Hjem)\.claude\statusline-command.ps1", $tekst, (New-Object Text.UTF8Encoding $true))
+$r = Koer "0a-bom" $h
+$ud = Join-Path $r.Pakke "Indstillinger\ClaudeCode\statusline-command.ps1"
+$bu = [IO.File]::ReadAllBytes($ud)
+Forvent "0a-bom" ($r.Kode -eq 0 -and $bu[0] -eq 0xEF -and $bu[1] -eq 0xBB -and $bu[2] -eq 0xBF) "BOM bevaret"
+Forvent "0a-bom" (([IO.File]::ReadAllText($ud)) -eq ($tekst.Replace($h.Hjem, '%USERPROFILE%'))) "tegn intakte, kun stien skrevet om"
 # 0b) Claude Code-mod i dev-mods\<id>\<mod> kommer med, og id-mappen flades ud; en mappe uden plugin.json er ikke et mod
 $h = Byg-Hjem "0b-mod"
 Skriv "$($h.Hjem)\.claude\dev-mods\abc123-id\minmod\.claude-plugin\plugin.json" "{ `"name`": `"minmod`" }"

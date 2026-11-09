@@ -234,6 +234,7 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `tools/budget2027/loenafstemning.py` + `test_loenafstemning.py` | Uafhængig lønafstemning: Power BI SD + BRUGER pr. konto = lønfilernes F2026 (0 kr.), Navision-delen som dokumenterede beløb (JST 08-11) |
 | `tools/budget2027/loen_regler.py` | Fælles lønregler for l30/l36 (personbundne tillæg/refusioner ophører med ansættelsen; JST-afgørelser som aggregater) |
 | `tools/budget2027/test_l50_fire_flad.py`, `test_review_0811.py` | Tests og mutationer for l50 (entydige blade, 0-rækker, måle-/kolonnesæt, stempel) og review-rettelserne 08-11 |
+| `tools/budget2027/budgetaar.py` + `test_fb_navne.py` | Budgetårskonstanten (`BUDGETAAR`, `FB` = "FB <år>", `B_VEDT` = "B<år−1>"), som alle genererede tekster og fanenavne bruger; testen binder fanenavne og kontroltekster mellem producent og læsere (JST 09-11) |
 | `tools/budget2027/orkestrering/produktion_konst.ps1` + `bisosu_filer.ps1` | Produktionsmotor, udtræksdato og basisfilnavne ét sted; skriver/tjekker BI_SOSU's `Datafiler`-linje (kræver det nye M-skema) |
 | `tools/budget2027/l49_optag_historik.py` | `Optag 2023-2025 - Studie+.xlsx` (faktisk optag, samme mål som fil 1; låst til motorkørslens udtræk) → fanen Optag 2023–2025 (historik) i FB (#21) |
 | `tools/budget2027/scenarie_inputark.py` + `byg_scenarie.py` | Scenarie-FB: kopi af inputarket med nedlagte optag/EUX/PAU-forudsætninger og fanen **0 Sammenligning** mod den udgivne FB (#20); 90/100 % absorption, HF-bortfald og målt GF2→HF-afløb, `- log.json` ved siden af arket (#28) |

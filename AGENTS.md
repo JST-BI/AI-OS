@@ -87,6 +87,9 @@ JST 2026-11-05: "Grundlaget bliver lokalt – indtil videre"; fjern stien fra li
 
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.
+**Sider/artefakter skal også på Y: (JST 2026-11-10):** når en side udgives på claude.ai, gemmes samme HTML som selvstændig fil
+(`<!doctype html>`, charset, titel) i projektets `Output\Sider\` (gitignoreret); lokale sider med navne i `Output\Budget\* - kontrolversion med navne.html`.
+Udgiv spejler dem (filer git ikke følger) – ellers ligger siden kun i en jobmappe og på claude.ai, som kollegerne ikke kan åbne.
 
 Kør robocopy- og git-scripts fra PowerShell, ikke fra Bash: stier konverteres forkert.
 `Y:` er en pr.-logon-mapping der kan falde ud midt i en session; `Test-Path` på UNC-stien vækker

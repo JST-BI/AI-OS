@@ -31,6 +31,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
 | `AI OS/.agents/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" (spejl i `.claude/skills/`) |
 | `AI OS/tools/udgiv-opsaetning.ps1` | "Udgiv opsætning": samler alle skills (AI OS, projekter, personlige) og JSTs indstillinger i VS Code, Claude Code og Codex i `<OneDrive>\AI OS\AI-SETUP` (gitignoreret) → `Y:\AI OS\AI-SETUP`; licensfilter, stiomskrivning, stop ved nøgle/CPR/e-mail; `-Proev` |
+| `AI OS/tools/test-udgiv-til-y.ps1` | Værn for `udgiv-til-y.ps1` trin 2b: en gitignoreret fil med æøå i navnet skal nå Y: også fra en løsrevet `powershell.exe` (tegnsæt 850) – falsk OneDrive/Y: i `%TEMP%` |
 | `AI OS/tools/test-udgiv-opsaetning.ps1` | Værn for `udgiv-opsaetning.ps1`: planter nøgle, CPR, e-mail, personlig sti, låst licens og junction én ad gangen og kræver stop/udeladelse |
 | `AI OS/.agents/skills/udgiv-opsaetning/SKILL.md` | Skill bag kodeordet "Udgiv opsætning" + `assets/LAESMIG-skabelon.md` (kollegernes vejledning; spejl i `.claude/skills/`) |
 | `AI OS/.agents/skills/aflever/SKILL.md` | Skill bag kodeordet "Aflever": sikr, bogfør, merge (JST vælger), ff kloner + INDEX, udgiv, ryd op, rapport (spejl i `.claude/skills/`) |

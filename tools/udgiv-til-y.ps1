@@ -50,6 +50,13 @@ $IkkePaaY = @('ADM-BESPARELSER')
 # som ADM-BESPARELSER. Om det maa paa Y:, er JSTs afgoerelse (aaben 05-11-2026); indtil da springes det over.
 $IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/')
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
+# Filnavne fra git (core.quotepath=off) er UTF-8. En loesrevet powershell.exe afkoder dem med konsollens tegnsaet (850),
+# saa et navn med aeoeaa blev forvansket, Test-Path fejlede, og filen blev sprunget stille over i trin 2b (12-11-2026: 1.616
+# filer i 8 repos). Kun git-kaldene, der laeser navne, koerer med UTF-8 - robocopy's udskrift laeses fortsat med konsollens.
+function GitNavne {
+  $gl = [Console]::OutputEncoding; [Console]::OutputEncoding = New-Object Text.UTF8Encoding $false
+  try { & git @args 2>$null } finally { [Console]::OutputEncoding = $gl }
+}
 L "UDGIV start"
 # Y:-klonerne ejes af filserveren, saa git afviser dem som "dubious ownership".
 # Uden undtagelsen melder scriptet hvert repo som "kan ikke fast-forwardes" og
@@ -114,10 +121,10 @@ if ($KunAIOS) { L "UDGIV slut (kun AI OS)"; Slut 0 }
 # Afviger den, roeres den ikke, og merge fejler synligt i loggen.
 function Ryd-IdentiskeUntracked($d, $n) {
   $ind = @{}
-  & git -C $d -c core.quotepath=off diff --name-only --diff-filter=A HEAD FETCH_HEAD 2>$null | ForEach-Object { $ind[$_] = 1 }
+  GitNavne -C $d -c core.quotepath=off diff --name-only --diff-filter=A HEAD FETCH_HEAD | ForEach-Object { $ind[$_] = 1 }
   if ($ind.Count -eq 0) { return }
   $ryddet = 0; $afviger = 0
-  & git -C $d -c core.quotepath=off ls-files --others 2>$null | Where-Object { $ind[$_] } | ForEach-Object {
+  GitNavne -C $d -c core.quotepath=off ls-files --others | Where-Object { $ind[$_] } | ForEach-Object {
     $blob = (& git -C $d rev-parse "FETCH_HEAD:$_" 2>$null)
     if ($blob -and $blob -eq (& git -C $d hash-object -- $_)) { Remove-Item -LiteralPath (Join-Path $d $_) -Force; $ryddet++ } else { $afviger++ }
   }
@@ -179,9 +186,9 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
   $udeladt = @($IkkePaaYStier | Where-Object { $_.StartsWith("$repo/") } | ForEach-Object { $_.Substring($repo.Length + 1) })
   foreach ($u in $udeladt) { if (Test-Path -LiteralPath (Join-Path $y $u)) { L "ADVARSEL $repo/$u : ligger paa Y: men maa ikke kopieres derud - roeres ikke" } }
   $yTracked = @{}
-  if (Test-Path (Join-Path $y ".git\HEAD")) { & git -C $y -c core.quotepath=off ls-files 2>$null | ForEach-Object { $yTracked[$_] = 1 } }
+  if (Test-Path (Join-Path $y ".git\HEAD")) { GitNavne -C $y -c core.quotepath=off ls-files | ForEach-Object { $yTracked[$_] = 1 } }
   $kopieret = 0
-  & git -C $od -c core.quotepath=off ls-files --others 2>$null |
+  GitNavne -C $od -c core.quotepath=off ls-files --others |
     Where-Object { $_ -notmatch '(^|/)(__pycache__|node_modules|\.claude/worktrees)/' -and $_ -notmatch '(^|/)(~\$[^/]*|desktop\.ini|Thumbs\.db)$' -and -not $yTracked[$_] } |
     Where-Object { $f = $_; -not ($udeladt | Where-Object { $f.StartsWith($_) }) } |
     ForEach-Object {

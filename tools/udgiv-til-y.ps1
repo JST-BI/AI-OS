@@ -48,7 +48,9 @@ $IkkePaaY = @('ADM-BESPARELSER')
 # Undermapper der ikke kopieres i trin 2b, selv om repoet ellers udgives (sti fra AI SOSU, med /).
 # DATA-BUDGET's FB-grundlag rummer loen\jst-valg.json - hvem sparerunden omfatter, samme foelsomhed
 # som ADM-BESPARELSER. Om det maa paa Y:, er JSTs afgoerelse (aaben 05-11-2026); indtil da springes det over.
-$IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/')
+# 13-11-2026: DATA-BUDGET_PROGNOSE er samlet ind i BI-OEKONOMI (undermappe); begge placeringer udelades, saalaenge
+# den gamle klon findes.
+$IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/', 'BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/')
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
 # Filnavne fra git (core.quotepath=off) er UTF-8. En loesrevet powershell.exe afkoder dem med konsollens tegnsaet (850),
 # saa et navn med aeoeaa blev forvansket, Test-Path fejlede, og filen blev sprunget stille over i trin 2b (12-11-2026: 1.616

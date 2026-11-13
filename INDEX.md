@@ -211,9 +211,9 @@ BI governance og styringsdokumenter.
 
 ---
 
-## DATA-BUDGET_PROGNOSE — `<OneDrive>\AI SOSU\DATA-BUDGET_PROGNOSE\` (repo: [JST-BI/DATA-BUDGET_PROGNOSE](https://github.com/JST-BI/DATA-BUDGET_PROGNOSE))
+## DATA-BUDGET_PROGNOSE — `<OneDrive>\AI SOSU\BI-OEKONOMI\DATA-BUDGET_PROGNOSE\` (undermappe i [JST-BI/BI-OEKONOMI](https://github.com/JST-BI/BI-OEKONOMI) siden 13-11-2026; historikken fra JST-BI/DATA-BUDGET_PROGNOSE er bevaret)
 
-Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xlsx).
+Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xlsx). Stierne herunder er relative til undermappen.
 
 | Fil | Beskrivelse |
 |---|---|
@@ -418,15 +418,15 @@ Epx-reformen: skolens tilkendegivelse til STUK (frist 20-01-2027). `Input/` og `
 
 ---
 
-## BI-SOSU — `<OneDrive>\AI SOSU\BI-SOSU\` (lokalt repo, intet GitHub-remote)
+## BI-SOSU — `<OneDrive>\AI SOSU\BI-OEKONOMI\BI-SOSU\` (undermappe i [JST-BI/BI-OEKONOMI](https://github.com/JST-BI/BI-OEKONOMI) siden 13-11-2026; historikken er bevaret, forfatteradresser = GitHub-noreply)
 
-Power BI-rapporten BI_SOSU: de fire FB-tabeller fra DATA-BUDGET_PROGNOSE som matricer med drill. `Input/` og `Output/` gitignored (navne i tabel 2 og 4). Oprettet 2026-11-05.
+Power BI-rapporten BI_SOSU: de fire FB-tabeller fra DATA-BUDGET_PROGNOSE som matricer med drill. `Input/` og `Output/` gitignored (navne i tabel 2 og 4). Oprettet 2026-11-05. Stierne herunder er relative til undermappen.
 
 | Fil | Beskrivelse |
 |---|---|
 | `AGENTS.md` | Projektregler: datakilden (FB's flade datatabel, ingen egne beregninger), identitet med FB, persondata |
 | `REVIEW.md` | Review-instruktioner (skabelon); importeret i `AGENTS.md` med `@REVIEW.md` |
-| `BI_SOSU.pbip` + `BI_SOSU.SemanticModel/` | Model: forespørgslen `Fire tabeller` (to navngivne datafiler fra DATA-BUDGET Output\Budget, OneDrive → Y:), tabellerne Elevaktivitet/Økonomi/Elevoptag/Årsværk, én måler pr. måling (Version uden valg = Basis) |
+| `BI_SOSU.pbip` + `BI_SOSU.SemanticModel/` | Model: forespørgslen `Fire tabeller` (to navngivne datafiler fra `BI-OEKONOMI\DATA-BUDGET_PROGNOSE\Output\Budget`, OneDrive → Y: → UNC), tabellerne Elevaktivitet/Økonomi/Elevoptag/Årsværk, én måler pr. måling (Version uden valg = Basis) |
 | `BI_SOSU.Report/` | Fire sider (én pr. tabel) med matricer og drill; Version- og År-slicere |
 | `tools/valider-rapport.ps1` | Validerer PBIR: JSON, felter mod TMDL, queryRef/selectorer (selvtest først) |
 

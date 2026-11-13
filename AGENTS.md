@@ -23,11 +23,11 @@ Alle arbejdsprojekter ligger i `<OneDrive>\AI SOSU\<PROJEKT>`, ét git-repo pr. 
 
 | Projekt | Brug til |
 |---|---|
-| `BI-OEKONOMI` | Power BI: HR/økonomi-rapporten og den semantiske model (HR_OEKONOMI) |
+| `BI-OEKONOMI` | Power BI: HR/økonomi-rapporten og den semantiske model (HR_OEKONOMI) + scenariemotoren; rummer også FB-kæden og BI_SOSU (rækkerne herunder) |
+| `BI-OEKONOMI/DATA-BUDGET_PROGNOSE` | Finansiel analyse, budget og prognose — FB <år> (Navision + BRUGER-budget → .xlsx); undermappe med egen `AGENTS.md` |
+| `BI-OEKONOMI/BI-SOSU` | Power BI: rapporten BI_SOSU — de fire FB-tabeller (elevaktivitet, økonomi, elevoptag, årsværk) som matricer med drill; undermappe med egen `AGENTS.md` |
 | `BI-OPTAG FRAVÆR` | Power BI: elevoptag og skoleforløbsfravær (Studie+ Z8312 + Z8224S) |
 | `BI-OPGAVEOVERSIGT` | Power BI: opgaveoversigt mod arbejdstidsnorm |
-| `BI-SOSU` | Power BI: rapporten BI_SOSU — de fire FB-tabeller (elevaktivitet, økonomi, elevoptag, årsværk) som matricer med drill |
-| `DATA-BUDGET_PROGNOSE` | Finansiel analyse, budget og prognose (Navision + BRUGER-budget → .xlsx) |
 | `SYS-INNOMATE` | Mailskabeloner og procesplaner for on-/offboarding |
 | `ADM-HÅNDBØGER` | Personalehåndbog og Lederhåndbog |
 | `ADM-ØKONOMI` | Regnskabsinstruks, Indkøbspolitik, Strategi for finansiel risiko |
@@ -46,11 +46,16 @@ gætte.
 `ADM-MØDER/` og `ADM-REVISION/` er **ikke** projekter (løse filer / tom). Bliver en af dem til
 et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken her.
 
-`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`,
-`ADM-INSTITUTIONSLANDSKAB` og `BI-SOSU` har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden
-JSTs ord. `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER` har
+**Samlet 13-11-2026 (JST 12-11: "alt i ét"):** `DATA-BUDGET_PROGNOSE` og `BI-SOSU` er flyttet ind i BI-OEKONOMI
+med historik. De gamle mapper `<OneDrive>\AI SOSU\DATA-BUDGET_PROGNOSE` og `…\BI-SOSU` (og deres Y:-kopier) er
+forældede kopier — arbejd aldrig dér; de slettes kun på JSTs ord. Det forhindrer, at en rettelse lander i en kopi,
+som ingen kæde læser.
+
+`ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER` og
+`ADM-INSTITUTIONSLANDSKAB` har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden
+JSTs ord (BI-SOSU må på GitHub: JST 12-11-2026). `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING` og `ADM-BESPARELSER` har
 `Input/` i `.gitignore`, fordi materialet er personhenførbart; `ADM-RETTIGHEDSSTYRING`,
-`ADM-BESPARELSER` og `BI-SOSU` gitignorer også `Output/` af samme grund (oversigter, varslinger
+`ADM-BESPARELSER` og `BI-OEKONOMI/BI-SOSU` gitignorer også `Output/` af samme grund (oversigter, varslinger
 og FB-tabeller med navngivne medarbejdere).
 
 ## Placering — én arbejdskopi, delte kopier på Y:
@@ -82,7 +87,7 @@ remote** (JST 2026-09-15). Udgiv sørger for det; Y:-klonerne står dog altid p�
 (JST 2026-10-16; afskedigelsesvarslinger med navn og CPR). Udgiv springer det over via
 `$IkkePaaY` i `tools/udgiv-til-y.ps1`; et nyt fortroligt projekt føjes til den liste.
 Samme følsomhed i en undermappe af et udgivet repo → `$IkkePaaYStier`: i dag
-`DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/` (FB-grundlaget med `jst-valg.json` – hvem sparerunden omfatter;
+`BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/` (og den gamle klons sti; FB-grundlaget med `jst-valg.json` – hvem sparerunden omfatter;
 JST 2026-11-05: "Grundlaget bliver lokalt – indtil videre"; fjern stien fra listen kun på JSTs ord).
 
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til

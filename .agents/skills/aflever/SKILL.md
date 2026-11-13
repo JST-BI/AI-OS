@@ -62,7 +62,7 @@ PR-nummeret i JSTs egen tekst. Derfor:
   uden ucommittede filer i de berørte stier. Ellers rapportér, ret intet.
 - **INDEX.md**: kom der filer til, forsvandt eller blev omdøbt i et projekt, så åbn en INDEX-PR i AI OS
   (den merges i næste runde, eller nu hvis JST valgte den).
-- **Genererede produkter** (fx FB-arbejdsbøger (budgetforslaget) i `DATA-BUDGET_PROGNOSE\Output\Budget`) udgives kun
+- **Genererede produkter** (fx FB-arbejdsbøger (budgetforslaget) i `BI-OEKONOMI\DATA-BUDGET_PROGNOSE\Output\Budget`) udgives kun
   når JST har sagt det for netop den leverance — forrige version gemmes først som "- foer …".
 
 ## 6. Udgiv

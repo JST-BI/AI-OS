@@ -47,9 +47,10 @@ gætte.
 et rigtigt projekt: kør `tools/setup-new-repo.ps1` og tilføj rækken her.
 
 **Samlet 13-11-2026 (JST 12-11: "alt i ét"):** `DATA-BUDGET_PROGNOSE` og `BI-SOSU` er flyttet ind i BI-OEKONOMI
-med historik. De gamle mapper `<OneDrive>\AI SOSU\DATA-BUDGET_PROGNOSE` og `…\BI-SOSU` (og deres Y:-kopier) er
-forældede kopier — arbejd aldrig dér; de slettes kun på JSTs ord. Det forhindrer, at en rettelse lander i en kopi,
-som ingen kæde læser.
+med historik. De gamle kloner ligger i `AI SOSU\_ARKIV\<navn> - flyttet til BI-OEKONOMI 2026-11-13` (OneDrive og
+Y:; JST 13-11: omdøbt, så de ikke bruges ved en fejl) — arbejd aldrig dér, og flyt dem aldrig tilbage; de slettes kun på
+JSTs ord. `_ARKIV` har ingen `.git`, så Udgiv springer den over. Det forhindrer, at en rettelse eller en rapport rammer
+en kopi, som ingen kæde opdaterer.
 
 `ADM-AFTALER`, `ADM-BLANKET`, `BI-OPTAG FRAVÆR`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER` og
 `ADM-INSTITUTIONSLANDSKAB` har lokale repos **uden remote** — fortrolighed er ikke afklaret. Læg dem ikke på GitHub uden

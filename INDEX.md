@@ -286,7 +286,8 @@ Mailmapperne under `Input/` og `Output/Bestillinger/` er derimod gitignored — 
 | `tools/afstemningsdata/uge<nr>.py` | Ét datamodul pr. uge (kun data, håndhævet af hvidlisten): bestillinger, kilder, beslutninger, åbne punkter, fakturering og tilbehør |
 | `tools/afstemningsdata/ugekort<nr>.json` | Ugekortets indhold (ugenr, dage, tilbudslinje; kun `<b>`/`<i>`) — læses af `byg-ugekort.py` |
 | `tools/mail-md-til-json.py` | Oversætter bestillingsmailene fra `.md` til `mails.json` (UTF-8, skrives direkte — aldrig med `>`) til kladdescriptet |
-| `tools/opret-kladder.ps1` | Lægger mailene som kladder i kantine@sosuranders.dk's postkasse (mærket `KantineAgent`; kun mærkede ryddes) OG gemmer dem som `.msg` i `Klar til afsendelse/`; vedhæftninger kun under JSON-mappen; `-KunKontrol` uden Outlook. Kalder aldrig `.Send()` |
+| `tools/opret-kladder.ps1` | Lægger mailene som kladder i kantine@sosuranders.dk's postkasse (mærket `KantineAgent`; kun mærkede ryddes) OG gemmer dem som `.msg` i `Klar til afsendelse/`; vedhæftninger kun under JSON-mappen; `-KunKontrol` uden Outlook. Kalder aldrig `.Send()`. Sætter til sidst fluebenet i indbakken (`marker-indbakke.ps1`; `-UdenFlueben`) |
+| `tools/marker-indbakke.ps1` | Flueben (opfølgningsflag = fuldført) på ugens færdigbestilte kildemails i kantine@'s indbakke (`KILDER` minus `UDENFOR`, Message-ID-match); `-Proev`; eneste skrivning i den delte indbakke (JST 15-11-2026) |
 | `tools/hent-indbakke.ps1` | Henter nye mails fra kantine@'s indbakke (kun læsning) som `.eml` i `Input/UBEHANDLEDE bestillinger/`; dubletnøgle = Message-ID, ellers EntryID (`X-Kantine-Noegle`) |
 | `tools/indbakke.py` | Samler `.eml` af hent-indbakkes Outlook-eksport (Exchange-headere byte for byte) og laver MS Forms-svar (JSON, skema `kantinebestilling-v1`) om til `.eml` |
 | `tools/dagskoersel-tilladelser.json` | Dagskørslens tilladelser: faste allow-præfikser, deny-liste, skrivning kun til ugedata og `Output/Bestillinger/**/*.md|json` |

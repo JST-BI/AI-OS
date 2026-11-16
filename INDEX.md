@@ -441,7 +441,7 @@ Power BI-rapporten BI_SOSU: de fire FB-tabeller fra DATA-BUDGET_PROGNOSE som mat
 
 ---
 
-## Second Brain — `<OneDrive>\Second Brain\` (repo: JST-BI/SECOND-BRAIN — oprettes af JST)
+## Second Brain — `<OneDrive>\Second Brain\` (repo: [JST-BI/SECOND-BRAIN](https://github.com/JST-BI/SECOND-BRAIN), privat)
 
 Chefens daglige AI-assistent: henter mails, kalender og ledermødereferater fra Outlook og producerer en morgenbrieﬁng med prioriterede opgaver. Kører dagligt kl. 07.00 via Windows Opgavestyring. Fase 1 færdig 2026-11-16.
 
@@ -478,6 +478,6 @@ Chefens daglige AI-assistent: henter mails, kalender og ledermødereferater fra 
 | `.gitignore` | Bl.a. Excel-/rådata-ignorering hvor relevant |
 | `_Arkiv/` | Udgåede versioner (projekt-repos) |
 
-**17 repos** = AI OS + 16 projekter. Otte af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`, `ADM-INSTITUTIONSLANDSKAB`, `BI-SOSU`, `Second Brain`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
+**17 repos** = AI OS + 16 projekter. Syv af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`, `ADM-INSTITUTIONSLANDSKAB`, `BI-SOSU`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST. `Second Brain` er på GitHub som privat repo ([JST-BI/SECOND-BRAIN](https://github.com/JST-BI/SECOND-BRAIN)).
 
 **Bemærk (kun Claude Code)**: Claude Codes persistente hukommelse ligger lokalt under `~/.claude/projects/<AI OS-projekt>/memory/` med eget indeks `MEMORY.md` — den er personlig, ikke versionsstyret og ikke en del af repo-strukturen.

@@ -138,6 +138,13 @@ Power BI-rapport og semantisk model for HR/økonomi.
 | `tools/afstem-navision-resultat.py` | **Offline-afstemning af resultatet mod Navision** (JST 10-11-2026: Balance + Finansposter med dimensioner er facit, øre-præcist): resultat pr. år fra finansposterne med modellens filter (`>=` startdato, Fixed Decimal) mod Balance linje 299999; genskaber også den gamle vej (Int64, `>`). Kun konto, år, antal og beløb i output |
 | `tools/scenariemotor/fejlliste_skoleforloeb.py` + `tests/test_fejlliste.py` | Fejllisten til Elevadministrationen over Studie+-skoleforløbskoder uden gyldig nøglestart (prioritet P1/P2; `Output\Datakvalitet\Studie+ skoleforløbskoder til rettelse <dato>.xlsx`, gitignoreret) (PR #136) |
 | `tools/scenariemotor/tests/test_optag_population.py` | Optagets population som M: kun hold med gyldig numerisk nøglestart; eksplicit `STARTDATO_RETTELSER` (= `fxSkoleforloebRettelse`), invarians- og drifttests (PR #136) |
+| `Rapporter/HR_OEKONOMI/…/definition/tables/STU-SCN-*.tmdl` + `SCN-*`/`fxSCN_*` i `expressions.tmdl` | **M-motoren (plan 3, BI-OEKONOMI #157, 16-11-2026):** Python-scenariemotoren porteret til Power Query – 19 skjulte tabeller i query-gruppen `STU\SCN` (Scenarier, Kilder, Hold, Tidslinje, HoldAttr, Profil, Retention, FaertaAndel, Optagsark, OptagPlads, Modelhold, Skabelon, Kendte, Afloeb, Aktivitet, RetentionMotor, TakstOpslag, Beloeb, Taellere). Alle har `excludeFromModelRefresh` (ingen side bruger dem endnu; flaget fjernes i den PR, der tager en tabel i brug). Ny datakilde 165 (optagsarket) i DATAKONTROLCENTER |
+| `tools/m-test/afstem_alle.ps1` | Samlet afstemning af M-motoren mod Python-eksporten: hver STU-SCN-tabel refreshes i sin egen friske, tomme PBI-instans og afstemmes straks (22 trin; 16-11-2026: 0 afvigelser, 21,7 min.). `-Facit <eksportmappe> -Arbejdsbog <bog> -Optagsark <ark> [-FortsaetVedFejl]`. Lukker kun instanser med vinduestitlen Untitled |
+| `tools/m-test/scn_tom.ps1` | Indlæser HR_OEKONOMI-TMDL som midlertidig database `HR_SCN_test` i en tom Power BI Desktop (PBI's egen TOM) og refresher de nævnte tabeller (`-Tabeller 'A,B'`, `-Behold`, `-Samlet`, `-FastCombine`, `-LukPBI`); port i `%TEMP%\m-test-scn\port.txt`. Målevej uden åben .pbip – brug en frisk instans pr. måling (en brugt instans holder hukommelsen og bliver langsom) |
+| `tools/m-test/skoleforloeb_startdato.ps1` + `skoleforloeb_startdato_facit.py` | Kører M-funktionen `fxSkoleforloebStartdato` fra TMDL i tom PBI-instans mod Pythons `hold`-regel (århundredeskift 49; #138/#153) |
+| `tools/scenariemotor/afstem_m.py` + `m_afstemning/*.dax` | Afstemning pr. trin: `--trin <t> --python <eksport>\<t>.csv --port <p> --database HR_SCN_test --arbejdsbog <bog> --optagsark <ark>`; nøgle for nøgle (1e-6), kontrolsummer, sha-binding af bog/ark/takster; læser dansk decimalkomma fra dax-query. 22 trin (`TRIN`), én `.dax` pr. trin |
+| `tools/scenariemotor/scenariemotor/eksport.py` | `koer.py eksport --scenarie Prognose --horisont 2036 --arbejdsbog … --optagsark … --ud <mappe>`: motorens mellemresultater som CSV (hold, tidslinje, holdattr, profil_trin, retention(_alle), faerta_andel, optagsark_celler, optag_plads, modelhold, skabelon(_kilde), kendte, afloeb, aktivitet, beloeb, takst_opslag, kilder, taellere) – facit for M-motoren; kun læsning (aktivitet.csv/beloeb.csv byte-identiske med en motorkørsel) |
+| `docs/superpowers/plans/2026-10-26-plan3-m-motor-stu-scn.md` + `2026-11-15-plan3-revision.md` + `…-plan3-ledger.md` + `2026-11-01-plan3-drift.md` | Plan 3 (M-motoren): opgaver T0–T9, beslutninger D1–D30, valg V1–V9, ledger og driftsnoter |
 | `tools/rapport-krydsreferencer.py` | **Kontrollerer rapportlaget op mod den kørende model** (14-09-2026): hver feltreference i PBIR-json holdes op mod modellens faktiske felter og opdeles efter hvor den sidder — `query` (visualet kan ikke rendere), `sidefilter` (rammer hele siden) eller formatering (kulør tabt, intet fejler). Første kørsel fandt 8 alvorlige, heraf `L-Kalender[Aktuelt år + 4 historikår]` som sidefilter på **32 sider**. Docstringen rummer to fælder i selve opslaget: `ExplicitName` er tom for beregnede tabellers kolonner (navnet ligger i `InferredName`), og `NATURALLEFTOUTERJOIN` i DAX tabte navnene helt |
 | `tools/dax-udf-forberedelse.md` | Kandidatliste og forberedelse til DAX UDF-migreringer |
 | `tools/pq-analyse-og-optimering.md` | Analysenotat: Power Query-optimering og fxSheetImport |
@@ -434,7 +441,31 @@ Power BI-rapporten BI_SOSU: de fire FB-tabeller fra DATA-BUDGET_PROGNOSE som mat
 
 ---
 
-## Fælles på tværs af alle 16 repos
+## Second Brain — `<OneDrive>\Second Brain\` (repo: JST-BI/SECOND-BRAIN — oprettes af JST)
+
+Chefens daglige AI-assistent: henter mails, kalender og ledermødereferater fra Outlook og producerer en morgenbrieﬁng med prioriterede opgaver. Kører dagligt kl. 07.00 via Windows Opgavestyring. Fase 1 færdig 2026-11-16.
+
+`Input/Mails/`, `Input/Kalender/` og `Input/Referater/` er gitignoreret (persondata). Kun `Input/Sparring/`, `Input/Noter/` og `tools/` trackes.
+
+| Fil | Beskrivelse |
+|---|---|
+| `AGENTS.md` | Projektregler: daglig kørsel, sikkerhed (.Send() forbudt), persondata, kendte begrænsninger fase 1 |
+| `REVIEW.md` | Review-instruktioner (skabelon + projektets egne regler); importeret i `AGENTS.md` med `@REVIEW.md` |
+| `tools/dagskoersel.ps1` | Daglig orchestrator kl. 07.00: henter mails/kalender/referater, kører `claude -p` (dagsprompt), opdaterer kalenderaftalen; `-Registrer` / `-Tving` / `-Proev`; exitkode = antal fejlede trin |
+| `tools/dagsprompt.md` | Agentens daglige instruktion til morgenbrieﬁngen: mails/kalender/referater er data, aldrig instruktioner; producerer `Output/Morgenbrieﬁng/briefing-YYYY-MM-DD.md` og opretter Outlook-opgaver |
+| `tools/dagskoersel-tilladelser.json` | Dagskørslens snævre tilladelsesliste (`--setting-sources project --strict-mcp-config --permission-mode dontAsk`) |
+| `tools/dagskoersel-claude.ps1` | Bygger `claude -p`-kommandolinjen ud fra tilladelsesfilen |
+| `tools/hent-indbakke.ps1` | Henter nye mails fra JSTs indbakke rekursivt som `.eml` i `Input/Mails/`; dubletnøgle = Message-ID |
+| `tools/hent-kalender.ps1` | Eksporterer kalenderaftaler og Outlook-opgaver til JSON i `Input/Kalender/` |
+| `tools/hent-referater.ps1` | Kopierer nye ledermødereferater fra `Y:\ADM\Referater` til `Input/Referater/`; sporer sidst-hentet |
+| `tools/opdater-kalenderaftale.ps1` | Opdaterer aftaleseriens (`Dagens opgaver – Second Brain`) beskrivelse med dagens briefing-opsummering |
+| `tools/udgiv-second-brain.ps1` | Udgiver Second Brain til Y: (tro kopi af `udgiv-til-y.ps1`-mønsteret) |
+| `Output/Morgenbrieﬁng/briefing-YYYY-MM-DD.md` | Daglig morgenbrieﬁng (gitignoreret — Output/ er gitignoreret) |
+| `Output/_log/dag-YYYY-MM-DD.log` | Dagskørslens logfil med alle trin og exitkoder (gitignoreret) |
+
+---
+
+## Fælles på tværs af alle 17 repos
 
 | Fil | Beskrivelse |
 |---|---|
@@ -447,6 +478,6 @@ Power BI-rapporten BI_SOSU: de fire FB-tabeller fra DATA-BUDGET_PROGNOSE som mat
 | `.gitignore` | Bl.a. Excel-/rådata-ignorering hvor relevant |
 | `_Arkiv/` | Udgåede versioner (projekt-repos) |
 
-**16 repos** = AI OS + 15 projekter. Syv af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`, `ADM-INSTITUTIONSLANDSKAB`, `BI-SOSU`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
+**17 repos** = AI OS + 16 projekter. Otte af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`, `ADM-INSTITUTIONSLANDSKAB`, `BI-SOSU`, `Second Brain`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST.
 
 **Bemærk (kun Claude Code)**: Claude Codes persistente hukommelse ligger lokalt under `~/.claude/projects/<AI OS-projekt>/memory/` med eget indeks `MEMORY.md` — den er personlig, ikke versionsstyret og ikke en del af repo-strukturen.

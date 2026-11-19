@@ -94,7 +94,7 @@ JST 2026-11-05: "Grundlaget bliver lokalt – indtil videre"; fjern stien fra li
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.
 **Sider/artefakter skal også på Y: (JST 2026-11-10):** når en side udgives på claude.ai, gemmes samme HTML som selvstændig fil
-(`<!doctype html>`, charset, titel) i projektets `Output\Sider\` (gitignoreret); lokale sider med navne i `Output\Budget\* - med navne.html` (entydigt navn: `FB 2027 - fire tabeller som side <dato> - med navne.html` / `- uden navne.html` i `Output\Sider\`; JST 11-11).
+(`<!doctype html>`, charset, titel) i projektets outputmappe (gitignoreret); for budgetforslaget er det `DATA-BUDGET_PROGNOSE\Output\FB <år>\` (alt færdigt output samlet, filnavne efter produkt, fx `FB <år> - Optagssimulator.html`, `- fire tabeller - som side.html` / `- som side - med navne.html`; årstallet fra `budgetaar.py`; JST 18-11).
 Udgiv spejler dem (filer git ikke følger) – ellers ligger siden kun i en jobmappe og på claude.ai, som kollegerne ikke kan åbne.
 
 Kør robocopy- og git-scripts fra PowerShell, ikke fra Bash: stier konverteres forkert.

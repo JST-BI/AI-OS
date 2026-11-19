@@ -255,6 +255,7 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `tools/budget2027/regression_fb.py` + `regression_fb.json` + `test_regression_fb.py` | Regressionstest: bygger b1 på det frosne grundlag og sammenligner sha256 pr. fane; exit 1 = koden flytter tal, exit 2 = input ændret → `--opdater` bevidst (PR #46) |
 | `tools/budget2027/test_l50_fire_flad.py`, `test_review_0811.py` | Tests og mutationer for l50 (entydige blade, 0-rækker, måle-/kolonnesæt, stempel) og review-rettelserne 08-11 |
 | `tools/budget2027/budgetaar.py` + `test_fb_navne.py` | Budgetårskonstanten (`BUDGETAAR`, `FB` = "FB <år>", `B_VEDT` = "B<år−1>"), som alle genererede tekster og fanenavne bruger; testen binder fanenavne og kontroltekster mellem producent og læsere (JST 09-11) |
+| `tools/budget2027/flyt_til_fb_mappe.ps1` + `test_fb_mappe.py` | Flytter det færdige output fra de gamle `Output\Budget`/`Output\Sider` til `Output\FB <år>\` (flytter, sletter aldrig, manifest i `Arkiv\flytning-<dato>.csv`, `-Proeve`, `-Rod` til Y:); grep-værnet fanger gamle stier i koden (BI-OEKONOMI #170) |
 | `tools/budget2027/navision_facit.py` + `test_navision_facit.py` | **Navision er facit for FB's økonomi** (JST 10-11-2026): resultat, omsætning, omkostninger og finansielle poster 2023–2025 øre-præcist fra finansposterne, krydstjekket mod Balance 499999; 12 kontrolrækker i fanen Kontrol (skal være 0,00). Stopper ved sha256-afvigelse fra modellens spejl (PR #38) |
 | `tools/budget2027/motor_laas.py` + `motor_laas.json` + `test_motor_laas.py` | **Motorlåsen** (JST 11-11-2026, PR #40): FB-kæden (l35/l38/l39/l47/l49/l51, scenarie_inputark, koer_scenarie, byg_v7) kører kun, når git-tree-hashen af BI-OEKONOMI `tools/scenariemotor` er den låste, og motormappen ikke har ucommittede ændringer eller indeksflag; låsen flyttes bevidst i `motor_laas.json`. **Motorstemplet** (#41, PR #42): `koer_scenarie.ps1` stempler hver motormappe (`<M>\motorlaas.json`: låsens tree + sha256 af seks filer), og alle læsere (byg_budget, l45, l48, l49, l51, identitet, kildeafstemning) stopper uden gyldigt stempel; `-Motormappe` kræver `-Ark` |
 | `tools/budget2027/orkestrering/stempl_motormappe.ps1` | Bagudstempel af en eksisterende motormappe (#41): kører `koer_scenarie.ps1` til en ny prøvemappe og stempler kun ved byte-identiske filer; bevis i `<prøve>.koer.log` og `<prøve>.bagudstempl.txt` |
@@ -266,9 +267,9 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `tools/budget2027/aarsvaerk_kr.py` + `test_aarsvaerk_kr.py` + `kontrol_aarsvaerk_kr.py` | Kontrol: årsværk som talt − årsværk efter kronerne for personer med fradrag i supplementet (i l37; mutationstest) (#21); testen kører nu på syntetiske data, det gamle script er `kontrol_aarsvaerk_kr.py` (PR #46) |
 | `tools/budget2027/orkestrering/` | Byggescripts (byg_fire, byg_scenarie, koer_scenarie, byg_v7) som reference; README med rækkefølgen (#21); et fejlet trin stopper kæden (#22); `recalc.ps1` (Excel-genberegning, sporet fra #24); standarder: værk = egen gren, motor `…-1103-tilskud`, output i `%TEMP%\budget42` (#24) |
 | `Output/Grundlag/budget2027/` | FB-grundlaget (SD/løn med `loen\jst-valg.json`, motorkørsler, `bro-42`, `arkiv\`); gitignoreret persondata, **ikke på Y:** (JST 05-11-2026, Udgiv `$IkkePaaYStier`); før 05-11 i en Claude-jobmappe (#24) |
-| `Output/Budget/Budget 2027-2035 - beregning <dato>.xlsx` | FB 2027 med broer, STUK-ark (6.1.1/6.2) og bæredygtighed; gitignoreret, ligger i OneDrive og på Y: |
-| `Output/Budget/Budget 2027-2035 - scenarie nedlagte optag (04-11-2026).xlsx` + `BRUGER - Optag 2027-2035 - scenarie nedlagte (04-11-2026).xlsx` | Scenariet og dets inputark (kopi; produktionsarket er uændret) |
-| `Output/Budget/Optag 2023-2025 - Studie+.xlsx` | Faktisk optag 2023–2025 (l49), input til 3 Elevoptag |
+| `Output/FB <år>/FB <år> - budgetforslag.xlsx` (+ `- med navne`) | FB 2027 med broer, STUK-ark (6.1.1/6.2) og bæredygtighed; gitignoreret, ligger i OneDrive og på Y: |
+| `Output/FB <år>/FB <år> - scenarie nedlagte optag.xlsx` + `Grundlag og input/BRUGER - Optag 2027-2035 - scenarie nedlagte (<dato>).xlsx` | Scenariet og dets inputark (kopi; produktionsarket er uændret) |
+| `Output/FB <år>/Grundlag og input/Optag 2023-2025 - Studie+.xlsx` | Faktisk optag 2023–2025 (l49), input til 3 Elevoptag |
 
 ---
 
@@ -440,7 +441,7 @@ Power BI-rapporten BI_SOSU: de fire FB-tabeller fra DATA-BUDGET_PROGNOSE som mat
 |---|---|
 | `AGENTS.md` | Projektregler: datakilden (FB's flade datatabel, ingen egne beregninger), identitet med FB, persondata |
 | `REVIEW.md` | Review-instruktioner (skabelon); importeret i `AGENTS.md` med `@REVIEW.md` |
-| `BI_SOSU.pbip` + `BI_SOSU.SemanticModel/` | Model: forespørgslen `Fire tabeller` (to navngivne datafiler fra `BI-OEKONOMI\DATA-BUDGET_PROGNOSE\Output\Budget`, OneDrive → Y: → UNC), tabellerne Elevaktivitet/Økonomi/Elevoptag/Årsværk, én måler pr. måling (Version uden valg = Basis) |
+| `BI_SOSU.pbip` + `BI_SOSU.SemanticModel/` | Model: forespørgslen `Fire tabeller` (to navngivne datafiler fra `BI-OEKONOMI\DATA-BUDGET_PROGNOSE\Output\FB <år>`, OneDrive → Y: → UNC), tabellerne Elevaktivitet/Økonomi/Elevoptag/Årsværk, én måler pr. måling (Version uden valg = Basis) |
 | `BI_SOSU.Report/` | Fire sider (én pr. tabel) med matricer og drill; Version- og År-slicere |
 | `tools/valider-rapport.ps1` | Validerer PBIR: JSON, felter mod TMDL, queryRef/selectorer (selvtest først) |
 

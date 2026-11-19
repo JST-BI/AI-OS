@@ -2,7 +2,7 @@
 
 > `<OneDrive>` = `C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers` (arbejdskopier); `Y:\AI OS` / `Y:\AI SOSU` er delte kopier til kollegerne.
 
-> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 13 projekter.
+> **Formål**: Ét opslagssted for alle styrede filer på tværs af AI OS og de 14 projekter (13 i AI SOSU + Second Brain).
 > **Vedligehold**: Opdatér dette indeks når filer tilføjes, fjernes eller omdøbes i ethvert repo (se Selvvedligehold i `AGENTS.md`).
 > **Instruktionsfil**: I alle repos er `AGENTS.md` den eneste instruktionsfil (uafhængig af AI-model); Codex og Claude Code (≥ v2.1.277) læser den direkte, og der må ingen `CLAUDE.md`, `CLAUDE.local.md` eller `.claude/CLAUDE.md` findes (de får Claude Code til at ignorere `AGENTS.md`). `tools/sync-agents-md.ps1` melder og fjerner dem; `.githooks/check_kun_agents_md.py` håndhæver det ved commit. **Review**: hvert repo har `REVIEW.md` (review-instruktioner), som `AGENTS.md` importerer med `@REVIEW.md`, så også lokal `/code-review` følger den; fælles skabelon `tools/review-skabelon.md`. **Skills** samme princip: `.agents/skills/` er eneste kilde, `.claude/skills/` et spejl skrevet af `tools/sync-skills.ps1`; `.githooks/check_skills_mirror.py` håndhæver det.
 > **Obsidian**: Vault-roden er `<OneDrive>\AI OS\`. De fysiske projektfiler ligger separat og kanonisk i `<OneDrive>\AI SOSU\`; der findes ingen junction eller særskilte Obsidian-kopier af projektfilerne.
@@ -50,11 +50,11 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/tmsl-refresh.ps1` | Tabel-scoped TMSL-refresh mod kørende PBI Desktop-instans (undgår fuld model-refresh) |
 | `AI OS/tools/pbi-reopen.ps1` | Genåbner HR_OEKONOMI.pbip i en kørende "Untitled" PBI Desktop via UIA-recents (kold genstart-cyklus) |
 | `AI OS/tools/pbi-screenshot.ps1` | Vælger rapportfane via UIA, lukker backstage, søger fejltekster og gemmer PrintWindow-screenshot |
-| `AI OS/.githooks/pre-commit` | Versioneret pre-commit hook; kalder begge checks nedenfor (findes i alle 12 repos) |
+| `AI OS/.githooks/pre-commit` | Versioneret pre-commit hook; kalder begge checks nedenfor (findes i alle 15 repos) |
 | `AI OS/.githooks/check_excel_pii.py` | Blokerer commit af Excel med persondata (CPR/e-mail/navnekolonner) |
 | `AI OS/.githooks/check_kun_agents_md.py` | Blokerer commit af `CLAUDE.md`, `CLAUDE.local.md` og `.claude/CLAUDE.md` |
 | `AI OS/.githooks/check_skills_mirror.py` | Blokerer commit hvor `.claude/skills/` afviger fra kilden `.agents/skills/` (git-index, blob-hash) |
-| `AI OS/.githooks/README.md` | Aktivering af hooks efter clone (findes i alle 12 repos) |
+| `AI OS/.githooks/README.md` | Aktivering af hooks efter clone (findes i alle 15 repos) |
 | `AI OS/.claude/` | Claude Code-indstillinger |
 | `AI OS/.agents/skills/pbi-live-maaling/SKILL.md` | Skill (spejl i `.claude/skills/`): live DAX-måling mod kørende PBI Desktop — port-opdagelse, ADOMD, aggregat-only-regel, gotchas |
 | `AI OS/.agents/skills/reverse-engineering-tal/SKILL.md` | Skill (spejl i `.claude/skills/`): reverse engineering af vedtagne/rapporterede tal — frys facit, proveniens og beslutningshistorik før rettelse, konkurrerende hypoteser testet mod ejerens facit, bevist vs. konsistent, forlæns verifikation |
@@ -258,7 +258,7 @@ Finansiel analyse, budget og prognose (Navision + BRUGER-budget/prognose → .xl
 | `tools/budget2027/budgetaar.py` + `test_fb_navne.py` | Budgetårskonstanten (`BUDGETAAR`, `FB` = "FB <år>", `B_VEDT` = "B<år−1>"), som alle genererede tekster og fanenavne bruger; testen binder fanenavne og kontroltekster mellem producent og læsere (JST 09-11) |
 | `tools/budget2027/flyt_til_fb_mappe.ps1` + `test_fb_mappe.py` | Flytter det færdige output fra de gamle `Output\Budget`/`Output\Sider` til `Output\FB <år>\` (flytter, sletter aldrig, manifest i `Arkiv\flytning-<dato>.csv`, `-Proeve`, `-Rod` til Y:); grep-værnet fanger gamle stier i koden (BI-OEKONOMI #170) |
 | `tools/budget2027/navision_facit.py` + `test_navision_facit.py` | **Navision er facit for FB's økonomi** (JST 10-11-2026): resultat, omsætning, omkostninger og finansielle poster 2023–2025 øre-præcist fra finansposterne, krydstjekket mod Balance 499999; 12 kontrolrækker i fanen Kontrol (skal være 0,00). Stopper ved sha256-afvigelse fra modellens spejl (PR #38) |
-| `tools/budget2027/motor_laas.py` + `motor_laas.json` + `test_motor_laas.py` | **Motorlåsen** (JST 11-11-2026, PR #40): FB-kæden (l35/l38/l39/l47/l49/l51, scenarie_inputark, koer_scenarie, byg_v7) kører kun, når git-tree-hashen af BI-OEKONOMI `tools/scenariemotor` er den låste, og motormappen ikke har ucommittede ændringer eller indeksflag; låsen flyttes bevidst i `motor_laas.json`. **Motorstemplet** (#41, PR #42): `koer_scenarie.ps1` stempler hver motormappe (`<M>\motorlaas.json`: låsens tree + sha256 af seks filer), og alle læsere (byg_budget, l45, l48, l49, l51, identitet, kildeafstemning) stopper uden gyldigt stempel; `-Motormappe` kræver `-Ark` |
+| `tools/budget2027/motor_laas.py` + `test_motor_laas.py` | **Motorlåsen** (JST 11-11-2026, PR #40): FB-kæden (l35/l38/l39/l47/l49/l51, scenarie_inputark, koer_scenarie, byg_v7) kører kun, når motormappen ikke har ucommittede ændringer eller indeksflag; siden #139 er låsen motormappens stempel (ingen låsefil at flytte). **Motorstemplet** (#41, PR #42): `koer_scenarie.ps1` stempler hver motormappe (`<M>\motorlaas.json`: låsens tree + sha256 af seks filer), og alle læsere (byg_budget, l45, l48, l49, l51, identitet, kildeafstemning) stopper uden gyldigt stempel; `-Motormappe` kræver `-Ark` |
 | `tools/budget2027/orkestrering/stempl_motormappe.ps1` | Bagudstempel af en eksisterende motormappe (#41): kører `koer_scenarie.ps1` til en ny prøvemappe og stempler kun ved byte-identiske filer; bevis i `<prøve>.koer.log` og `<prøve>.bagudstempl.txt` |
 | `tools/budget2027/orkestrering/produktion_konst.ps1` + `bisosu_filer.ps1` | Produktionsmotor, udtræksdato og basisfilnavne ét sted; skriver/tjekker BI_SOSU's `Datafiler`-linje (kræver det nye M-skema) |
 | `tools/budget2027/l49_optag_historik.py` | `Optag 2023-2025 - Studie+.xlsx` (faktisk optag, samme mål som fil 1; låst til motorkørslens udtræk) → fanen Optag 2023–2025 (historik) i FB (#21) |
@@ -472,7 +472,7 @@ Chefens daglige AI-assistent: henter mails, kalender og ledermødereferater fra 
 
 ---
 
-## Fælles på tværs af alle 17 repos
+## Fælles på tværs af alle 15 repos
 
 | Fil | Beskrivelse |
 |---|---|
@@ -485,6 +485,6 @@ Chefens daglige AI-assistent: henter mails, kalender og ledermødereferater fra 
 | `.gitignore` | Bl.a. Excel-/rådata-ignorering hvor relevant |
 | `_Arkiv/` | Udgåede versioner (projekt-repos) |
 
-**17 repos** = AI OS + 16 projekter. Syv af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`, `ADM-INSTITUTIONSLANDSKAB`, `BI-SOSU`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST. `Second Brain` er på GitHub som privat repo ([JST-BI/SECOND-BRAIN](https://github.com/JST-BI/SECOND-BRAIN)).
+**15 repos** = AI OS + 14 projekter (13 i AI SOSU + Second Brain; DATA-BUDGET_PROGNOSE og BI-SOSU er undermapper i BI-OEKONOMI siden 13-11-2026). Seks af dem (`BI-OPTAG FRAVÆR`, `ADM-AFTALER`, `ADM-BLANKET`, `ADM-RETTIGHEDSSTYRING`, `ADM-BESPARELSER`, `ADM-INSTITUTIONSLANDSKAB`) har lokale git-repos uden GitHub-remote, indtil fortrolighedsniveauet er afklaret med JST. `Second Brain` er på GitHub som privat repo ([JST-BI/SECOND-BRAIN](https://github.com/JST-BI/SECOND-BRAIN)).
 
 **Bemærk (kun Claude Code)**: Claude Codes persistente hukommelse ligger lokalt under `~/.claude/projects/<AI OS-projekt>/memory/` med eget indeks `MEMORY.md` — den er personlig, ikke versionsstyret og ikke en del af repo-strukturen.

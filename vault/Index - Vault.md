@@ -1,7 +1,7 @@
 ---
 tags: [index]
 created: 2026-08-22
-updated: 2026-08-28
+updated: 2026-11-19
 status: permanent
 type: index
 aliases: [MOC - Vault]
@@ -33,7 +33,7 @@ Se `AGENTS.md` → *Obsidian-vaultregler* for scope og routing.
 | `_attachments/` | Vedhæftninger | – |
 
 ## Noter
-*(ingen endnu — listen holdes uden dubletter og sorteres alfabetisk)*
+- [[Obsidian AI Assistant - System Prompt]] — systemprompt til AI-pluginet i Obsidian (`resources/`)
 
 ## Relaterede indexes
 *(ingen endnu)*

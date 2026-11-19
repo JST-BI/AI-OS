@@ -63,8 +63,9 @@ Obsidian er konfigureret til at følge dette: `.obsidian/app.json` lægger nye f
 Agenten skriver i vaulten med Obsidians kommandolinje `obsidian` (`create`, `read`, `append`,
 `delete` m.fl.; skill `obsidian-cli`), og den virker kun, når Obsidian kører – ellers "The CLI is
 unable to find Obsidian". Start den med `Obsidian.exe "obsidian://open?vault=AI%20OS"`. `delete`
-lægger filen i papirkurven. Persondata hører aldrig i vaulten: et AI-plugin sender noterne til en
-ekstern model.
+lægger filen i papirkurven. Følsomme persondata (CPR, løn, helbred, elev- og medarbejderdata fra
+udtræk) hører aldrig i vaulten: AI-pluginet sender noterne til en ekstern model. Pluginets systemprompt
+er [[Obsidian AI Assistant - System Prompt]] i `vault/resources/` – ret den, når reglerne her ændres.
 
 ## Index/MOC-vedligehold
 

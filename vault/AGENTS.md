@@ -60,6 +60,12 @@ Obsidian er konfigureret til at følge dette: `.obsidian/app.json` lægger nye f
 `vault/inbox/`, `daily-notes.json` peger på `vault/journal/`, `templates.json` på
 `vault/_templates/`. Uden den opsætning skrev daily-notes-pluginet i roden.
 
+Agenten skriver i vaulten med Obsidians kommandolinje `obsidian` (`create`, `read`, `append`,
+`delete` m.fl.; skill `obsidian-cli`), og den virker kun, når Obsidian kører – ellers "The CLI is
+unable to find Obsidian". Start den med `Obsidian.exe "obsidian://open?vault=AI%20OS"`. `delete`
+lægger filen i papirkurven. Persondata hører aldrig i vaulten: et AI-plugin sender noterne til en
+ekstern model.
+
 ## Index/MOC-vedligehold
 
 [[Index - Vault]] er vaultens MOC. `INDEX.md` i AI OS-roden er noget andet — filindekset over

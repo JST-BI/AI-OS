@@ -84,11 +84,13 @@ rapport "Filer der kun findes paa Y:" skal være 0 før en opgave meldes færdig
 OneDrive → Y:, så en PowerPoint lagt i `Y:\…\Input` var ellers usynlig for arbejdskopien (2026-09-15).
 **Y: og OneDrive skal være identiske — også gitignoreret Input/Output med persondata og repos uden
 remote** (JST 2026-09-15). Udgiv sørger for det; Y:-klonerne står dog altid på `main`.
+Udgiv overskriver aldrig en nyere Y:-fil og stopper et repo med lokale ændringer på Y:; exit ≠ 0 / "UDGIV FEJL" =
+ikke færdig. Det forhindrer, at kollegers arbejde på Y: forsvinder i en stash eller under en ældre kopi.
 **Eneste undtagelse: `ADM-BESPARELSER` må aldrig kopieres til Y:** — hverken repo eller filer
 (JST 2026-10-16; afskedigelsesvarslinger med navn og CPR). Udgiv springer det over via
 `$IkkePaaY` i `tools/udgiv-til-y.ps1`; et nyt fortroligt projekt føjes til den liste.
 Samme følsomhed i en undermappe af et udgivet repo → `$IkkePaaYStier`: i dag
-`BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/` (og den gamle klons sti; FB-grundlaget med `jst-valg.json` – hvem sparerunden omfatter;
+`BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget*/` (mønster – hvert FB-år; og den gamle klons sti; FB-grundlaget med `jst-valg.json` – hvem sparerunden omfatter;
 JST 2026-11-05: "Grundlaget bliver lokalt – indtil videre"; fjern stien fra listen kun på JSTs ord).
 
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til

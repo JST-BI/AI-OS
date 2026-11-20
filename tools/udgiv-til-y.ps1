@@ -4,12 +4,19 @@
 .DESCRIPTION
   1) Y:\AI OS  <- filkopi af <OneDrive>\AI OS (robocopy /E /XO: kun nyere filer, intet slettes).
      Udelader .git, .claude\worktrees, .codex-tmp, .obsidian\workspace.json, node_modules og alt personligt.
-  2) Y:\AI SOSU\<repo> <- git pull --ff-only origin main i hver klon med remote. Lokale aendringer paa Y:
-     stashes foerst (rapporteres), saa intet overskrives i blinde. Kloner uden remote fast-forwardes
-     fra OneDrive-klonen, og et repo der mangler paa Y: klones derud.
+  2) Y:\AI SOSU\<repo> <- git pull --ff-only origin main i hver klon med remote. Har Y: lokale aendringer,
+     STOPPER repoet (ingen stash, ingen pull, FEJL) - medmindre -StashPaaY er givet. Kloner uden remote
+     fast-forwardes fra OneDrive-klonens main (aldrig dens aktuelle gren), og et repo der mangler paa Y:
+     klones derud fra main; origin peger da paa samme GitHub-remote som OneDrive-klonen (fjernes kun,
+     hvis OneDrive-klonen ingen remote har). Y:-klonen skal staa paa main, ellers FEJL.
   2b) Filer git ikke foelger (gitignoreret Input/Output m.m.) kopieres OneDrive -> Y:, naar de mangler
-     eller er nyere. Ogsaa persondata - JSTs beslutning 2026-09-15.
+     paa Y: eller OneDrive-udgaven er nyere. Ogsaa persondata - JSTs beslutning 2026-09-15. Er Y:-udgaven
+     nyere og har andet indhold (SHA256), kopieres den IKKE: listen "Nyere paa Y: (ikke overskrevet)".
+  2c) Melder filer i Y:\AI SOSU\<repo>, som hverken Y:-git eller OneDrive har (foraeldede ELLER nye paa Y:
+     - kan ikke skelnes). Sletter aldrig noget i AI SOSU.
   3) Rapporterer filer der KUN findes paa Y: - de skal hentes ind i OneDrive.
+  Exit-kode: 1 ved enhver FEJL (robocopy >= 8, repo der ikke kan/maa fast-forwardes, fejlet kopi),
+  2 ved filer der kun findes / er nyere paa Y:, 0 ellers. Sidste linje er "UDGIV OK" eller "UDGIV FEJL: n".
   Projekter i $IkkePaaY (ADM-BESPARELSER) springes over i ALLE trin og maa aldrig ligge paa Y:.
   Y:-kopierne er kollegernes arbejdsgrundlag: DATAKONTROLCENTER paa Y: og Z8050 m.fl. paa Y: roeres IKKE.
   Koeres af agenten paa kodeordet "Udgiv" (se AI OS\\AGENTS.md) eller manuelt.
@@ -22,6 +29,8 @@
 .PARAMETER RyddForaeldede
   Slet de filer under Y:\AI OS der ikke laengere findes i kilden. Uden flaget rapporteres de kun.
   Roerer aldrig noget uden for Y:\AI OS, og aldrig repo-kopierne under Y:\AI SOSU.
+.PARAMETER StashPaaY
+  Stash lokale aendringer i en Y:-klon med remote foer pull (rapporteres). Uden flaget stopper repoet med FEJL.
 .EXAMPLE
   & "<OneDrive>\AI OS\tools\udgiv-til-y.ps1"
   & "<OneDrive>\AI OS\tools\udgiv-til-y.ps1" -KunAIOS
@@ -38,6 +47,7 @@ param(
   [string]$YAISOSU = "Y:\AI SOSU",
   [switch]$KunAIOS,
   [switch]$RyddForaeldede,
+  [switch]$StashPaaY,
   [string]$Log = (Join-Path $env:LOCALAPPDATA "Temp\udgiv-til-y.log")
 )
 $ErrorActionPreference = 'Continue'
@@ -50,8 +60,21 @@ $IkkePaaY = @('ADM-BESPARELSER')
 # som ADM-BESPARELSER. Om det maa paa Y:, er JSTs afgoerelse (aaben 05-11-2026); indtil da springes det over.
 # 13-11-2026: DATA-BUDGET_PROGNOSE er samlet ind i BI-OEKONOMI (undermappe); begge placeringer udelades, saalaenge
 # den gamle klon findes.
-$IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/', 'BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget2027/')
+# Moenstre (-like, uden forskel paa store/smaa bogstaver): budget* daekker hvert FB-aar (budget2027, budget2028 ...),
+# saa vaernet ikke falder bort, naar aaret skifter.
+$IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget*/', 'BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget*/')
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
+# Alle fejl taelles her; scriptet slutter med exit 1, hvis taelleren ikke er 0 (Opsummer).
+$FejlAntal = 0
+$NyereY = New-Object System.Collections.Generic.List[string]
+function Fejl($m) { L "FEJL: $m"; $script:FejlAntal++ }
+function Opsummer($kunYAntal) {
+  if ($FejlAntal -or $NyereY.Count -or $kunYAntal) {
+    L ("UDGIV FEJL: " + ($FejlAntal + $NyereY.Count + $kunYAntal) + " (fejl $FejlAntal, nyere paa Y: $($NyereY.Count), kun paa Y: $kunYAntal)")
+    Slut $(if ($FejlAntal) { 1 } else { 2 })
+  }
+  L "UDGIV OK"; Slut 0
+}
 # Filnavne fra git (core.quotepath=off) er UTF-8. En loesrevet powershell.exe afkoder dem med konsollens tegnsaet (850),
 # saa et navn med aeoeaa blev forvansket, Test-Path fejlede, og filen blev sprunget stille over i trin 2b (12-11-2026: 1.616
 # filer i 8 repos). Kun git-kaldene, der laeser navne, koerer med UTF-8 - robocopy's udskrift laeses fortsat med konsollens.
@@ -81,15 +104,19 @@ $env:GIT_CONFIG_KEY_1 = "gc.auto"
 $env:GIT_CONFIG_VALUE_1 = "0"
 $env:GIT_CONFIG_KEY_2 = "maintenance.auto"
 $env:GIT_CONFIG_VALUE_2 = "false"
-if (-not (Test-Path $YAIOS)) { L "FEJL: $YAIOS findes ikke (VPN/Y: ikke tilsluttet?)"; Slut 1 }
+if (-not (Test-Path $YAIOS)) { Fejl "$YAIOS findes ikke (VPN/Y: ikke tilsluttet?)"; Opsummer 0 }
 
 # 1) AI OS -> Y:\AI OS (filkopi)
 $src = Join-Path $OneDrive "AI OS"
 & robocopy $src $YAIOS /E /XO /R:2 /W:5 /XD .git .claude .codex-tmp .obsidian node_modules .agents /XF workspace.json /NFL /NDL /NJH /NP | Select-Object -Last 8 | ForEach-Object { L ("  " + $_.Trim()) }
 $code = $LASTEXITCODE
 L ("AI OS -> Y: robocopy exit $code " + $(if ($code -lt 8) { "(OK)" } else { "(FEJL)" }))
+if ($code -ge 8) { Fejl "robocopy AI OS -> Y: exit $code" }
 # .obsidian kopieres uden workspace.json (personlig tilstand)
-& robocopy (Join-Path $src ".obsidian") (Join-Path $YAIOS ".obsidian") /E /XO /R:2 /W:5 /XF workspace.json workspace-mobile.json /NFL /NDL /NJH /NJS /NP | Out-Null
+if (Test-Path -LiteralPath (Join-Path $src ".obsidian")) {
+  & robocopy (Join-Path $src ".obsidian") (Join-Path $YAIOS ".obsidian") /E /XO /R:2 /W:5 /XF workspace.json workspace-mobile.json /NFL /NDL /NJH /NJS /NP | Out-Null
+  if ($LASTEXITCODE -ge 8) { Fejl "robocopy .obsidian -> Y: exit $LASTEXITCODE" }
+}
 
 # 1b) Foraeldede filer paa Y: - dem kilden ikke laengere har. En flytning i kilden ser for
 #     robocopy ud som en tilfoejelse, saa uden dette bliver den gamle placering liggende.
@@ -114,7 +141,7 @@ else {
   L "Foraeldede filer paa Y:\AI OS: $($foraeldede.Count) - koer med -RyddForaeldede for at fjerne dem"
 }
 
-if ($KunAIOS) { L "UDGIV slut (kun AI OS)"; Slut 0 }
+if ($KunAIOS) { L "UDGIV slut (kun AI OS)"; Opsummer 0 }
 
 # En fil der ligger UNTRACKED paa Y: og nu kommer ind via git, faar merge til at afvise hele
 # opdateringen ("untracked working tree files would be overwritten"). Det sker hver gang en fil
@@ -134,15 +161,21 @@ function Ryd-IdentiskeUntracked($d, $n) {
   if ($afviger) { L "$n : ADVARSEL $afviger untracked filer AFVIGER fra det indkommende - merge vil fejle" }
 }
 
-# 2a) Repos der findes i OneDrive men slet ikke paa Y: klones derud fra OneDrive-klonen.
-#     Origin fjernes igen, saa klonen ligner de andre lokale kloner (Udgiv henter dem fra OneDrive).
+# 2a) Repos der findes i OneDrive men slet ikke paa Y: klones derud fra OneDrive-klonens MAIN (ikke dens
+#     aktuelle gren - Y: staar altid paa main). Har OneDrive-klonen en remote (GitHub), peger Y:'s origin paa
+#     den, saa trin 2 puller fra GitHub; kun uden remote fjernes origin (Udgiv henter da fra OneDrive).
 Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-Path (Join-Path $_.FullName ".git\HEAD") } | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object {
   $y = Join-Path $YAISOSU $_.Name
   if (Test-Path $y) { return }
-  & git clone -q $_.FullName $y 2>&1 | Out-Null
-  & git -C $y remote remove origin 2>$null
+  $odKlon = $_.FullName
+  & git -C $odKlon rev-parse --verify -q refs/heads/main 2>$null | Out-Null
+  if ($LASTEXITCODE -ne 0) { Fejl "$($_.Name) : mangler paa Y:, men OneDrive-klonen har ingen main - ikke klonet"; return }
+  & git clone -q --branch main $odKlon $y 2>&1 | Out-Null
+  if ($LASTEXITCODE -ne 0) { Fejl "$($_.Name) : git clone til Y: mislykkedes"; return }
+  $odRemote = (& git -C $odKlon remote get-url origin 2>$null)
+  if ($odRemote) { & git -C $y remote set-url origin $odRemote 2>$null } else { & git -C $y remote remove origin 2>$null }
   & git -C $y config core.hooksPath .githooks
-  L ("$($_.Name) : manglede paa Y: - klonet fra OneDrive (" + (& git -C $y rev-parse --short HEAD) + ")")
+  L ("$($_.Name) : manglede paa Y: - klonet fra OneDrive main (" + (& git -C $y rev-parse --short HEAD) + ")" + $(if ($odRemote) { ", origin = OneDrive-klonens remote" } else { ", ingen remote" }))
 }
 
 # 2) Y:\AI SOSU\<repo> <- GitHub (ff-only); kloner uden remote <- OneDrive-klonen (ff-only)
@@ -150,30 +183,46 @@ Get-ChildItem -Directory $YAISOSU | ForEach-Object {
   $d = $_.FullName; $n = $_.Name
   if ($IkkePaaY -contains $n) { L "ADVARSEL $n : ligger paa Y: men maa ALDRIG vaere der - roeres ikke; fjern mappen manuelt"; return }
   if (-not (Test-Path (Join-Path $d ".git\HEAD"))) { L "$n : ingen gyldig .git - springes over"; return }
+  # Y: staar altid paa main; paa en anden gren ville origin/main blive ff'et ind paa den forkerte gren.
+  $yGren = (& git -C $d branch --show-current 2>$null)
+  if ($yGren -ne 'main') { Fejl "$n : Y:-klonen staar paa '$yGren', ikke main - roeres ikke"; return }
   $remote = (& git -C $d remote get-url origin 2>$null)
   if (-not $remote) {
-    # Uden remote er OneDrive-klonen kilden. Kun fast-forward, og kun naar Y: er ren.
+    # Uden remote er OneDrive-klonens MAIN kilden (aldrig dens aktuelle gren). Kun fast-forward, og kun naar Y: er ren.
     $od = Join-Path $OneDrive "AI SOSU\$n"
-    $gren = (& git -C $od branch --show-current 2>$null)
-    if (-not $gren) { L "$n : ingen remote og ingen OneDrive-klon - springes over"; return }
+    if (-not (Test-Path (Join-Path $od ".git\HEAD"))) { L "$n : ingen remote og ingen OneDrive-klon - springes over (trin 3 melder filerne)"; return }
+    & git -C $od rev-parse --verify -q refs/heads/main 2>$null | Out-Null
+    if ($LASTEXITCODE -ne 0) { Fejl "$n : OneDrive-klonen har ingen main - roeres ikke"; return }
     $before = (& git -C $d rev-parse --short HEAD)
     $dirty = @(& git -C $d status --short --untracked-files=no).Count
-    & git -C $d fetch -q $od $gren 2>$null
+    if ($dirty -gt 0) { Fejl "$n : $dirty lokale aendringer paa Y: - roeres ikke (hent dem ind i OneDrive)"; return }
+    & git -C $d fetch -q $od main 2>$null
+    if ($LASTEXITCODE -ne 0) { Fejl "$n : fetch fra OneDrive-klonens main mislykkedes"; return }
     & git -C $d merge-base --is-ancestor HEAD FETCH_HEAD
-    if ($LASTEXITCODE -ne 0 -or $dirty -gt 0) { L "$n : lokal klon kan IKKE fast-forwardes (dirty=$dirty) - roeres ikke"; return }
+    if ($LASTEXITCODE -ne 0) { Fejl "$n : lokal klon kan IKKE fast-forwardes til OneDrive main (Y: har commits, OneDrive ikke har) - roeres ikke"; return }
     Ryd-IdentiskeUntracked $d $n
-    & git -C $d merge -q --ff-only FETCH_HEAD 2>&1 | Out-Null
-    L ("$n : $before -> " + (& git -C $d rev-parse --short HEAD) + " (fra OneDrive, ingen remote)")
-    return
+    $out = (& git -C $d merge -q --ff-only FETCH_HEAD 2>&1 | Select-Object -Last 1)
   }
-  $dirty = @(& git -C $d status --short | Where-Object { $_ -notmatch '^\?\?' }).Count
-  if ($dirty -gt 0) { & git -C $d stash push -q -m ("Y-kopi: lokale aendringer foer Udgiv " + (Get-Date -Format yyyy-MM-dd)) | Out-Null; L "$n : $dirty aendrede filer stashet (git stash list i $d)" }
-  $before = (& git -C $d rev-parse --short HEAD)
-  & git -C $d fetch -q origin main 2>$null
-  Ryd-IdentiskeUntracked $d $n
-  $out = (& git -C $d merge -q --ff-only FETCH_HEAD 2>&1 | Select-Object -Last 1)
+  else {
+    $dirty = @(& git -C $d status --short | Where-Object { $_ -notmatch '^\?\?' }).Count
+    if ($dirty -gt 0) {
+      if (-not $StashPaaY) { Fejl "$n : $dirty lokale aendringer paa Y: - STOP for repoet (ingen stash, ingen pull). Hent dem ind i OneDrive, eller koer med -StashPaaY"; return }
+      & git -C $d stash push -q -m ("Y-kopi: lokale aendringer foer Udgiv " + (Get-Date -Format yyyy-MM-dd)) | Out-Null
+      L "$n : $dirty aendrede filer stashet (-StashPaaY; git stash list i $d)"
+    }
+    $before = (& git -C $d rev-parse --short HEAD)
+    & git -C $d fetch -q origin main 2>$null
+    if ($LASTEXITCODE -ne 0) { Fejl "$n : git fetch origin main mislykkedes"; return }
+    Ryd-IdentiskeUntracked $d $n
+    $out = (& git -C $d merge -q --ff-only FETCH_HEAD 2>&1 | Select-Object -Last 1)
+  }
+  # Virkningen afgoer, ikke exit-koden: en fejlet baggrunds-repack ('geometric-repack') kan give exit != 0,
+  # selv om repoet flyttede sig. Succes = HEAD er FETCH_HEAD. Er Y: foran (commits kun paa Y:), er det ogsaa en FEJL.
   $after = (& git -C $d rev-parse --short HEAD)
-  L ("$n : $before -> $after " + $(if ($out) { "($out)" } else { "" }))
+  if ((& git -C $d rev-parse HEAD) -ne (& git -C $d rev-parse FETCH_HEAD)) {
+    Fejl ("$n : staar paa $after, ikke paa main fra " + $(if ($remote) { "origin" } else { "OneDrive" }) + " - fast-forward afvist eller commits kun paa Y: " + $(if ($out) { "($out)" } else { "" })); return
+  }
+  L ("$n : $before -> $after " + $(if (-not $remote) { "(fra OneDrive main, ingen remote) " } else { "" }) + $(if ($out) { "($out)" } else { "" }))
 }
 
 # 2b) Filer git ikke foelger (gitignoreret Input/Output, pbi-cache m.m.) findes kun i OneDrive-klonen
@@ -186,26 +235,54 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
   if (-not (Test-Path $y)) { return }
   $repo = $_.Name
   $udeladt = @($IkkePaaYStier | Where-Object { $_.StartsWith("$repo/") } | ForEach-Object { $_.Substring($repo.Length + 1) })
-  foreach ($u in $udeladt) { if (Test-Path -LiteralPath (Join-Path $y $u)) { L "ADVARSEL $repo/$u : ligger paa Y: men maa ikke kopieres derud - roeres ikke" } }
+  # -Path (ikke -LiteralPath): moenstrene har wildcards (budget*).
+  foreach ($u in $udeladt) { if (Test-Path -Path (Join-Path $y $u)) { L "ADVARSEL $repo/$u : ligger paa Y: men maa ikke kopieres derud - roeres ikke" } }
   $yTracked = @{}
   if (Test-Path (Join-Path $y ".git\HEAD")) { GitNavne -C $y -c core.quotepath=off ls-files | ForEach-Object { $yTracked[$_] = 1 } }
   $kopieret = 0
   GitNavne -C $od -c core.quotepath=off ls-files --others |
     Where-Object { $_ -notmatch '(^|/)(__pycache__|node_modules|\.claude/worktrees)/' -and $_ -notmatch '(^|/)(~\$[^/]*|desktop\.ini|Thumbs\.db)$' -and -not $yTracked[$_] } |
-    Where-Object { $f = $_; -not ($udeladt | Where-Object { $f.StartsWith($_) }) } |
+    Where-Object { $f = $_; -not ($udeladt | Where-Object { $f -like "$_*" }) } |
     ForEach-Object {
-      $src = Join-Path $od $_; $dst = Join-Path $y $_
-      if (-not (Test-Path -LiteralPath $src -PathType Leaf)) { return }
-      $s = Get-Item -LiteralPath $src -Force
+      $rel = $_; $kilde = Join-Path $od $rel; $dst = Join-Path $y $rel
+      if (-not (Test-Path -LiteralPath $kilde -PathType Leaf)) { return }
+      $s = Get-Item -LiteralPath $kilde -Force
       if (Test-Path -LiteralPath $dst) {
         $t = Get-Item -LiteralPath $dst -Force
-        if ($t.Length -eq $s.Length -and $t.LastWriteTimeUtc -ge $s.LastWriteTimeUtc.AddSeconds(-2)) { return }
+        # Kun OneDrive -> Y:, naar OneDrive-udgaven er NYERE. Samme tid (+-2 s) og laengde = samme fil (ingen hash over VPN).
+        # Ellers (Y: nyere, eller samme tid men anden laengde) afgoer indholdet: ens = intet, forskelligt = meld, kopier ikke.
+        if ($s.LastWriteTimeUtc -le $t.LastWriteTimeUtc.AddSeconds(2)) {
+          if ($t.Length -eq $s.Length -and $t.LastWriteTimeUtc -le $s.LastWriteTimeUtc.AddSeconds(2)) { return }
+          if ((Get-FileHash -LiteralPath $kilde -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath $dst -Algorithm SHA256).Hash) { return }
+          $script:NyereY.Add("$repo/$rel"); return
+        }
       }
-      New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dst) | Out-Null
-      Copy-Item -LiteralPath $src -Destination $dst -Force
-      $kopieret++
+      try {
+        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dst) -ErrorAction Stop | Out-Null
+        Copy-Item -LiteralPath $kilde -Destination $dst -Force -ErrorAction Stop
+        $kopieret++
+      }
+      catch { Fejl "$repo/$rel : kopi til Y: mislykkedes ($($_.Exception.Message))" }
     }
-  if ($kopieret) { L "$($_.Name) : $kopieret filer uden for git kopieret til Y:" }
+  if ($kopieret) { L "$repo : $kopieret filer uden for git kopieret til Y:" }
+}
+foreach ($ny in $NyereY | Select-Object -First 20) { L "  nyere paa Y: $ny" }
+if ($NyereY.Count -gt 20) { L ("  ... og " + ($NyereY.Count - 20) + " mere") }
+L ("Nyere paa Y: (ikke overskrevet): $($NyereY.Count)" + $(if ($NyereY.Count) { " - Y:-udgaven er nyere og har andet indhold; hent den ind i OneDrive (hash-tjek) eller afgoer med JST" } else { "" }))
+
+# 2c) Foraeldede filer i Y:\AI SOSU\<repo>: filer Y:-git ikke foelger, og som OneDrive ikke (laengere) har.
+#     I AI SOSU kan en foraeldet kopi fra trin 2b ikke skelnes fra en kollegas nye arbejde paa Y:, saa der
+#     slettes ALDRIG noget her - heller ikke med -RyddForaeldede. Trin 3 taeller dem som "kun paa Y:".
+Get-ChildItem -Directory $YAISOSU -ErrorAction SilentlyContinue | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object {
+  $yRepo = $_.FullName; $oRepo = Join-Path $OneDrive "AI SOSU\$($_.Name)"; $rn = $_.Name
+  if (-not (Test-Path (Join-Path $yRepo ".git\HEAD")) -or -not (Test-Path $oRepo)) { return }
+  $gamle = @(GitNavne -C $yRepo -c core.quotepath=off ls-files --others |
+    Where-Object { $_ -notmatch '(^|/)(__pycache__|node_modules)/' -and $_ -notmatch '(^|/)(~\$[^/]*|desktop\.ini|Thumbs\.db|workspace\.json)$' } |
+    Where-Object { -not (Test-Path -LiteralPath (Join-Path $oRepo $_)) })
+  if ($gamle.Count -eq 0) { return }
+  foreach ($g in $gamle | Select-Object -First 10) { L "  foraeldet eller ny paa Y: $rn/$g" }
+  if ($gamle.Count -gt 10) { L ("  ... og " + ($gamle.Count - 10) + " mere") }
+  L "Foraeldede filer paa Y:\AI SOSU\$rn : $($gamle.Count) - findes ikke i OneDrive; slettes aldrig af Udgiv (afgoer med JST)"
 }
 
 # 3) Filer der KUN findes paa Y: - lagt dér af JST eller en kollega, eller skrevet af en agent
@@ -213,7 +290,7 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
 #    forbliver de usynlige for arbejdskopien (set 2026-09-15: infoskaermenes PowerPoints, en
 #    pbip og Codex' arbejdsmappe laa kun paa Y:). Kun "New File" taeller: "Newer" er
 #    checkout-tidsstempler fra git pull og siger intet om indholdet.
-if (-not (Test-Path $YAISOSU)) { L "FEJL: $YAISOSU forsvandt undervejs (Y:-mapping faldet) - koer igen mod UNC"; Slut 1 }
+if (-not (Test-Path $YAISOSU)) { Fejl "$YAISOSU forsvandt undervejs (Y:-mapping faldet) - koer igen mod UNC"; Opsummer 0 }
 $par = @(@{ Y = $YAIOS; O = (Join-Path $OneDrive "AI OS") })
 Get-ChildItem -Directory $YAISOSU | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object { $par += @{ Y = $_.FullName; O = (Join-Path $OneDrive "AI SOSU\$($_.Name)") } }
 $kunY = 0
@@ -234,4 +311,4 @@ foreach ($p in $par) {
 L ("Filer der kun findes paa Y: $kunY" + $(if ($kunY) { " - kopiér dem til OneDrive (se AI OS\\AGENTS.md, Placering)" } else { "" }))
 L "UDGIV slut"
 # robocopy returnerer 1 for "filer kopieret", og den kode slap ellers ud som scriptets exit-kode.
-Slut $(if ($kunY) { 2 } else { 0 })
+Opsummer $kunY

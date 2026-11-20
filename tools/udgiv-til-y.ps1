@@ -76,6 +76,29 @@ function HashEns($a, $b) {
   if (-not $ha -or -not $hb) { throw "tom hash" }
   $ha -eq $hb
 }
+# Filer under $rod som @{ relativ sti -> FileInfo } via .NET - ALDRIG ved at parse robocopy-udskrift: den afkodes med
+# konsollens tegnsaet (850), saa en sti med aeoeaa blev forvansket ("t?t.txt"), hash fejlede, og filen blev forkert meldt.
+# Mapper med et navn i $udenMapper springes over paa alle niveauer (som robocopy /XD); filnavne der matcher $udenFiler
+# (regex) springes over (som /XF). Reparse points foelges ikke. En mappe der ikke kan laeses, er en FEJL.
+function FilerUnder([string]$rod, [string[]]$udenMapper, [string]$udenFiler) {
+  $h = @{}
+  if (-not (Test-Path -LiteralPath $rod -PathType Container)) { return $h }
+  $rodInfo = New-Object IO.DirectoryInfo $rod
+  $laengde = $rodInfo.FullName.TrimEnd('\').Length
+  $stak = New-Object System.Collections.Stack
+  $stak.Push($rodInfo)
+  while ($stak.Count) {
+    $mappe = $stak.Pop()
+    try { $poster = $mappe.GetFileSystemInfos() } catch { Fejl "$($mappe.FullName) : kan ikke laeses ($($_.Exception.Message))"; continue }
+    foreach ($p in $poster) {
+      if ($p -is [IO.DirectoryInfo]) {
+        if ($udenMapper -notcontains $p.Name -and -not ($p.Attributes -band [IO.FileAttributes]::ReparsePoint)) { $stak.Push($p) }
+      }
+      elseif (-not ($udenFiler -and $p.Name -match $udenFiler)) { $h[$p.FullName.Substring($laengde).TrimStart('\')] = $p }
+    }
+  }
+  $h
+}
 function Opsummer($kunYAntal) {
   if ($FejlAntal -or $NyereY.Count -or $kunYAntal) {
     L ("UDGIV FEJL: " + ($FejlAntal + $NyereY.Count + $kunYAntal) + " (fejl $FejlAntal, nyere paa Y: $($NyereY.Count), kun paa Y: $kunYAntal)")
@@ -116,12 +139,17 @@ if (-not (Test-Path $YAIOS)) { Fejl "$YAIOS findes ikke (VPN/Y: ikke tilsluttet?
 
 # 1) AI OS -> Y:\AI OS (filkopi)
 $src = Join-Path $OneDrive "AI OS"
-# Filer der er NYERE paa Y:\AI OS (robocopy-klassen "Older" = kilden er aeldre): /XO lader dem staa, og det er rigtigt,
-# men de skal meldes, naar indholdet afviger - ellers forsvinder en kollegas rettelse stille ved naeste aendring i OneDrive.
-@(& robocopy $src $YAIOS /E /L /R:0 /W:0 /XD .git .claude .codex-tmp .obsidian node_modules .agents /XF workspace.json /NJH /NJS /NDL /NP /FP |
-  Where-Object { $_ -match '^\s*Older\s' } | ForEach-Object { ($_ -split "`t")[-1].Trim() }) | ForEach-Object {
-  $rel = $_.Substring($src.Length).TrimStart('\')
-  try { if (-not (HashEns $_ (Join-Path $YAIOS $rel))) { $script:NyereY.Add("AI OS/$($rel.Replace('\','/'))") } }
+# Filer der er NYERE paa Y:\AI OS (> 2 s): /XO nedenfor lader dem staa, og det er rigtigt, men de skal meldes, naar
+# indholdet afviger - ellers forsvinder en kollegas rettelse stille. Samme udelukkelser som robocopy-kaldene (inkl. .obsidian
+# uden workspace-filerne). Kun kandidaterne hashes.
+$aiosMapper = @('.git', '.claude', '.codex-tmp', 'node_modules', '.agents')
+$aiosFiler = '^(workspace\.json|workspace-mobile\.json)$'
+$oAIOS = FilerUnder $src $aiosMapper $aiosFiler
+$yAIOSFiler = FilerUnder $YAIOS $aiosMapper $aiosFiler
+foreach ($rel in @($yAIOSFiler.Keys | Sort-Object)) {
+  $o = $oAIOS[$rel]; $yf = $yAIOSFiler[$rel]
+  if (-not $o -or $yf.LastWriteTimeUtc -le $o.LastWriteTimeUtc.AddSeconds(2)) { continue }
+  try { if (-not (HashEns $o.FullName $yf.FullName)) { $NyereY.Add("AI OS/$($rel.Replace('\','/'))") } }
   catch { Fejl "AI OS/$rel : hash kunne ikke beregnes ($($_.Exception.Message))" }
 }
 & robocopy $src $YAIOS /E /XO /R:2 /W:5 /XD .git .claude .codex-tmp .obsidian node_modules .agents /XF workspace.json /NFL /NDL /NJH /NP | Select-Object -Last 8 | ForEach-Object { L ("  " + $_.Trim()) }
@@ -319,8 +347,11 @@ foreach ($p in $par) {
     continue
   }
   # ~$* er Excel/Words laasefil (nogen har filen aaben paa Y:), Thumbs.db er Stifinders cache.
-  $nye = @(& robocopy $p.Y $p.O /E /L /XD .git __pycache__ node_modules /XF desktop.ini workspace.json Thumbs.db '~$*' /NJH /NJS /NDL /NP /FP /R:0 /W:0 |
-    Where-Object { $_ -match 'New File' } | ForEach-Object { ($_ -split "`t")[-1].Trim() })
+  # Sammenlignes via .NET (FilerUnder), ikke robocopy-udskrift - ellers forvanskes aeoeaa i stierne.
+  $kunYMapper = @('.git', '__pycache__', 'node_modules'); $kunYFiler = '^(desktop\.ini|workspace\.json|Thumbs\.db|~\$.*)$'
+  $oFiler = FilerUnder $p.O $kunYMapper $kunYFiler
+  $yFiler = FilerUnder $p.Y $kunYMapper $kunYFiler
+  $nye = @($yFiler.Keys | Where-Object { -not $oFiler.ContainsKey($_) } | Sort-Object | ForEach-Object { $yFiler[$_].FullName })
   foreach ($f in $nye | Select-Object -First 10) { L "  kun paa Y: $f" }
   if ($nye.Count -gt 10) { L ("  ... og " + ($nye.Count - 10) + " mere under " + $p.Y) }
   $kunY += $nye.Count

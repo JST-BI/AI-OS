@@ -42,8 +42,10 @@ function Scenarie($navn) {
   New-Item -ItemType Directory -Force (Join-Path $sc.OD "AI SOSU"), $sc.YOS, $sc.YSOSU | Out-Null
   $sc
 }
-function Koer($sc, [string]$ekstra = '') {
-  $cmd = "& '$Script' -OneDrive '$($sc.OD)' -YAIOS '$($sc.YOS)' -YAISOSU '$($sc.YSOSU)' -Log '$($sc.Log)' $ekstra; exit `$LASTEXITCODE"
+function Koer($sc, [string]$ekstra = '', [int]$Tegnsaet = 0) {
+  # -Tegnsaet: konsollens OutputEncoding i boerneprocessen (850 = loesrevet powershell.exe, 65001 = UTF-8-session).
+  # Afviger den fra robocopy's OEM-tegnsaet, forvanskes aeoeaa i parset robocopy-udskrift.
+  $cmd = $(if ($Tegnsaet) { "[Console]::OutputEncoding = [Text.Encoding]::GetEncoding($Tegnsaet); " } else { "" }) + "& '$Script' -OneDrive '$($sc.OD)' -YAIOS '$($sc.YOS)' -YAISOSU '$($sc.YSOSU)' -Log '$($sc.Log)' $ekstra; exit `$LASTEXITCODE"
   & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command $cmd *> $null
   $kode = $LASTEXITCODE
   @{ Kode = $kode; Log = [string](Laes $sc.Log) }
@@ -249,6 +251,31 @@ Forvent 's9-urort' ((Laes "$($sc.YOS)\noter.md") -eq "kollegas rettelse`n") 'nye
 Forvent 's9-meldt' ($res.Log -match 'nyere paa Y: AI OS/noter\.md') 'den staar i listen "Nyere paa Y:"'
 Forvent 's9-ens' ($res.Log -notmatch 'nyere paa Y: AI OS/ens\.md') 'samme indhold meldes ikke'
 Forvent 's9-exit' ($res.Kode -ne 0) "exit != 0 (fik $($res.Kode))"
+
+# --- S10: aeoeaa i stierne - trin 1 (nyere paa Y:) og trin 3 (kun paa Y:) maa ikke forvanske dem (review #41 r2)
+$ae = [char]0xE6; $oe = [char]0xF8; $aa = [char]0xE5; $AEstort = [char]0xC6
+foreach ($tegn in 850, 65001) {
+$sc = Scenarie "s10-aeoeaa-$tegn"
+$r = RepoUdenRemote $sc "R"
+$mappe = "$ae$oe$aa"; $fil = "${AEstort}r$oe fil.txt"; $taet = "t${ae}t.txt"; $kunOS = "ny $ae$oe$aa.txt"; $kunSOSU = "kun $ae$oe$aa.txt"
+Skriv "$($sc.OD)\AI OS\$mappe\$fil" "od`n";             Tid "$($sc.OD)\AI OS\$mappe\$fil" -60
+Skriv "$($sc.YOS)\$mappe\$fil" "kollegas rettelse`n";   Tid "$($sc.YOS)\$mappe\$fil" 0
+Skriv "$($sc.OD)\AI OS\$taet" "ens`n"
+Skriv "$($sc.YOS)\$taet" "ens`n"
+[IO.File]::SetLastWriteTimeUtc("$($sc.OD)\AI OS\$taet", $Nu.AddSeconds(-1)); [IO.File]::SetLastWriteTimeUtc("$($sc.YOS)\$taet", $Nu)
+Skriv "$($sc.YOS)\$kunOS" "kun paa y`n"
+Skriv "$($r.Y)\Output\$kunSOSU" "kun paa y`n"
+$res = Koer $sc -Tegnsaet $tegn
+$t = "s10-$tegn"
+Forvent "$t-nyere" ($res.Log.Contains("nyere paa Y: AI OS/$mappe/$fil")) 'nyere Y:-fil med aeoeaa staar korrekt i "Nyere paa Y:"'
+Forvent "$t-urort" ((Laes "$($sc.YOS)\$mappe\$fil") -eq "kollegas rettelse`n") 'og er ikke overskrevet'
+Forvent "$t-ens" ($res.Log -notmatch '\d\d:\d\d:\d\d  FEJL:') 'ingen FEJL-linjer (samme indhold 1 s nyere, ingen forvansket hash-sti)'
+Forvent "$t-ens-ikke-meldt" (-not $res.Log.Contains("nyere paa Y: AI OS/$taet")) 'samme indhold 1 s nyere meldes ikke som nyere'
+Forvent "$t-kun-y-aios" ($res.Log.Contains("kun paa Y: $($sc.YOS)\$kunOS")) 'kun-paa-Y med aeoeaa (AI OS) staar korrekt i loggen'
+Forvent "$t-kun-y-sosu" ($res.Log.Contains("kun paa Y: $($r.Y)\Output\$kunSOSU")) 'kun-paa-Y med aeoeaa (AI SOSU) staar korrekt i loggen'
+Forvent "$t-antal" ($res.Log -match 'Filer der kun findes paa Y: 2') 'trin 3 taeller 2'
+Forvent "$t-exit" ($res.Kode -eq 2) "exit 2 - kun nyere/kun paa Y:, ingen fejl (fik $($res.Kode))"
+}
 
 if (-not $Behold) { Remove-Item -LiteralPath $Rod -Recurse -Force -ErrorAction SilentlyContinue }
 if ($AntalFejl) { "$AntalFejl FEJL"; exit 1 } else { "alle OK"; exit 0 }

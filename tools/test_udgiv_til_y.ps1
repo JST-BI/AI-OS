@@ -206,5 +206,49 @@ Forvent 's6-case' (-not (Test-Path "$($r.Y)\$g\Budget2029")) 'Budget2029 (store 
 Forvent 's6-andet' (Test-Path "$($r.Y)\$g\andet.txt") 'andre filer i Grundlag kopieres'
 Forvent 's6-advarsel' ($res.Log -match 'ADVARSEL BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget\*/ : ligger paa Y:') 'en budget-mappe paa Y: giver ADVARSEL'
 
+# --- S7: fortrolige data paa Y: er en FEJL, ikke en tavs advarsel (review #41) ---------------------------
+# 7a ADM-BESPARELSER ligger paa Y:.
+$sc = Scenarie "s7a-besparelser-paa-y"
+$null = RepoUdenRemote $sc "R"
+Skriv "$($sc.YSOSU)\ADM-BESPARELSER\varsling.txt" "fortroligt`n"
+$res = Koer $sc
+Forvent 's7a-exit' ($res.Kode -ne 0) "ADM-BESPARELSER paa Y: giver exit != 0 (fik $($res.Kode))"
+Forvent 's7a-opsum' ($res.Log -match 'UDGIV FEJL: \d+') 'opsummering "UDGIV FEJL: n"'
+Forvent 's7a-urort' (Test-Path "$($sc.YSOSU)\ADM-BESPARELSER\varsling.txt") 'intet slettet paa Y:'
+# 7b en Grundlag/budget2027-fil ligger paa Y: og findes ogsaa i OneDrive (trin 3 ser den derfor ikke).
+$sc = Scenarie "s7b-grundlag-paa-y"
+$r = RepoUdenRemote $sc "BI-OEKONOMI"
+Skriv "$($r.OD)\.gitignore" "Output/`nDATA-BUDGET_PROGNOSE/Output/`n"; Commit $r.OD "ignore"
+G $r.Y fetch -q $r.OD main; G $r.Y merge -q --ff-only FETCH_HEAD
+Skriv "$($r.OD)\$g\budget2027\loen\jst-valg.json" "{}"
+Skriv "$($r.Y)\$g\budget2027\loen\jst-valg.json" "{}"
+$res = Koer $sc
+Forvent 's7b-exit' ($res.Kode -ne 0) "Grundlag-fil paa Y: giver exit != 0 (fik $($res.Kode))"
+Forvent 's7b-opsum' ($res.Log -match 'UDGIV FEJL: \d+') 'opsummering "UDGIV FEJL: n"'
+Forvent 's7b-urort' (Test-Path "$($r.Y)\$g\budget2027\loen\jst-valg.json") 'intet slettet paa Y:'
+
+# --- S8: en hash, der ikke kan beregnes, er en FEJL, ikke "ens" (review #41) -----------------------------
+$sc = Scenarie "s8-hashfejl"
+$r = RepoUdenRemote $sc "R"
+Skriv "$($r.OD)\Output\laast.txt" "od`n";       Tid "$($r.OD)\Output\laast.txt" -60
+Skriv "$($r.Y)\Output\laast.txt" "y-nyere`n";   Tid "$($r.Y)\Output\laast.txt" 0
+$laas = [IO.File]::Open("$($r.Y)\Output\laast.txt", 'Open', 'ReadWrite', 'None')
+try { $res = Koer $sc } finally { $laas.Close() }
+Forvent 's8-exit' ($res.Kode -eq 1) "ulaeselig Y:-fil giver exit 1 (fik $($res.Kode))"
+Forvent 's8-meldt' ($res.Log -match 'FEJL: R/Output/laast\.txt : hash kunne ikke beregnes') 'hashfejlen meldes'
+
+# --- S9: nyere fil paa Y:\AI OS meldes og overskrives ikke (review #41) ----------------------------------
+$sc = Scenarie "s9-aios-nyere"
+$null = RepoUdenRemote $sc "R"
+Skriv "$($sc.OD)\AI OS\noter.md" "od`n";          Tid "$($sc.OD)\AI OS\noter.md" -60
+Skriv "$($sc.YOS)\noter.md" "kollegas rettelse`n"; Tid "$($sc.YOS)\noter.md" 0
+Skriv "$($sc.OD)\AI OS\ens.md" "ens`n";           Tid "$($sc.OD)\AI OS\ens.md" -60
+Skriv "$($sc.YOS)\ens.md" "ens`n";                Tid "$($sc.YOS)\ens.md" 0
+$res = Koer $sc
+Forvent 's9-urort' ((Laes "$($sc.YOS)\noter.md") -eq "kollegas rettelse`n") 'nyere Y:\AI OS-fil er ikke overskrevet'
+Forvent 's9-meldt' ($res.Log -match 'nyere paa Y: AI OS/noter\.md') 'den staar i listen "Nyere paa Y:"'
+Forvent 's9-ens' ($res.Log -notmatch 'nyere paa Y: AI OS/ens\.md') 'samme indhold meldes ikke'
+Forvent 's9-exit' ($res.Kode -ne 0) "exit != 0 (fik $($res.Kode))"
+
 if (-not $Behold) { Remove-Item -LiteralPath $Rod -Recurse -Force -ErrorAction SilentlyContinue }
 if ($AntalFejl) { "$AntalFejl FEJL"; exit 1 } else { "alle OK"; exit 0 }

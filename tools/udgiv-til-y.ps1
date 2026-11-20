@@ -15,7 +15,8 @@
   2c) Melder filer i Y:\AI SOSU\<repo>, som hverken Y:-git eller OneDrive har (foraeldede ELLER nye paa Y:
      - kan ikke skelnes). Sletter aldrig noget i AI SOSU.
   3) Rapporterer filer der KUN findes paa Y: - de skal hentes ind i OneDrive.
-  Exit-kode: 1 ved enhver FEJL (robocopy >= 8, repo der ikke kan/maa fast-forwardes, fejlet kopi),
+  Exit-kode: 1 ved enhver FEJL (robocopy >= 8, repo der ikke kan/maa fast-forwardes, fejlet kopi eller hash,
+  ADM-BESPARELSER eller en $IkkePaaYStier-sti paa Y: - meldes, slettes aldrig),
   2 ved filer der kun findes / er nyere paa Y:, 0 ellers. Sidste linje er "UDGIV OK" eller "UDGIV FEJL: n".
   Projekter i $IkkePaaY (ADM-BESPARELSER) springes over i ALLE trin og maa aldrig ligge paa Y:.
   Y:-kopierne er kollegernes arbejdsgrundlag: DATAKONTROLCENTER paa Y: og Z8050 m.fl. paa Y: roeres IKKE.
@@ -68,6 +69,13 @@ function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s |
 $FejlAntal = 0
 $NyereY = New-Object System.Collections.Generic.List[string]
 function Fejl($m) { L "FEJL: $m"; $script:FejlAntal++ }
+# SHA256-sammenligning; en fil der ikke kan laeses, kaster (kalderen melder Fejl) - aldrig $null -eq $null = "ens".
+function HashEns($a, $b) {
+  $ha = (Get-FileHash -LiteralPath $a -Algorithm SHA256 -ErrorAction Stop).Hash
+  $hb = (Get-FileHash -LiteralPath $b -Algorithm SHA256 -ErrorAction Stop).Hash
+  if (-not $ha -or -not $hb) { throw "tom hash" }
+  $ha -eq $hb
+}
 function Opsummer($kunYAntal) {
   if ($FejlAntal -or $NyereY.Count -or $kunYAntal) {
     L ("UDGIV FEJL: " + ($FejlAntal + $NyereY.Count + $kunYAntal) + " (fejl $FejlAntal, nyere paa Y: $($NyereY.Count), kun paa Y: $kunYAntal)")
@@ -108,6 +116,14 @@ if (-not (Test-Path $YAIOS)) { Fejl "$YAIOS findes ikke (VPN/Y: ikke tilsluttet?
 
 # 1) AI OS -> Y:\AI OS (filkopi)
 $src = Join-Path $OneDrive "AI OS"
+# Filer der er NYERE paa Y:\AI OS (robocopy-klassen "Older" = kilden er aeldre): /XO lader dem staa, og det er rigtigt,
+# men de skal meldes, naar indholdet afviger - ellers forsvinder en kollegas rettelse stille ved naeste aendring i OneDrive.
+@(& robocopy $src $YAIOS /E /L /R:0 /W:0 /XD .git .claude .codex-tmp .obsidian node_modules .agents /XF workspace.json /NJH /NJS /NDL /NP /FP |
+  Where-Object { $_ -match '^\s*Older\s' } | ForEach-Object { ($_ -split "`t")[-1].Trim() }) | ForEach-Object {
+  $rel = $_.Substring($src.Length).TrimStart('\')
+  try { if (-not (HashEns $_ (Join-Path $YAIOS $rel))) { $script:NyereY.Add("AI OS/$($rel.Replace('\','/'))") } }
+  catch { Fejl "AI OS/$rel : hash kunne ikke beregnes ($($_.Exception.Message))" }
+}
 & robocopy $src $YAIOS /E /XO /R:2 /W:5 /XD .git .claude .codex-tmp .obsidian node_modules .agents /XF workspace.json /NFL /NDL /NJH /NP | Select-Object -Last 8 | ForEach-Object { L ("  " + $_.Trim()) }
 $code = $LASTEXITCODE
 L ("AI OS -> Y: robocopy exit $code " + $(if ($code -lt 8) { "(OK)" } else { "(FEJL)" }))
@@ -141,7 +157,7 @@ else {
   L "Foraeldede filer paa Y:\AI OS: $($foraeldede.Count) - koer med -RyddForaeldede for at fjerne dem"
 }
 
-if ($KunAIOS) { L "UDGIV slut (kun AI OS)"; Opsummer 0 }
+if ($KunAIOS) { foreach ($ny in $NyereY) { L "  nyere paa Y: $ny" }; L "Nyere paa Y: (ikke overskrevet): $($NyereY.Count)"; L "UDGIV slut (kun AI OS)"; Opsummer 0 }
 
 # En fil der ligger UNTRACKED paa Y: og nu kommer ind via git, faar merge til at afvise hele
 # opdateringen ("untracked working tree files would be overwritten"). Det sker hver gang en fil
@@ -181,7 +197,7 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
 # 2) Y:\AI SOSU\<repo> <- GitHub (ff-only); kloner uden remote <- OneDrive-klonen (ff-only)
 Get-ChildItem -Directory $YAISOSU | ForEach-Object {
   $d = $_.FullName; $n = $_.Name
-  if ($IkkePaaY -contains $n) { L "ADVARSEL $n : ligger paa Y: men maa ALDRIG vaere der - roeres ikke; fjern mappen manuelt"; return }
+  if ($IkkePaaY -contains $n) { Fejl "ADVARSEL $n : ligger paa Y: men maa ALDRIG vaere der - roeres ikke; sig det til JST (slet ikke selv)"; return }
   if (-not (Test-Path (Join-Path $d ".git\HEAD"))) { L "$n : ingen gyldig .git - springes over"; return }
   # Y: staar altid paa main; paa en anden gren ville origin/main blive ff'et ind paa den forkerte gren.
   $yGren = (& git -C $d branch --show-current 2>$null)
@@ -236,7 +252,7 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
   $repo = $_.Name
   $udeladt = @($IkkePaaYStier | Where-Object { $_.StartsWith("$repo/") } | ForEach-Object { $_.Substring($repo.Length + 1) })
   # -Path (ikke -LiteralPath): moenstrene har wildcards (budget*).
-  foreach ($u in $udeladt) { if (Test-Path -Path (Join-Path $y $u)) { L "ADVARSEL $repo/$u : ligger paa Y: men maa ikke kopieres derud - roeres ikke" } }
+  foreach ($u in $udeladt) { if (Test-Path -Path (Join-Path $y $u)) { Fejl "ADVARSEL $repo/$u : ligger paa Y: men maa ikke kopieres derud - roeres ikke; sig det til JST (slet ikke selv)" } }
   $yTracked = @{}
   if (Test-Path (Join-Path $y ".git\HEAD")) { GitNavne -C $y -c core.quotepath=off ls-files | ForEach-Object { $yTracked[$_] = 1 } }
   $kopieret = 0
@@ -253,7 +269,8 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
         # Ellers (Y: nyere, eller samme tid men anden laengde) afgoer indholdet: ens = intet, forskelligt = meld, kopier ikke.
         if ($s.LastWriteTimeUtc -le $t.LastWriteTimeUtc.AddSeconds(2)) {
           if ($t.Length -eq $s.Length -and $t.LastWriteTimeUtc -le $s.LastWriteTimeUtc.AddSeconds(2)) { return }
-          if ((Get-FileHash -LiteralPath $kilde -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath $dst -Algorithm SHA256).Hash) { return }
+          try { if (HashEns $kilde $dst) { return } }
+          catch { Fejl "$repo/$rel : hash kunne ikke beregnes ($($_.Exception.Message)) - ikke kopieret"; return }
           $script:NyereY.Add("$repo/$rel"); return
         }
       }

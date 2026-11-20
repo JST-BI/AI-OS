@@ -335,7 +335,7 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
 #     overskrives aldrig ("Nyere paa Y:"), filer kun paa maalet meldes i trin 3, intet slettes; $IkkePaaY/$IkkePaaYStier
 #     gaelder. Maalet ligger ved siden af AI SOSU (samme rod som -YAISOSU), saa testmapper ogsaa styrer det.
 #     Aarstallet laeses fra budgetaar.py (BUDGETAAR = <aar>) - kun den mappe, ikke andre "FB *"-mapper.
-$OekoPar = $null
+$OekoRodFundet = $null
 $oeko = [string][char]0xD8 + 'konomi'                     # "Oekonomi" med O-streg; scriptet er ASCII (PS 5.1 laeser det som ANSI)
 $oekoNavn = $oeko + 'styring'
 $dbp = Join-Path $OneDrive "AI SOSU\BI-OEKONOMI\DATA-BUDGET_PROGNOSE"
@@ -352,6 +352,7 @@ else {
     $fbKilde = Join-Path $dbp "Output\$fb"
     $oekoRod = Join-Path (Split-Path -Parent $YAISOSU) "$oeko\$oekoNavn"
     $fbMaal = Join-Path $oekoRod $fb
+    if (Test-Path -LiteralPath $oekoRod) { $OekoRodFundet = $oekoRod }   # trin 3 sammenligner alle FB-mapper dér
     $relRod = "BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/$fb/"
     if (-not (Test-Path -LiteralPath $fbKilde)) { L "$oekoNavn : $fbKilde findes ikke endnu - springes over" }
     elseif (-not (Test-Path -LiteralPath $oekoRod)) { Fejl "$oekoNavn : $oekoRod findes ikke (Y:-mapping/rettigheder?) - FB-mappen ikke spejlet" }
@@ -366,7 +367,6 @@ else {
         switch (SpejlFil $kildeFiler[$rel].FullName (Join-Path $fbMaal $rel) "$oekoNavn/$fb/$relS") { 'kopieret' { $kopi++ } 'ens' { $ens++ } }
       }
       L "${oekoNavn}: $kopi filer kopieret, $ens ens ($fbKilde -> $fbMaal)"
-      $OekoPar = @{ Y = $fbMaal; O = $fbKilde }   # trin 3 melder filer, der kun findes paa maalet
     }
   }
 }
@@ -397,8 +397,21 @@ Get-ChildItem -Directory $YAISOSU -ErrorAction SilentlyContinue | Where-Object {
 if (-not (Test-Path $YAISOSU)) { Fejl "$YAISOSU forsvandt undervejs (Y:-mapping faldet) - koer igen mod UNC"; Opsummer 0 }
 $par = @(@{ Y = $YAIOS; O = (Join-Path $OneDrive "AI OS") })
 Get-ChildItem -Directory $YAISOSU | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object { $par += @{ Y = $_.FullName; O = (Join-Path $OneDrive "AI SOSU\$($_.Name)") } }
-if ($OekoPar) { $par += $OekoPar }
 $kunY = 0
+# Oekonomistyring: hver "FB *"-mappe dér sammenlignes med samme mappe i OneDrive Output\ (ogsaa tidligere aar efter
+# aarsskiftet - 2d kopierer kun budgetaarets). En FB-mappe OneDrive ikke har, meldes og taelles som "kun paa Y:".
+if ($OekoRodFundet) {
+  $outRod = Join-Path $dbp 'Output'
+  Get-ChildItem -LiteralPath $OekoRodFundet -Directory -Force | Where-Object { $_.Name -like 'FB *' } | Sort-Object Name | ForEach-Object {
+    $oFb = Join-Path $outRod $_.Name
+    if (Test-Path -LiteralPath $oFb) { $par += @{ Y = $_.FullName; O = $oFb } }
+    else {
+      $nFb = (FilerUnder $_.FullName @() '(^|\\)(~\$[^\\]*|Thumbs\.db|desktop\.ini)$').Count
+      L "FB-mappe kun i ${oekoNavn}: $($_.FullName) ($nFb filer) - findes ikke i OneDrive Output\"
+      $kunY += $nFb
+    }
+  }
+}
 foreach ($p in $par) {
   if (-not (Test-Path $p.O)) {
     # En tom mappe (fx "Ny mappe" oprettet i Stifinder) er ikke arbejde, der kan gaa tabt.

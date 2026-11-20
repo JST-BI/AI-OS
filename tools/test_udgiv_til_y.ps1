@@ -332,6 +332,9 @@ Skriv "$fbO\ens.txt" "ens`n";              Tid "$fbO\ens.txt" -60
 Skriv "$fbY\ens.txt" "ens`n";              Tid "$fbY\ens.txt" 0
 Skriv "$fbY\kun $ae$oe$aa paa maal.txt" "kun`n"
 Skriv "$($r.OD)\DATA-BUDGET_PROGNOSE\Output\FB 2030\gammel.txt" "andet aar`n"
+# Efter aarsskiftet: FB 2030 ligger ogsaa i Oekonomistyring (med en fil kun dér), FB 2029 kun dér.
+Skriv "$maal\FB 2030\kun gl.txt" "kun i gl aar`n"
+Skriv "$maal\FB 2029\x.txt" "x`n"
 $res = Koer $sc
 Forvent 's12-kopi' ((Laes "$fbY\FB 2031 - budgetforslag - med navne.txt") -eq "ny`n") 'manglende fil (med navne) er kopieret'
 Forvent 's12-aeoeaa' ((Laes "$fbY\$aeFil") -eq "aeoeaa`n") 'fil med aeoeaa i undermappe er kopieret'
@@ -339,7 +342,10 @@ Forvent 's12-nyere' ((Laes "$fbY\nyere.txt") -eq "rettet paa Y`n") 'nyere fil pa
 Forvent 's12-nyere-meldt' ($res.Log.Contains("nyere paa Y: $styrN/FB 2031/nyere.txt")) 'og staar i "Nyere paa Y:"'
 Forvent 's12-kun-maal' ($res.Log.Contains("kun paa Y: $fbY\kun $ae$oe$aa paa maal.txt")) 'fil kun paa maalet meldes (trin 3)'
 Forvent 's12-kun-urort' (Test-Path -LiteralPath "$fbY\kun $ae$oe$aa paa maal.txt") 'og slettes ikke'
-Forvent 's12-andet-aar' (-not (Test-Path "$maal\FB 2030")) 'kun budgetaarets FB-mappe (ikke FB 2030)'
+Forvent 's12-andet-aar' (-not (Test-Path "$maal\FB 2030\gammel.txt")) 'kun budgetaarets FB-mappe kopieres (ikke FB 2030)'
+Forvent 's12-gl-aar-sammenlignet' ($res.Log.Contains("kun paa Y: $maal\FB 2030\kun gl.txt")) 'FB 2030 i Oekonomistyring sammenlignes i trin 3'
+Forvent 's12-fb-kun-der' ($res.Log.Contains("FB-mappe kun i ${styrN}: $maal\FB 2029 (1 filer)")) 'FB-mappe OneDrive ikke har, meldes'
+Forvent 's12-antal' ($res.Log -match 'Filer der kun findes paa Y: 3') 'trin 3 taeller 3 (kun-paa-maal, FB 2030, FB 2029)'
 Forvent 's12-log' ($res.Log.Contains("${styrN}: 2 filer kopieret, 1 ens")) 'log "Oekonomistyring: 2 filer kopieret, 1 ens"'
 Forvent 's12-exit' ($res.Kode -eq 2) "exit 2 (nyere + kun paa maal, ingen fejl) (fik $($res.Kode))"
 

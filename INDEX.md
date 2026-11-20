@@ -28,7 +28,7 @@ Infrastruktur: agentdefinitioner, AI-konfiguration, fælles værktøjer.
 | `AI OS/tools/codex-opsaetning.md` | Codex på en ny maskine: trust, `project_doc_max_bytes`, hooks, `.codex/rules/`. Flyttet ud af AGENTS.md 2026-09-05 |
 | `AI OS/tools/sync-agents-md.ps1` | Sikrer at `AGENTS.md` er eneste instruktionsfil: sletter gamle `CLAUDE.md`-pegefiler; `-Check` melder enhver CLAUDE-variant, også over projekterne (exit 1) |
 | `AI OS/tools/sync-skills.ps1` | Spejler `.agents/skills/` (kilden) til `.claude/skills/`; `-Check` rapporterer drift (exit 1, kaldes af sessionsstartkontrollen) |
-| `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier); skill `/udgiv` |
+| `AI OS/tools/udgiv-til-y.ps1` | "Udgiv": spejler `<OneDrive>\AI OS` → `Y:\AI OS` og ff-puller `Y:\AI SOSU\<repo>` fra GitHub (kollegernes kopier) og spejler FB <år>-mappen til `Y:\Økonomi\Økonomistyring\FB <år>`; skill `/udgiv` |
 | `AI OS/.agents/skills/udgiv/SKILL.md` | Skill bag kodeordet "Udgiv" (spejl i `.claude/skills/`) |
 | `AI OS/tools/udgiv-opsaetning.ps1` | "Udgiv opsætning": samler alle skills (AI OS, projekter, personlige) og JSTs indstillinger i VS Code, Claude Code og Codex i `<OneDrive>\AI OS\AI-SETUP` (gitignoreret) → `Y:\AI OS\AI-SETUP`; licensfilter, stiomskrivning, stop ved nøgle/CPR/e-mail; `-Proev` |
 | `AI OS/tools/test-udgiv-til-y.ps1` | Værn for `udgiv-til-y.ps1` trin 2b: en gitignoreret fil med æøå i navnet skal nå Y: også fra en løsrevet `powershell.exe` (tegnsæt 850) – falsk OneDrive/Y: i `%TEMP%` |

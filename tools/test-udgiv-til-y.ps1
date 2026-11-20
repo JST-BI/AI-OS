@@ -26,7 +26,7 @@ Skriv "$r\a.txt" "a`n"
 Skriv "$r\Output\$navn" "ignoreret med aeoeaa`n"
 Skriv "$r\Output\ascii.txt" "ignoreret ascii`n"
 $eap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
-& git -C $r init -q 2>&1 | Out-Null
+& git -C $r init -q -b main 2>&1 | Out-Null
 & git -C $r -c user.name=t -c user.email=t@example.invalid -c commit.gpgsign=false -c core.hooksPath= add -A 2>&1 | Out-Null
 & git -C $r -c user.name=t -c user.email=t@example.invalid -c commit.gpgsign=false -c core.hooksPath= commit -q -m start 2>&1 | Out-Null
 $ErrorActionPreference = $eap

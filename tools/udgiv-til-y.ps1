@@ -67,6 +67,7 @@ $IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget*/', 'BI-OEKONOMI
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
 # Alle fejl taelles her; scriptet slutter med exit 1, hvis taelleren ikke er 0 (Opsummer).
 $FejlAntal = 0
+$LinksOver = 0
 $NyereY = New-Object System.Collections.Generic.List[string]
 function Fejl($m) { L "FEJL: $m"; $script:FejlAntal++ }
 # SHA256-sammenligning; en fil der ikke kan laeses, kaster (kalderen melder Fejl) - aldrig $null -eq $null = "ens".
@@ -97,7 +98,9 @@ function FilerUnder([string]$rod, [string[]]$udenMapper, [string]$udenFiler) {
       if ($p -is [IO.DirectoryInfo]) {
         if ($udenMapper -contains $p.Name) { continue }
         # LinkType (PowerShell-egenskab) slaas kun op for reparse points; cloud-pladsholdere giver $null og foelges.
-        if (($p.Attributes -band [IO.FileAttributes]::ReparsePoint) -and @('SymbolicLink', 'Junction') -contains $p.LinkType) { continue }
+        if (($p.Attributes -band [IO.FileAttributes]::ReparsePoint) -and @('SymbolicLink', 'Junction') -contains $p.LinkType) {
+          L "  link sprunget over ($($p.LinkType)): $($p.FullName)"; $script:LinksOver++; continue
+        }
         $stak.Push($p)
       }
       else {
@@ -109,11 +112,33 @@ function FilerUnder([string]$rod, [string[]]$udenMapper, [string]$udenFiler) {
   $h
 }
 function Opsummer($kunYAntal) {
+  $links = $(if ($LinksOver) { " - links sprunget over: $LinksOver" } else { "" })
   if ($FejlAntal -or $NyereY.Count -or $kunYAntal) {
-    L ("UDGIV FEJL: " + ($FejlAntal + $NyereY.Count + $kunYAntal) + " (fejl $FejlAntal, nyere paa Y: $($NyereY.Count), kun paa Y: $kunYAntal)")
+    L ("UDGIV FEJL: " + ($FejlAntal + $NyereY.Count + $kunYAntal) + " (fejl $FejlAntal, nyere paa Y: $($NyereY.Count), kun paa Y: $kunYAntal)$links")
     Slut $(if ($FejlAntal) { 1 } else { 2 })
   }
-  L "UDGIV OK"; Slut 0
+  L "UDGIV OK$links"; Slut 0
+}
+# Een fil OneDrive -> Y: efter reglen fra trin 2b: kopier kun, naar maalet mangler eller OneDrive er NYERE (> 2 s).
+# Samme tid og laengde = samme fil (ingen hash over VPN); ellers afgoer SHA256: ens = intet, forskelligt = "Nyere paa Y:"
+# (overskrives ALDRIG). Returnerer 'kopieret', 'ens', 'nyere' eller 'fejl'. $vis er stien i loggen.
+function SpejlFil([string]$kilde, [string]$dst, [string]$vis) {
+  $s = Get-Item -LiteralPath $kilde -Force
+  if (Test-Path -LiteralPath $dst) {
+    $t = Get-Item -LiteralPath $dst -Force
+    if ($s.LastWriteTimeUtc -le $t.LastWriteTimeUtc.AddSeconds(2)) {
+      if ($t.Length -eq $s.Length -and $t.LastWriteTimeUtc -le $s.LastWriteTimeUtc.AddSeconds(2)) { return 'ens' }
+      try { if (HashEns $kilde $dst) { return 'ens' } }
+      catch { Fejl "$vis : hash kunne ikke beregnes ($($_.Exception.Message)) - ikke kopieret"; return 'fejl' }
+      $script:NyereY.Add($vis); return 'nyere'
+    }
+  }
+  try {
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dst) -ErrorAction Stop | Out-Null
+    Copy-Item -LiteralPath $kilde -Destination $dst -Force -ErrorAction Stop
+    return 'kopieret'
+  }
+  catch { Fejl "$vis : kopi til Y: mislykkedes ($($_.Exception.Message))"; return 'fejl' }
 }
 # Filnavne fra git (core.quotepath=off) er UTF-8. En loesrevet powershell.exe afkoder dem med konsollens tegnsaet (850),
 # saa et navn med aeoeaa blev forvansket, Test-Path fejlede, og filen blev sprunget stille over i trin 2b (12-11-2026: 1.616
@@ -300,26 +325,50 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
     ForEach-Object {
       $rel = $_; $kilde = Join-Path $od $rel; $dst = Join-Path $y $rel
       if (-not (Test-Path -LiteralPath $kilde -PathType Leaf)) { return }
-      $s = Get-Item -LiteralPath $kilde -Force
-      if (Test-Path -LiteralPath $dst) {
-        $t = Get-Item -LiteralPath $dst -Force
-        # Kun OneDrive -> Y:, naar OneDrive-udgaven er NYERE. Samme tid (+-2 s) og laengde = samme fil (ingen hash over VPN).
-        # Ellers (Y: nyere, eller samme tid men anden laengde) afgoer indholdet: ens = intet, forskelligt = meld, kopier ikke.
-        if ($s.LastWriteTimeUtc -le $t.LastWriteTimeUtc.AddSeconds(2)) {
-          if ($t.Length -eq $s.Length -and $t.LastWriteTimeUtc -le $s.LastWriteTimeUtc.AddSeconds(2)) { return }
-          try { if (HashEns $kilde $dst) { return } }
-          catch { Fejl "$repo/$rel : hash kunne ikke beregnes ($($_.Exception.Message)) - ikke kopieret"; return }
-          $script:NyereY.Add("$repo/$rel"); return
-        }
-      }
-      try {
-        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dst) -ErrorAction Stop | Out-Null
-        Copy-Item -LiteralPath $kilde -Destination $dst -Force -ErrorAction Stop
-        $kopieret++
-      }
-      catch { Fejl "$repo/$rel : kopi til Y: mislykkedes ($($_.Exception.Message))" }
+      if ((SpejlFil $kilde $dst "$repo/$rel") -eq 'kopieret') { $kopieret++ }
     }
   if ($kopieret) { L "$repo : $kopieret filer uden for git kopieret til Y:" }
+}
+
+# 2d) FB <aar>-mappen spejles HELT til Y:\Oekonomi\Oekonomistyring\FB <aar> (oekonomichefen 20-11-2026: "hele mappen",
+#     ogsaa filerne med navne). Samme regler som 2b: kun nyere/manglende kopieres, nyere paa maalet med andet indhold
+#     overskrives aldrig ("Nyere paa Y:"), filer kun paa maalet meldes i trin 3, intet slettes; $IkkePaaY/$IkkePaaYStier
+#     gaelder. Maalet ligger ved siden af AI SOSU (samme rod som -YAISOSU), saa testmapper ogsaa styrer det.
+#     Aarstallet laeses fra budgetaar.py (BUDGETAAR = <aar>) - kun den mappe, ikke andre "FB *"-mapper.
+$OekoPar = $null
+$oeko = [string][char]0xD8 + 'konomi'                     # "Oekonomi" med O-streg; scriptet er ASCII (PS 5.1 laeser det som ANSI)
+$oekoNavn = $oeko + 'styring'
+$dbp = Join-Path $OneDrive "AI SOSU\BI-OEKONOMI\DATA-BUDGET_PROGNOSE"
+$aarFil = Join-Path $dbp "tools\budget2027\budgetaar.py"
+if ($IkkePaaY -contains 'BI-OEKONOMI') { L "$oekoNavn : BI-OEKONOMI staar i `$IkkePaaY - springes over" }
+elseif (-not (Test-Path -LiteralPath $dbp)) { L "$oekoNavn : ingen DATA-BUDGET_PROGNOSE i OneDrive - springes over" }
+elseif (-not (Test-Path -LiteralPath $aarFil)) { Fejl "$oekoNavn : budgetaar.py mangler ($aarFil) - FB-mappen ikke spejlet" }
+else {
+  $aarTekst = [IO.File]::ReadAllText($aarFil)
+  $mAar = [regex]::Matches($aarTekst, '(?m)^BUDGETAAR\s*=\s*(\d{4})\s*(#.*)?$')
+  if ($mAar.Count -ne 1) { Fejl "$oekoNavn : BUDGETAAR fundet $($mAar.Count) gange i budgetaar.py (ventet 1) - FB-mappen ikke spejlet" }
+  else {
+    $fb = "FB " + $mAar[0].Groups[1].Value
+    $fbKilde = Join-Path $dbp "Output\$fb"
+    $oekoRod = Join-Path (Split-Path -Parent $YAISOSU) "$oeko\$oekoNavn"
+    $fbMaal = Join-Path $oekoRod $fb
+    $relRod = "BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/$fb/"
+    if (-not (Test-Path -LiteralPath $fbKilde)) { L "$oekoNavn : $fbKilde findes ikke endnu - springes over" }
+    elseif (-not (Test-Path -LiteralPath $oekoRod)) { Fejl "$oekoNavn : $oekoRod findes ikke (Y:-mapping/rettigheder?) - FB-mappen ikke spejlet" }
+    elseif ($IkkePaaYStier | Where-Object { $relRod -like "$_*" }) { L "$oekoNavn : $relRod staar i `$IkkePaaYStier - springes over" }
+    else {
+      $oekoFiler = '(^|\\)(desktop\.ini|Thumbs\.db|~\$[^\\]*)$'
+      $kopi = 0; $ens = 0
+      $kildeFiler = FilerUnder $fbKilde @() $oekoFiler
+      foreach ($rel in @($kildeFiler.Keys | Sort-Object)) {
+        $relS = $rel.Replace('\', '/')
+        if ($IkkePaaYStier | Where-Object { "$relRod$relS" -like "$_*" }) { continue }
+        switch (SpejlFil $kildeFiler[$rel].FullName (Join-Path $fbMaal $rel) "$oekoNavn/$fb/$relS") { 'kopieret' { $kopi++ } 'ens' { $ens++ } }
+      }
+      L "${oekoNavn}: $kopi filer kopieret, $ens ens ($fbKilde -> $fbMaal)"
+      $OekoPar = @{ Y = $fbMaal; O = $fbKilde }   # trin 3 melder filer, der kun findes paa maalet
+    }
+  }
 }
 foreach ($ny in $NyereY | Select-Object -First 20) { L "  nyere paa Y: $ny" }
 if ($NyereY.Count -gt 20) { L ("  ... og " + ($NyereY.Count - 20) + " mere") }
@@ -348,11 +397,13 @@ Get-ChildItem -Directory $YAISOSU -ErrorAction SilentlyContinue | Where-Object {
 if (-not (Test-Path $YAISOSU)) { Fejl "$YAISOSU forsvandt undervejs (Y:-mapping faldet) - koer igen mod UNC"; Opsummer 0 }
 $par = @(@{ Y = $YAIOS; O = (Join-Path $OneDrive "AI OS") })
 Get-ChildItem -Directory $YAISOSU | Where-Object { $IkkePaaY -notcontains $_.Name } | ForEach-Object { $par += @{ Y = $_.FullName; O = (Join-Path $OneDrive "AI SOSU\$($_.Name)") } }
+if ($OekoPar) { $par += $OekoPar }
 $kunY = 0
 foreach ($p in $par) {
   if (-not (Test-Path $p.O)) {
     # En tom mappe (fx "Ny mappe" oprettet i Stifinder) er ikke arbejde, der kan gaa tabt.
-    $filer = @(Get-ChildItem -LiteralPath $p.Y -Recurse -File -Force -ErrorAction SilentlyContinue | Where-Object { $_.Name -notmatch '^(~\$.*|Thumbs\.db|desktop\.ini)$' }).Count
+    # FilerUnder: en ulaeselig mappe er en FEJL, ikke et stille 0.
+    $filer = (FilerUnder $p.Y @() '(^|\\)(~\$[^\\]*|Thumbs\.db|desktop\.ini)$').Count
     if ($filer) { L ("KUN PAA Y: hele mappen " + $p.Y + " ($filer filer)"); $kunY += $filer }
     continue
   }

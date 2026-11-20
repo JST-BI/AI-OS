@@ -86,6 +86,7 @@ OneDrive → Y:, så en PowerPoint lagt i `Y:\…\Input` var ellers usynlig for 
 remote** (JST 2026-09-15). Udgiv sørger for det; Y:-klonerne står dog altid på `main`.
 Udgiv overskriver aldrig en nyere Y:-fil og stopper et repo med lokale ændringer på Y:; exit ≠ 0 / "UDGIV FEJL" =
 ikke færdig. Det forhindrer, at kollegers arbejde på Y: forsvinder i en stash eller under en ældre kopi.
+FB <år>-mappen spejles også til `Y:\Økonomi\Økonomistyring\FB <år>` (hele mappen, JST 20-11-2026).
 **Eneste undtagelse: `ADM-BESPARELSER` må aldrig kopieres til Y:** — hverken repo eller filer
 (JST 2026-10-16; afskedigelsesvarslinger med navn og CPR). Udgiv springer det over via
 `$IkkePaaY` i `tools/udgiv-til-y.ps1`; et nyt fortroligt projekt føjes til den liste.

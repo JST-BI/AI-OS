@@ -286,7 +286,8 @@ if (Test-Path -LiteralPath $rigtig) {
   if (-not $fu) { Forvent 's11-funktion' $false 'FilerUnder findes i scriptet' }
   else {
     function Fejl($m) { $script:S11Fejl++ }
-    $script:S11Fejl = 0
+    function L($m) { $script:S11Log += "$m`n" }
+    $script:S11Fejl = 0; $script:S11Log = ''; $script:LinksOver = 0
     . ([scriptblock]::Create($fu.Extent.Text))
     $mapperX = @('.git', '.claude', '.codex-tmp', 'node_modules', '.agents'); $filerX = '(^|\\)workspace\.json$'
     $antalFU = (FilerUnder $rigtig $mapperX $filerX).Count
@@ -304,10 +305,50 @@ if (Test-Path -LiteralPath $rigtig) {
     & cmd /c mklink /J "$jr\rod\link" "$jr\maal" 2>&1 | Out-Null
     $jf = FilerUnder "$jr\rod" @() ''
     Forvent 's11-junction' ($jf.Count -eq 1 -and $jf.ContainsKey('a.txt')) "junction foelges ikke ($($jf.Count) filer)"
+    Forvent 's11-junction-meldt' (($S11Log -match 'link sprunget over \(Junction\)') -and $LinksOver -eq 1) 'det overspringne link meldes og taelles'
     & cmd /c rmdir "$jr\rod\link" 2>&1 | Out-Null
   }
 }
 else { "SPRUNGET s11 - $rigtig findes ikke paa denne maskine" }
 
-if (-not $Behold) { Remove-Item -LiteralPath $Rod -Recurse -Force -ErrorAction SilentlyContinue }
+# --- S12: FB <aar>-mappen spejles til Y:\Oekonomi\Oekonomistyring\FB <aar> (JST 20-11-2026) -------------
+$stregO = [string][char]0xD8; $oekoN = "${stregO}konomi"; $styrN = "${stregO}konomistyring"   # ikke $OE: = $oe (PowerShell skelner ikke store/smaa)
+$sc = Scenarie "s12-oekonomistyring"
+$r = RepoUdenRemote $sc "BI-OEKONOMI" -UdenY
+Skriv "$($r.OD)\.gitignore" "Output/`nDATA-BUDGET_PROGNOSE/Output/`n"
+Skriv "$($r.OD)\DATA-BUDGET_PROGNOSE\tools\budget2027\budgetaar.py" "`"`"`"doc`"`"`"`nBUDGETAAR = 2031`nFB = f'FB {BUDGETAAR}'`n"
+Commit $r.OD "budgetaar"
+& git clone -q $r.OD $r.Y 2>&1 | Out-Null; G $r.Y remote remove origin
+$fbO = "$($r.OD)\DATA-BUDGET_PROGNOSE\Output\FB 2031"
+$maal = Join-Path $sc.Rod "Y\$oekoN\$styrN"
+New-Item -ItemType Directory -Force $maal | Out-Null
+$fbY = "$maal\FB 2031"
+$aeFil = "Grundlag og input\$ae$oe$aa - med navne.txt"
+Skriv "$fbO\FB 2031 - budgetforslag - med navne.txt" "ny`n"
+Skriv "$fbO\$aeFil" "aeoeaa`n"
+Skriv "$fbO\nyere.txt" "od`n";             Tid "$fbO\nyere.txt" -60
+Skriv "$fbY\nyere.txt" "rettet paa Y`n";   Tid "$fbY\nyere.txt" 0
+Skriv "$fbO\ens.txt" "ens`n";              Tid "$fbO\ens.txt" -60
+Skriv "$fbY\ens.txt" "ens`n";              Tid "$fbY\ens.txt" 0
+Skriv "$fbY\kun $ae$oe$aa paa maal.txt" "kun`n"
+Skriv "$($r.OD)\DATA-BUDGET_PROGNOSE\Output\FB 2030\gammel.txt" "andet aar`n"
+$res = Koer $sc
+Forvent 's12-kopi' ((Laes "$fbY\FB 2031 - budgetforslag - med navne.txt") -eq "ny`n") 'manglende fil (med navne) er kopieret'
+Forvent 's12-aeoeaa' ((Laes "$fbY\$aeFil") -eq "aeoeaa`n") 'fil med aeoeaa i undermappe er kopieret'
+Forvent 's12-nyere' ((Laes "$fbY\nyere.txt") -eq "rettet paa Y`n") 'nyere fil paa maalet er IKKE overskrevet'
+Forvent 's12-nyere-meldt' ($res.Log.Contains("nyere paa Y: $styrN/FB 2031/nyere.txt")) 'og staar i "Nyere paa Y:"'
+Forvent 's12-kun-maal' ($res.Log.Contains("kun paa Y: $fbY\kun $ae$oe$aa paa maal.txt")) 'fil kun paa maalet meldes (trin 3)'
+Forvent 's12-kun-urort' (Test-Path -LiteralPath "$fbY\kun $ae$oe$aa paa maal.txt") 'og slettes ikke'
+Forvent 's12-andet-aar' (-not (Test-Path "$maal\FB 2030")) 'kun budgetaarets FB-mappe (ikke FB 2030)'
+Forvent 's12-log' ($res.Log.Contains("${styrN}: 2 filer kopieret, 1 ens")) 'log "Oekonomistyring: 2 filer kopieret, 1 ens"'
+Forvent 's12-exit' ($res.Kode -eq 2) "exit 2 (nyere + kun paa maal, ingen fejl) (fik $($res.Kode))"
+
+if (-not $Behold) {
+  Remove-Item -LiteralPath $Rod -Recurse -Force -ErrorAction SilentlyContinue
+  # Standardroden C:\Temp\udgiv-test fjernes ogsaa, naar den er tom bagefter.
+  $forael = Split-Path -Parent $Rod
+  if ((Split-Path -Leaf $forael) -eq 'udgiv-test' -and -not (Get-ChildItem -LiteralPath $forael -Force -ErrorAction SilentlyContinue)) {
+    Remove-Item -LiteralPath $forael -Force -ErrorAction SilentlyContinue
+  }
+}
 if ($AntalFejl) { "$AntalFejl FEJL"; exit 1 } else { "alle OK"; exit 0 }

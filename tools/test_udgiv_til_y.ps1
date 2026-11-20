@@ -277,5 +277,37 @@ Forvent "$t-antal" ($res.Log -match 'Filer der kun findes paa Y: 2') 'trin 3 tae
 Forvent "$t-exit" ($res.Kode -eq 2) "exit 2 - kun nyere/kun paa Y:, ingen fejl (fik $($res.Kode))"
 }
 
+# --- S11: FilerUnder finder alle filer i den RIGTIGE OneDrive\AI OS (review #41 r3) ----------------------
+# Kun laesning og kun antal. Med Files On-Demand er alle OneDrive-mapper reparse points; de skal foelges.
+$rigtig = "C:\Users\jst\OneDrive - Social og Sundhedsskolen Randers\AI OS"
+if (Test-Path -LiteralPath $rigtig) {
+  $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script, [ref]$null, [ref]$null)
+  $fu = $ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'FilerUnder' }, $true) | Select-Object -First 1
+  if (-not $fu) { Forvent 's11-funktion' $false 'FilerUnder findes i scriptet' }
+  else {
+    function Fejl($m) { $script:S11Fejl++ }
+    $script:S11Fejl = 0
+    . ([scriptblock]::Create($fu.Extent.Text))
+    $mapperX = @('.git', '.claude', '.codex-tmp', 'node_modules', '.agents'); $filerX = '(^|\\)workspace\.json$'
+    $antalFU = (FilerUnder $rigtig $mapperX $filerX).Count
+    $laengdeR = $rigtig.Length
+    $antalGCI = @(Get-ChildItem -LiteralPath $rigtig -Recurse -File -Force -ErrorAction SilentlyContinue | Where-Object {
+        $rel = $_.FullName.Substring($laengdeR).TrimStart('\'); $dele = $rel.Split('\')
+        -not ($dele[0..($dele.Count - 2)] | Where-Object { $mapperX -contains $_ }) -and $rel -notmatch $filerX }).Count
+    $tom = Join-Path $Rod "findes-ikke"
+    $antalRC = @(& robocopy $rigtig $tom /L /E /XD $mapperX /XF workspace.json /NJH /NJS /NDL /NC /NS /NP /FP /R:0 /W:0 | Where-Object { $_.Trim() }).Count
+    Forvent 's11-gci' ($antalFU -eq $antalGCI -and $antalFU -gt 100) "FilerUnder = Get-ChildItem -Recurse ($antalFU mod $antalGCI)"
+    Forvent 's11-robocopy' ($antalFU -eq $antalRC) "FilerUnder = robocopy /L ($antalFU mod $antalRC)"
+    Forvent 's11-fejl' ($S11Fejl -eq 0) "ingen ulaeselige mapper ($S11Fejl)"
+    # Et aegte link (junction) foelges ikke.
+    $jr = Join-Path $Rod "s11-junction"; Skriv "$jr\rod\a.txt" "a"; Skriv "$jr\maal\b.txt" "b"
+    & cmd /c mklink /J "$jr\rod\link" "$jr\maal" 2>&1 | Out-Null
+    $jf = FilerUnder "$jr\rod" @() ''
+    Forvent 's11-junction' ($jf.Count -eq 1 -and $jf.ContainsKey('a.txt')) "junction foelges ikke ($($jf.Count) filer)"
+    & cmd /c rmdir "$jr\rod\link" 2>&1 | Out-Null
+  }
+}
+else { "SPRUNGET s11 - $rigtig findes ikke paa denne maskine" }
+
 if (-not $Behold) { Remove-Item -LiteralPath $Rod -Recurse -Force -ErrorAction SilentlyContinue }
 if ($AntalFejl) { "$AntalFejl FEJL"; exit 1 } else { "alle OK"; exit 0 }

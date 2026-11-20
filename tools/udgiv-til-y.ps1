@@ -78,8 +78,11 @@ function HashEns($a, $b) {
 }
 # Filer under $rod som @{ relativ sti -> FileInfo } via .NET - ALDRIG ved at parse robocopy-udskrift: den afkodes med
 # konsollens tegnsaet (850), saa en sti med aeoeaa blev forvansket ("t?t.txt"), hash fejlede, og filen blev forkert meldt.
-# Mapper med et navn i $udenMapper springes over paa alle niveauer (som robocopy /XD); filnavne der matcher $udenFiler
-# (regex) springes over (som /XF). Reparse points foelges ikke. En mappe der ikke kan laeses, er en FEJL.
+# Mapper med et navn i $udenMapper springes over paa alle niveauer (som robocopy /XD); filer hvis RELATIVE sti (med \)
+# matcher $udenFiler (regex) springes over (som /XF). Kun aegte links (LinkType SymbolicLink/Junction) foelges ikke:
+# med OneDrive Files On-Demand er ALLE mapper reparse points (cloud-tag), saa et filter paa ReparsePoint-attributten
+# fandt 6 af 676 filer i AI OS. Kun metadata laeses - intet filindhold hentes ned.
+# En mappe der ikke kan laeses, er en FEJL.
 function FilerUnder([string]$rod, [string[]]$udenMapper, [string]$udenFiler) {
   $h = @{}
   if (-not (Test-Path -LiteralPath $rod -PathType Container)) { return $h }
@@ -92,9 +95,15 @@ function FilerUnder([string]$rod, [string[]]$udenMapper, [string]$udenFiler) {
     try { $poster = $mappe.GetFileSystemInfos() } catch { Fejl "$($mappe.FullName) : kan ikke laeses ($($_.Exception.Message))"; continue }
     foreach ($p in $poster) {
       if ($p -is [IO.DirectoryInfo]) {
-        if ($udenMapper -notcontains $p.Name -and -not ($p.Attributes -band [IO.FileAttributes]::ReparsePoint)) { $stak.Push($p) }
+        if ($udenMapper -contains $p.Name) { continue }
+        # LinkType (PowerShell-egenskab) slaas kun op for reparse points; cloud-pladsholdere giver $null og foelges.
+        if (($p.Attributes -band [IO.FileAttributes]::ReparsePoint) -and @('SymbolicLink', 'Junction') -contains $p.LinkType) { continue }
+        $stak.Push($p)
       }
-      elseif (-not ($udenFiler -and $p.Name -match $udenFiler)) { $h[$p.FullName.Substring($laengde).TrimStart('\')] = $p }
+      else {
+        $rel = $p.FullName.Substring($laengde).TrimStart('\')
+        if (-not ($udenFiler -and $rel -match $udenFiler)) { $h[$rel] = $p }
+      }
     }
   }
   $h
@@ -143,7 +152,8 @@ $src = Join-Path $OneDrive "AI OS"
 # indholdet afviger - ellers forsvinder en kollegas rettelse stille. Samme udelukkelser som robocopy-kaldene (inkl. .obsidian
 # uden workspace-filerne). Kun kandidaterne hashes.
 $aiosMapper = @('.git', '.claude', '.codex-tmp', 'node_modules', '.agents')
-$aiosFiler = '^(workspace\.json|workspace-mobile\.json)$'
+# Som robocopy: workspace.json overalt (/XF i begge kald), workspace-mobile.json kun under .obsidian (kun .obsidian-kaldet).
+$aiosFiler = '(^|\\)workspace\.json$|^\.obsidian\\(.*\\)?workspace-mobile\.json$'
 $oAIOS = FilerUnder $src $aiosMapper $aiosFiler
 $yAIOSFiler = FilerUnder $YAIOS $aiosMapper $aiosFiler
 foreach ($rel in @($yAIOSFiler.Keys | Sort-Object)) {
@@ -348,7 +358,7 @@ foreach ($p in $par) {
   }
   # ~$* er Excel/Words laasefil (nogen har filen aaben paa Y:), Thumbs.db er Stifinders cache.
   # Sammenlignes via .NET (FilerUnder), ikke robocopy-udskrift - ellers forvanskes aeoeaa i stierne.
-  $kunYMapper = @('.git', '__pycache__', 'node_modules'); $kunYFiler = '^(desktop\.ini|workspace\.json|Thumbs\.db|~\$.*)$'
+  $kunYMapper = @('.git', '__pycache__', 'node_modules'); $kunYFiler = '(^|\\)(desktop\.ini|workspace\.json|Thumbs\.db|~\$[^\\]*)$'
   $oFiler = FilerUnder $p.O $kunYMapper $kunYFiler
   $yFiler = FilerUnder $p.Y $kunYMapper $kunYFiler
   $nye = @($yFiler.Keys | Where-Object { -not $oFiler.ContainsKey($_) } | Sort-Object | ForEach-Object { $yFiler[$_].FullName })

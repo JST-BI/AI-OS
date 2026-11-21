@@ -93,6 +93,7 @@ FB <år>-mappen spejles også til `Y:\Økonomi\Økonomistyring\FB <år>` (JST 20
 Samme følsomhed i en undermappe af et udgivet repo → `$IkkePaaYStier`: i dag
 `BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget*/` (mønster – hvert FB-år; og den gamle klons sti; FB-grundlaget med `jst-valg.json` – hvem sparerunden omfatter;
 JST 2026-11-05: "Grundlaget bliver lokalt – indtil videre"; fjern stien fra listen kun på JSTs ord).
+**Nyere på Y: er ikke det samme som rigtig:** før en Y:-fil hentes ind i OneDrive (eller omvendt), kontrollér at den kan åbnes (xlsx/zip starter med `PK`, ikke kun nul-bytes) og – for data – at den stemmer med kilden. 21-11-2026 var en lønfil på Y: 100 % nul-bytes med samme størrelse; den blev meldt som "nyere på Y:" og hentet ind, og kun OneDrive-synkroniseringen rullede den tilbage.
 
 **Kodeordet "Udgiv"** → skill `/udgiv` (`tools/udgiv-til-y.ps1`). Forudsætter at alt er merget til
 `main` og pushet — Udgiv henter fra GitHub, ikke fra OneDrive-klonerne.

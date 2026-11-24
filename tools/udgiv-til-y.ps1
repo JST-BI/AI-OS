@@ -63,7 +63,9 @@ $IkkePaaY = @('ADM-BESPARELSER')
 # den gamle klon findes.
 # Moenstre (-like, uden forskel paa store/smaa bogstaver): budget* daekker hvert FB-aar (budget2027, budget2028 ...),
 # saa vaernet ikke falder bort, naar aaret skifter.
-$IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget*/', 'BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget*/')
+# 24-11-2026 (BI-OEKONOMI trin 2): Output er flyttet fra DATA-BUDGET_PROGNOSE til rodens BI-OEKONOMI\Output - vaernet gaelder begge.
+$IkkePaaYStier = @('DATA-BUDGET_PROGNOSE/Output/Grundlag/budget*/', 'BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/Grundlag/budget*/',
+                   'BI-OEKONOMI/Output/Grundlag/budget*/')
 function L($m) { $s = "{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m; $s; $s | Out-File -Append -Encoding utf8 $Log }
 # Alle fejl taelles her; scriptet slutter med exit 1, hvis taelleren ikke er 0 (Opsummer).
 $FejlAntal = 0
@@ -330,11 +332,14 @@ Get-ChildItem -Directory (Join-Path $OneDrive "AI SOSU") | Where-Object { Test-P
   if ($kopieret) { L "$repo : $kopieret filer uden for git kopieret til Y:" }
 }
 
-# 2d) FB <aar>-mappen spejles HELT til Y:\Oekonomi\Oekonomistyring\FB <aar> (oekonomichefen 20-11-2026: "hele mappen",
-#     ogsaa filerne med navne). Samme regler som 2b: kun nyere/manglende kopieres, nyere paa maalet med andet indhold
-#     overskrives aldrig ("Nyere paa Y:"), filer kun paa maalet meldes i trin 3, intet slettes; $IkkePaaY/$IkkePaaYStier
-#     gaelder. Maalet ligger ved siden af AI SOSU (samme rod som -YAISOSU), saa testmapper ogsaa styrer det.
-#     Aarstallet laeses fra budgetaar.py (BUDGETAAR = <aar>) - kun den mappe, ikke andre "FB *"-mapper.
+# 2d) FB <aar>-mappen spejles 1:1 til Y:\Oekonomi\Oekonomistyring\FB <aar> (oekonomichefen 20-11-2026: "hele mappen",
+#     ogsaa filerne med navne; JST 24-11-2026: "1:1 kopi af FB 2027"). En fil paa maalet med andet indhold overskrives,
+#     og en fil, der kun findes paa maalet, flyttes ud - i begge tilfaelde gemmes maalets udgave FOERST i
+#     Oekonomistyring\_arkiv (Udgiv)\FB <aar>\<tidspunkt>\ (uden for FB-mappen, saa den forbliver 1:1; intet gaar tabt).
+#     $IkkePaaY/$IkkePaaYStier gaelder. Maalet ligger ved siden af AI SOSU (samme rod som -YAISOSU), saa testmapper ogsaa
+#     styrer det. Aarstallet laeses fra budgetaar.py (BUDGETAAR = <aar>) - kun den mappe, ikke andre "FB *"-mapper.
+#     Kilden er rodens BI-OEKONOMI\Output\FB <aar> (trin 2, 24-11-2026); den gamle DATA-BUDGET_PROGNOSE\Output bruges kun,
+#     til flytningen er sket.
 $OekoRodFundet = $null
 $oeko = [string][char]0xD8 + 'konomi'                     # "Oekonomi" med O-streg; scriptet er ASCII (PS 5.1 laeser det som ANSI)
 $oekoNavn = $oeko + 'styring'
@@ -349,24 +354,52 @@ else {
   if ($mAar.Count -ne 1) { Fejl "$oekoNavn : BUDGETAAR fundet $($mAar.Count) gange i budgetaar.py (ventet 1) - FB-mappen ikke spejlet" }
   else {
     $fb = "FB " + $mAar[0].Groups[1].Value
-    $fbKilde = Join-Path $dbp "Output\$fb"
+    $fbKilde = Join-Path $OneDrive "AI SOSU\BI-OEKONOMI\Output\$fb"
+    $relRod = "BI-OEKONOMI/Output/$fb/"
+    $fbGl = Join-Path $dbp "Output\$fb"
+    if (-not (Test-Path -LiteralPath $fbKilde) -and (Test-Path -LiteralPath $fbGl)) { $fbKilde = $fbGl; $relRod = "BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/$fb/" }
     $oekoRod = Join-Path (Split-Path -Parent $YAISOSU) "$oeko\$oekoNavn"
     $fbMaal = Join-Path $oekoRod $fb
     if (Test-Path -LiteralPath $oekoRod) { $OekoRodFundet = $oekoRod }   # trin 3 sammenligner alle FB-mapper dér
-    $relRod = "BI-OEKONOMI/DATA-BUDGET_PROGNOSE/Output/$fb/"
     if (-not (Test-Path -LiteralPath $fbKilde)) { L "$oekoNavn : $fbKilde findes ikke endnu - springes over" }
     elseif (-not (Test-Path -LiteralPath $oekoRod)) { Fejl "$oekoNavn : $oekoRod findes ikke (Y:-mapping/rettigheder?) - FB-mappen ikke spejlet" }
     elseif ($IkkePaaYStier | Where-Object { $relRod -like "$_*" }) { L "$oekoNavn : $relRod staar i `$IkkePaaYStier - springes over" }
     else {
       $oekoFiler = '(^|\\)(desktop\.ini|Thumbs\.db|~\$[^\\]*)$'
-      $kopi = 0; $ens = 0
+      $kopi = 0; $ens = 0; $over = 0; $ud = 0
+      $arkiv = Join-Path $oekoRod ("_arkiv (Udgiv)\$fb\" + (Get-Date -Format 'yyyy-MM-dd HHmmss'))
       $kildeFiler = FilerUnder $fbKilde @() $oekoFiler
       foreach ($rel in @($kildeFiler.Keys | Sort-Object)) {
         $relS = $rel.Replace('\', '/')
         if ($IkkePaaYStier | Where-Object { "$relRod$relS" -like "$_*" }) { continue }
-        switch (SpejlFil $kildeFiler[$rel].FullName (Join-Path $fbMaal $rel) "$oekoNavn/$fb/$relS") { 'kopieret' { $kopi++ } 'ens' { $ens++ } }
+        $dst = Join-Path $fbMaal $rel
+        $res = SpejlFil $kildeFiler[$rel].FullName $dst "$oekoNavn/$fb/$relS"
+        if ($res -eq 'nyere') {
+          # 1:1: maalets udgave (andet indhold) arkiveres, og kilden kopieres ind
+          [void]$script:NyereY.Remove("$oekoNavn/$fb/$relS")
+          try {
+            $a = Join-Path $arkiv $rel
+            New-Item -ItemType Directory -Force -Path (Split-Path -Parent $a) -ErrorAction Stop | Out-Null
+            Move-Item -LiteralPath $dst -Destination $a -ErrorAction Stop
+            Copy-Item -LiteralPath $kildeFiler[$rel].FullName -Destination $dst -Force -ErrorAction Stop
+            $over++; L "  overskrevet (Y:-udgaven arkiveret): $oekoNavn/$fb/$relS"
+          } catch { Fejl "$oekoNavn/$fb/$relS : kunne ikke overskrives ($($_.Exception.Message))" }
+        }
+        elseif ($res -eq 'kopieret') { $kopi++ }
+        elseif ($res -eq 'ens') { $ens++ }
       }
-      L "${oekoNavn}: $kopi filer kopieret, $ens ens ($fbKilde -> $fbMaal)"
+      # 1:1: filer, der kun findes paa maalet, flyttes til arkivet (laasefiler ~$ og Stifinders filer roeres ikke)
+      $maalFiler = FilerUnder $fbMaal @() $oekoFiler
+      foreach ($rel in @($maalFiler.Keys | Sort-Object)) {
+        if ($kildeFiler.ContainsKey($rel)) { continue }
+        try {
+          $a = Join-Path $arkiv $rel
+          New-Item -ItemType Directory -Force -Path (Split-Path -Parent $a) -ErrorAction Stop | Out-Null
+          Move-Item -LiteralPath $maalFiler[$rel].FullName -Destination $a -ErrorAction Stop
+          $ud++; L "  kun paa maalet, flyttet til arkivet: $oekoNavn/$fb/$($rel.Replace('\', '/'))"
+        } catch { Fejl "$oekoNavn/$fb/$rel : kunne ikke flyttes til arkivet ($($_.Exception.Message))" }
+      }
+      L "${oekoNavn}: $kopi filer kopieret, $over overskrevet, $ud flyttet til arkivet, $ens ens ($fbKilde -> $fbMaal)"
     }
   }
 }
@@ -401,9 +434,11 @@ $kunY = 0
 # Oekonomistyring: hver "FB *"-mappe dér sammenlignes med samme mappe i OneDrive Output\ (ogsaa tidligere aar efter
 # aarsskiftet - 2d kopierer kun budgetaarets). En FB-mappe OneDrive ikke har, meldes og taelles som "kun paa Y:".
 if ($OekoRodFundet) {
-  $outRod = Join-Path $dbp 'Output'
+  $outRod = Join-Path $OneDrive 'AI SOSU\BI-OEKONOMI\Output'                    # trin 2 (24-11-2026); den gamle placering som fallback
+  $outGl = Join-Path $dbp 'Output'
   Get-ChildItem -LiteralPath $OekoRodFundet -Directory -Force | Where-Object { $_.Name -like 'FB *' } | Sort-Object Name | ForEach-Object {
     $oFb = Join-Path $outRod $_.Name
+    if (-not (Test-Path -LiteralPath $oFb)) { $oFb = Join-Path $outGl $_.Name }
     if (Test-Path -LiteralPath $oFb) { $par += @{ Y = $_.FullName; O = $oFb } }
     else {
       $nFb = (FilerUnder $_.FullName @() '(^|\\)(~\$[^\\]*|Thumbs\.db|desktop\.ini)$').Count

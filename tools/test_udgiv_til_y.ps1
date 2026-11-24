@@ -319,7 +319,7 @@ Skriv "$($r.OD)\.gitignore" "Output/`nDATA-BUDGET_PROGNOSE/Output/`n"
 Skriv "$($r.OD)\DATA-BUDGET_PROGNOSE\tools\budget2027\budgetaar.py" "`"`"`"doc`"`"`"`nBUDGETAAR = 2031`nFB = f'FB {BUDGETAAR}'`n"
 Commit $r.OD "budgetaar"
 & git clone -q $r.OD $r.Y 2>&1 | Out-Null; G $r.Y remote remove origin
-$fbO = "$($r.OD)\DATA-BUDGET_PROGNOSE\Output\FB 2031"
+$fbO = "$($r.OD)\Output\FB 2031"                          # trin 2 (24-11-2026): rodens Output
 $maal = Join-Path $sc.Rod "Y\$oekoN\$styrN"
 New-Item -ItemType Directory -Force $maal | Out-Null
 $fbY = "$maal\FB 2031"
@@ -331,23 +331,48 @@ Skriv "$fbY\nyere.txt" "rettet paa Y`n";   Tid "$fbY\nyere.txt" 0
 Skriv "$fbO\ens.txt" "ens`n";              Tid "$fbO\ens.txt" -60
 Skriv "$fbY\ens.txt" "ens`n";              Tid "$fbY\ens.txt" 0
 Skriv "$fbY\kun $ae$oe$aa paa maal.txt" "kun`n"
-Skriv "$($r.OD)\DATA-BUDGET_PROGNOSE\Output\FB 2030\gammel.txt" "andet aar`n"
+Skriv "$($r.OD)\Output\FB 2030\gammel.txt" "andet aar`n"
 # Efter aarsskiftet: FB 2030 ligger ogsaa i Oekonomistyring (med en fil kun dér), FB 2029 kun dér.
 Skriv "$maal\FB 2030\kun gl.txt" "kun i gl aar`n"
 Skriv "$maal\FB 2029\x.txt" "x`n"
 $res = Koer $sc
 Forvent 's12-kopi' ((Laes "$fbY\FB 2031 - budgetforslag - med navne.txt") -eq "ny`n") 'manglende fil (med navne) er kopieret'
 Forvent 's12-aeoeaa' ((Laes "$fbY\$aeFil") -eq "aeoeaa`n") 'fil med aeoeaa i undermappe er kopieret'
-Forvent 's12-nyere' ((Laes "$fbY\nyere.txt") -eq "rettet paa Y`n") 'nyere fil paa maalet er IKKE overskrevet'
-Forvent 's12-nyere-meldt' ($res.Log.Contains("nyere paa Y: $styrN/FB 2031/nyere.txt")) 'og staar i "Nyere paa Y:"'
-Forvent 's12-kun-maal' ($res.Log.Contains("kun paa Y: $fbY\kun $ae$oe$aa paa maal.txt")) 'fil kun paa maalet meldes (trin 3)'
-Forvent 's12-kun-urort' (Test-Path -LiteralPath "$fbY\kun $ae$oe$aa paa maal.txt") 'og slettes ikke'
+# 1:1 (JST 24-11-2026): maalets afvigende udgave og filen kun paa maalet ligger i _arkiv (Udgiv)\FB 2031\<tid>\, FB-mappen er 1:1.
+$ark = @(Get-ChildItem -LiteralPath "$maal\_arkiv (Udgiv)\FB 2031" -Directory -ErrorAction SilentlyContinue)
+Forvent 's12-nyere' ((Laes "$fbY\nyere.txt") -eq "od`n") '1:1: fil med andet indhold paa maalet er overskrevet med kilden'
+Forvent 's12-nyere-arkiv' ($ark.Count -eq 1 -and (Laes "$($ark[0].FullName)\nyere.txt") -eq "rettet paa Y`n") 'og maalets udgave er arkiveret (intet tabt)'
+Forvent 's12-kun-maal' (-not (Test-Path -LiteralPath "$fbY\kun $ae$oe$aa paa maal.txt")) '1:1: fil kun paa maalet er fjernet fra FB-mappen'
+Forvent 's12-kun-arkiv' ($ark.Count -eq 1 -and (Test-Path -LiteralPath "$($ark[0].FullName)\kun $ae$oe$aa paa maal.txt")) 'og ligger i arkivet'
 Forvent 's12-andet-aar' (-not (Test-Path "$maal\FB 2030\gammel.txt")) 'kun budgetaarets FB-mappe kopieres (ikke FB 2030)'
 Forvent 's12-gl-aar-sammenlignet' ($res.Log.Contains("kun paa Y: $maal\FB 2030\kun gl.txt")) 'FB 2030 i Oekonomistyring sammenlignes i trin 3'
 Forvent 's12-fb-kun-der' ($res.Log.Contains("FB-mappe kun i ${styrN}: $maal\FB 2029 (1 filer)")) 'FB-mappe OneDrive ikke har, meldes'
-Forvent 's12-antal' ($res.Log -match 'Filer der kun findes paa Y: 3') 'trin 3 taeller 3 (kun-paa-maal, FB 2030, FB 2029)'
-Forvent 's12-log' ($res.Log.Contains("${styrN}: 2 filer kopieret, 1 ens")) 'log "Oekonomistyring: 2 filer kopieret, 1 ens"'
-Forvent 's12-exit' ($res.Kode -eq 2) "exit 2 (nyere + kun paa maal, ingen fejl) (fik $($res.Kode))"
+Forvent 's12-antal' ($res.Log -match 'Filer der kun findes paa Y: 2') 'trin 3 taeller 2 (FB 2030, FB 2029) - FB 2031 er 1:1'
+Forvent 's12-log' ($res.Log.Contains("${styrN}: 2 filer kopieret, 1 overskrevet, 1 flyttet til arkivet, 1 ens")) 'log med kopieret/overskrevet/arkiveret/ens'
+Forvent 's12-exit' ($res.Kode -eq 2) "exit 2 (kun paa Y i andre aar, ingen fejl) (fik $($res.Kode))"
+
+# --- S12b: indtil flytningen (trin 2) bruges den gamle DATA-BUDGET_PROGNOSE\Output som kilde ------------------
+$sc = Scenarie "s12b-gammel-placering"
+$r = RepoUdenRemote $sc "BI-OEKONOMI" -UdenY
+Skriv "$($r.OD)\.gitignore" "Output/`nDATA-BUDGET_PROGNOSE/Output/`n"
+Skriv "$($r.OD)\DATA-BUDGET_PROGNOSE\tools\budget2027\budgetaar.py" "`"`"`"doc`"`"`"`nBUDGETAAR = 2031`nFB = f'FB {BUDGETAAR}'`n"
+Commit $r.OD "budgetaar"
+& git clone -q $r.OD $r.Y 2>&1 | Out-Null; G $r.Y remote remove origin
+$maal = Join-Path $sc.Rod "Y\$oekoN\$styrN"; New-Item -ItemType Directory -Force $maal | Out-Null
+Skriv "$($r.OD)\DATA-BUDGET_PROGNOSE\Output\FB 2031\gl.txt" "gammel placering`n"
+$res = Koer $sc
+Forvent 's12b-kopi' ((Laes "$maal\FB 2031\gl.txt") -eq "gammel placering`n") 'FB-mappen i den gamle placering spejles, til den er flyttet'
+
+# --- S6b: vaernet for FB-grundlaget gaelder ogsaa rodens Output (trin 2, 24-11-2026) ------------------------------
+$sc = Scenarie "s6b-ikke-paa-y-rod"
+$r = RepoUdenRemote $sc "BI-OEKONOMI"
+Skriv "$($r.OD)\.gitignore" "Output/`nDATA-BUDGET_PROGNOSE/Output/`n"; Commit $r.OD "ignore"
+G $r.Y fetch -q $r.OD main; G $r.Y merge -q --ff-only FETCH_HEAD
+Skriv "$($r.OD)\Output\Grundlag\budget2027\loen\jst-valg.json" "{}"
+Skriv "$($r.OD)\Output\Grundlag\andet.txt" "maa gerne`n"
+$res = Koer $sc
+Forvent 's6b-2027' (-not (Test-Path "$($r.Y)\Output\Grundlag\budget2027")) 'Output\Grundlag\budget2027 i roden kopieres ikke'
+Forvent 's6b-andet' (Test-Path "$($r.Y)\Output\Grundlag\andet.txt") 'andre filer i rodens Grundlag kopieres'
 
 if (-not $Behold) {
   Remove-Item -LiteralPath $Rod -Recurse -Force -ErrorAction SilentlyContinue

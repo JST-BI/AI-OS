@@ -121,6 +121,10 @@ pegefilen `CLAUDE.md` → `@AGENTS.md` blev fjernet overalt 2026-11-01.
 `.claude/skills/` er et byte-identisk spejl, som kun `tools/sync-skills.ps1` skriver — Claude Code
 har ingen import for skills, og filserveren afviser symlinks. Redigér aldrig i `.claude/skills/`;
 `.githooks/check_skills_mirror.py` blokerer drift, og sessionsstartkontrollen melder den.
+`sync-skills.ps1` spejler også hver skill til `~\.claude\skills\<navn>\` (brugerniveau, JST 26-11-2026): projektskills
+indlæses kun i sessioner startet i AI OS, så `/aflever`, `/pause` og `/udgiv` manglede i sessioner startet i `C:\Users\jst`
+eller et AI SOSU-projekt. Den rører kun mapper på listen `~\.claude\skills\.ai-os-skills` — en personlig skill eller junction
+med samme navn springes over og meldes. Kør `sync-skills.ps1` efter hver skill-ændring; test: `tools/test-sync-skills.ps1`.
 
 Codex finder `AGENTS.md` ved at gå opad mod nærmeste `.git` — aldrig på tværs. En regel der skal
 gælde i et projekt, skal stå i det projekts egen fil.

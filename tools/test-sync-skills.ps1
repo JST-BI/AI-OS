@@ -31,6 +31,9 @@ try {
   Skriv "$bruger\synced\x\SKILL.md" "konto-skill`n"                       # fremmed mappe
   Skriv "$andet\SKILL.md" "bag junction`n"
   New-Item -ItemType Junction -Path "$bruger\linket" -Target $andet | Out-Null
+  # 'linket' staar paa styringslisten (fx en tidligere AI OS-mappe, som nogen har erstattet med et link): saa er det
+  # KUN link-tjekket, der beskytter filen bag junctionen - ellers maaler scenariet intet (mutation 26-11-2026).
+  Skriv "$bruger\.ai-os-skills" "linket`r`n"
 
   # 1) Foerste spejl
   $r = Koer @()
